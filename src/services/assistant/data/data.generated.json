@@ -411,8 +411,7 @@
      }
     },
     "w": {
-     "reader": 4.0,
-     "text": 3.0
+     "reader": 4.0
     }
    },
    "fact": {
@@ -944,6 +943,13 @@
   },
   "version": 1
  },
+ "link_aliases": [
+  {
+   "alias": "threat",
+   "canonical": "id",
+   "path": "/threats"
+  }
+ ],
  "notes": {
   "answer_text": {
    "default": "Here is what the Hub holds on this.",

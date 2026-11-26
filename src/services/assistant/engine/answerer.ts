@@ -150,6 +150,35 @@ class ResIndex {
   }
 }
 
+/** A status that does not retire a record: no status at all (undefined or null), an empty one, or "active". */
+export function isActiveStatus(s: string | null | undefined): boolean { return s === undefined || s === null || s === '' || s === 'active' }
+
+/** The link with every alias parameter written as its canonical one, so that two spellings the Hub opens as one page compare equal (the id wins when both are present). */
+export function canonicalLink(link: string, aliases: { path: string; alias: string; canonical: string }[]): string {
+  const q = link.indexOf('?')
+  if (q < 0) return link
+  const base = link.slice(0, q)
+  let rest = link.slice(q + 1)
+  const path = base.split('#')[0].replace(/\/+$/, '') || '/'
+  for (const al of aliases) {
+    if (path !== al.path) continue
+    const h = rest.indexOf('#')
+    const query = h < 0 ? rest : rest.slice(0, h)
+    const frag = h < 0 ? '' : rest.slice(h)
+    const parts = query.split('&')
+    const hasCanon = parts.some((p) => p.startsWith(al.canonical + '=') && p !== al.canonical + '=')
+    const hasAlias = parts.some((p) => p.startsWith(al.alias + '='))
+    const out: string[] = []
+    for (let p of parts) {
+      if (hasAlias && p === al.canonical + '=') continue
+      if (p.startsWith(al.alias + '=')) { if (hasCanon) continue; p = al.canonical + p.slice(al.alias.length) }
+      out.push(p)
+    }
+    rest = out.join('&') + frag
+  }
+  return base + '?' + rest
+}
+
 export class Answerer {
   strict: Strict
   engine: Engine
@@ -157,6 +186,7 @@ export class Answerer {
   res: ResIndex
   resByLink = new Map<string, Resource>()
   recOfLink = new Map<string, string[]>()
+  recOfKey = new Map<string, string[]>()
   linkOfRec = new Map<string, string>()
   private raw = new Map<string, Result>()
   private personaPaths: Map<string, string[]> | null = null
@@ -176,9 +206,13 @@ export class Answerer {
     this.res = new ResIndex(cat.resources)
     for (const r of cat.resources) this.resByLink.set(r.link, r)
     for (const r of model.records) if (r.link) { this.linkOfRec.set(r.id, r.link); const a = this.recOfLink.get(r.link); if (a) a.push(r.id); else this.recOfLink.set(r.link, [r.id]) }
+    for (const [link, ids] of this.recOfLink) { const k = this.linkKey(link); const a = this.recOfKey.get(k); if (a) a.push(...ids); else this.recOfKey.set(k, [...ids]) }
     // a page record of the link comes first (as in the catalogue); the sort is stable
     for (const ids of this.recOfLink.values()) ids.sort((a, b) => Number(this.strict.records.get(a)!.type !== 'page') - Number(this.strict.records.get(b)!.type !== 'page'))
   }
+  /** The key a link is looked up by in the records that own it: its canonical spelling without a fragment. */
+  linkKey(link: string): string { return canonicalLink(link, this.data.link_aliases ?? []).split('#')[0] }
+  recordsOfLink(link: string): string[] { const a = this.recOfLink.get(link); return a && a.length ? a : this.recOfKey.get(this.linkKey(link)) ?? [] }
   rec(id: string): Rec { return this.strict.records.get(id)! }
   answerRaw(q: string): Result { let r = this.raw.get(q); if (!r) { r = this.strict.answer(q); this.raw.set(q, r) } return r }
   tagOf(id: string): string { const r = this.strict.records.get(id); return r && r.type === 'tool' && r.link ? 'TOOL:' + r.link.replace(/\/+$/, '').split('/').pop() : id }
@@ -208,9 +242,9 @@ export class Answerer {
     return out
   }
   statusOk(r: Resource): boolean {
-    const ids = r.record_ids.length ? r.record_ids : (this.recOfLink.get(r.link) ?? [])
+    const ids = r.record_ids.length ? r.record_ids : this.recordsOfLink(r.link)
     if (!ids.length) return true
-    return ids.some((i) => [undefined, '', 'active'].includes(this.strict.records.get(i)?.status))
+    return ids.some((i) => isActiveStatus(this.strict.records.get(i)?.status))
   }
 
   // ------------------------------------------------------------ finders
@@ -302,7 +336,7 @@ export class Answerer {
     const out = new Map<string, number>()
     if (!(f.industries.length || f.places.length)) return out
     for (const rec of this.model.records) {
-      if (!['guidance', 'framework'].includes(rec.type) || ![undefined, '', 'active'].includes(rec.status)) continue
+      if (!['guidance', 'framework'].includes(rec.type) || !isActiveStatus(rec.status)) continue
       const d = this.cat.dims[rec.id]
       if (!rec.link || !d) continue
       let bonus = 0.0
@@ -445,7 +479,7 @@ export class Answerer {
     if (res.kind !== 'answer' || res.tier === 2 || res.from_fields) return null
     const rec = this.strict.records.get((res.record ?? {}).id ?? '')
     // A retired record answers one question only: what replaced it, and only when the link is proven (the reader's chain).
-    if (!rec || (![undefined, '', 'active'].includes(rec.status) && !successor)) return null
+    if (!rec || (!isActiveStatus(rec.status) && !successor)) return null
     if ((res.records ?? []).length > 1) return null
     let value = res.value
     if ((value === null || value === undefined || value === '') && res.values && res.values.length) value = res.values.map(String).join('; ')
@@ -455,7 +489,7 @@ export class Answerer {
     if (spec.direct_field_rx && res.field && !new RegExp(spec.direct_field_rx.replace(/^\(\?i\)/, ''), spec.direct_field_rx.startsWith('(?i)') ? 'i' : '').test(String(res.field))) return null
     if (spec.one_of_kind && reading.names.length && reading.names[0].ids.filter((i) => spec.one_of_kind.includes(this.rec(i).type)).length > 1) return null
     for (const n of reading.names.slice(0, 1)) {
-      const twins = n.ids.filter((i) => this.rec(i).family === rec.family && this.rec(i).type === rec.type && [undefined, '', 'active'].includes(this.rec(i).status))
+      const twins = n.ids.filter((i) => this.rec(i).family === rec.family && this.rec(i).type === rec.type && isActiveStatus(this.rec(i).status))
       if (twins.length > 1 && !(res.records && res.records.length > 1)) return null
     }
     let ev = this.evidence(rec, res)
@@ -507,7 +541,7 @@ export class Answerer {
     let rest = reading.clean
     for (const n of reading.names) rest = rest.replace(new RegExp(escRx(n.text), 'gi'), ' ')
     if (!shape.some((rx) => rx.test(rest)) || ['answer', 'clarify'].includes(this.answerRaw(reading.question).kind)) return null
-    const ids = new Set(reading.named_ids.filter((i) => ['document', 'standard'].includes(this.rec(i).type) && [undefined, '', 'active'].includes(this.rec(i).status)))
+    const ids = new Set(reading.named_ids.filter((i) => ['document', 'standard'].includes(this.rec(i).type) && isActiveStatus(this.rec(i).status)))
     if (ids.size !== 1 || reading.names.length !== 1) return null
     const rec = this.rec([...ids][0])
     const ev = this.evidence(rec, {})
