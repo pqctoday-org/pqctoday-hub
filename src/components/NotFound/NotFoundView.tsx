@@ -18,16 +18,19 @@ export function NotFoundView() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-12" data-testid="not-found">
-      <h1 className="mb-4 text-3xl font-bold text-foreground">Page not found</h1>
+      <h1 className="mb-4 font-display text-3xl font-bold text-heading">Page not found</h1>
       <p className="mb-6 text-muted-foreground">
-        We could not find <code className="break-all rounded bg-muted px-1 py-0.5">{pathname}</code>
+        We could not find{' '}
+        <code className="break-all rounded-lg bg-chip px-1.5 py-0.5 text-chip-foreground">
+          {pathname}
+        </code>
         . It may have moved, or the address may be mistyped.
       </p>
-      <p className="mb-2 font-semibold text-foreground">Where to go next</p>
+      <p className="mb-2 font-display font-semibold text-heading">Where to go next</p>
       <ul className="space-y-1">
         {NOT_FOUND_LINKS.map((link) => (
           <li key={link.path}>
-            <Link to={link.path} className="text-primary hover:underline">
+            <Link to={link.path} className="text-primary-legible hover:underline">
               {link.label}
             </Link>
           </li>

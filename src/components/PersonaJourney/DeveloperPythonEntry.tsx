@@ -5,7 +5,7 @@ import { PYTHON_SIGNATURE_EXERCISE_PATH } from '@/data/pythonWorkbench'
 
 export function DeveloperPythonEntry() {
   return (
-    <div className="mt-4 rounded-lg border border-border bg-muted/30 p-3">
+    <div className="mt-4 rounded-2xl border border-border bg-muted/30 p-3">
       <Link
         to={PYTHON_SIGNATURE_EXERCISE_PATH}
         className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-primary underline underline-offset-2"

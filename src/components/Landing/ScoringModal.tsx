@@ -63,7 +63,7 @@ export function ScoringModal({ isOpen, onClose, totalSteps, totalQuestions }: Sc
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="glass-panel p-6 max-w-lg w-full max-h-[85dvh] overflow-y-auto"
+              className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 max-w-lg w-full max-h-[85dvh] overflow-y-auto"
               role="dialog"
               aria-modal="true"
               aria-labelledby="scoring-modal-title"
@@ -71,7 +71,10 @@ export function ScoringModal({ isOpen, onClose, totalSteps, totalQuestions }: Sc
             >
               {/* Header */}
               <div className="flex items-center justify-between mb-5">
-                <h2 id="scoring-modal-title" className="text-lg font-bold text-foreground">
+                <h2
+                  id="scoring-modal-title"
+                  className="text-lg font-bold font-display text-heading"
+                >
                   How Your Score Works
                 </h2>
                 <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close">
@@ -81,7 +84,7 @@ export function ScoringModal({ isOpen, onClose, totalSteps, totalQuestions }: Sc
 
               {/* Dimensions */}
               <div className="space-y-3 mb-6">
-                <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                   Four Dimensions
                 </p>
                 {dimensions.map((dim) => (
@@ -100,7 +103,7 @@ export function ScoringModal({ isOpen, onClose, totalSteps, totalQuestions }: Sc
 
               {/* Belt Ranks with threshold requirements */}
               <div className="mb-6">
-                <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-3">
+                <p className="uppercase mb-3 text-[11px] font-extrabold tracking-[0.14em] text-heading">
                   Belt Ranks &amp; Requirements
                 </p>
                 <div className="space-y-3">

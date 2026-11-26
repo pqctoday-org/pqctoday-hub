@@ -22,11 +22,17 @@ export function RelatedContentPanel({ id, entries, className }: RelatedContentPa
     <section
       aria-labelledby={`related-content-${id}`}
       data-testid="related-content"
-      className={cn('rounded-xl border border-border bg-card p-4 sm:p-5', className)}
+      className={cn(
+        'rounded-3xl border-2 border-ink bg-card p-4 shadow-[0_6px_0_hsl(var(--edge))] sm:p-5',
+        className
+      )}
     >
       <div className="mb-3 flex items-center gap-2">
         <Network size={18} className="shrink-0 text-primary" aria-hidden="true" />
-        <h2 id={`related-content-${id}`} className="text-sm font-semibold text-foreground">
+        <h2
+          id={`related-content-${id}`}
+          className="font-display text-sm font-semibold text-heading"
+        >
           Related content
         </h2>
       </div>
@@ -35,7 +41,7 @@ export function RelatedContentPanel({ id, entries, className }: RelatedContentPa
           <li key={entry.to}>
             <Link
               to={entry.to}
-              className="flex items-start gap-2.5 rounded-lg border border-border bg-background px-3 py-2.5 text-sm transition-colors hover:border-primary/40 hover:bg-muted"
+              className="flex items-start gap-2.5 rounded-2xl border border-border bg-card px-3 py-2.5 text-sm transition-colors hover:bg-highlight"
             >
               <ArrowRight size={15} className="mt-0.5 shrink-0 text-primary" aria-hidden="true" />
               <span className="min-w-0">

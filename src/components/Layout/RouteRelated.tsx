@@ -31,18 +31,18 @@ export function RouteRelated({ mobile }: { mobile: boolean }) {
     <section
       aria-label="Related content"
       data-testid="related-content"
-      className="mx-4 mb-4 rounded-xl border border-border bg-card p-3.5"
+      className="mx-4 mb-4 rounded-3xl border-2 border-ink bg-card p-3.5 shadow-[0_6px_0_hsl(var(--edge))]"
     >
       <div className="mb-2.5 flex items-center gap-2">
         <Network size={15} className="shrink-0 text-primary" aria-hidden="true" />
-        <h2 className="text-[13px] font-semibold text-foreground">Related content</h2>
+        <h2 className="font-display text-sm font-semibold text-heading">Related content</h2>
       </div>
       <ul className="flex flex-col gap-2">
         {entries.map((e) => (
           <li key={e.to}>
             <Link
               to={e.to}
-              className="flex min-h-[44px] items-start gap-2 rounded-lg border border-border bg-background px-2.5 py-2 text-[12.5px] active:bg-muted"
+              className="flex min-h-[44px] items-start gap-2 rounded-2xl border border-border bg-card px-3 py-2 text-[12.5px] active:bg-muted"
             >
               <ArrowRight size={13} className="mt-0.5 shrink-0 text-primary" aria-hidden="true" />
               <span className="min-w-0">

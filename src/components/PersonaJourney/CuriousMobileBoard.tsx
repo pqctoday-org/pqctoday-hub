@@ -101,21 +101,21 @@ const ROUTED_BOTTOM_TABS: RoutedTabDef[] = [
  */
 const TONE_CLASS: Record<string, { panel: string; label: string; punchline: string }> = {
   bad: {
-    panel: 'border-critical/40 bg-critical/5',
+    panel: 'bg-critical/5',
     label: 'text-critical',
     punchline: 'text-critical',
   },
   warn: {
-    panel: 'border-warning/40 bg-warning/5',
+    panel: 'bg-warning/5',
     label: 'text-warning',
     punchline: 'text-warning',
   },
   info: {
-    panel: 'border-primary/40 bg-primary/5',
+    panel: 'bg-primary/5',
     label: 'text-primary',
     punchline: 'text-primary',
   },
-  accent: { panel: 'border-accent/50 bg-accent/5', label: 'text-accent', punchline: 'text-accent' },
+  accent: { panel: 'bg-accent/5', label: 'text-accent', punchline: 'text-accent' },
 }
 
 function RoutedBottomTab({ path, label, icon: Icon, testId }: RoutedTabDef) {
@@ -239,7 +239,7 @@ export function CuriousMobileBoard({ variantId, onSelectVariant }: CuriousMobile
                 className={cn(
                   'h-auto shrink-0 snap-start rounded-full border px-4 py-1.5 text-xs font-semibold transition-colors',
                   selected
-                    ? 'border-primary/50 bg-primary/10 text-primary'
+                    ? 'bg-primary/10 text-primary'
                     : 'border-border bg-muted/30 text-muted-foreground hover:border-primary/40 hover:text-foreground'
                 )}
               >
@@ -252,7 +252,7 @@ export function CuriousMobileBoard({ variantId, onSelectVariant }: CuriousMobile
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-primary">
           {board.heroEyebrow}
         </p>
-        <h1 className="text-gradient mt-3 text-2xl font-extrabold leading-tight sm:text-3xl">
+        <h1 className="font-display text-heading mt-3 text-2xl font-extrabold leading-tight sm:text-3xl">
           {board.headline}
         </h1>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{board.sub}</p>
@@ -279,7 +279,13 @@ export function CuriousMobileBoard({ variantId, onSelectVariant }: CuriousMobile
         {/* Side card — rows stacked (not side-by-side). Tone, title, rows and
             punchline all come from the active board, so each option gets its
             own card rather than every option showing the HNDL one. */}
-        <section data-testid="hndl-card" className={cn('glass-panel mt-6 p-4', tone.panel)}>
+        <section
+          data-testid="hndl-card"
+          className={cn(
+            'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-6 p-4',
+            tone.panel
+          )}
+        >
           <span
             data-testid="side-card-provenance"
             className="mb-2 inline-flex w-fit items-center rounded-full border border-border bg-background/60 px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground"
@@ -307,7 +313,10 @@ export function CuriousMobileBoard({ variantId, onSelectVariant }: CuriousMobile
         </section>
 
         {/* Honest labs-gating note — plain callout, not an error state */}
-        <section data-testid="labs-gating" className="glass-panel mt-4 p-4">
+        <section
+          data-testid="labs-gating"
+          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-4 p-4"
+        >
           <p className="text-sm font-bold text-foreground">Want the hands-on labs?</p>
           <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
             They run real cryptography and need a laptop. We&rsquo;ll send you a link — or carry on
@@ -352,7 +361,7 @@ export function CuriousMobileBoard({ variantId, onSelectVariant }: CuriousMobile
             role="dialog"
             aria-modal="true"
             aria-label="More"
-            className="fixed inset-x-0 bottom-0 z-modal rounded-t-2xl border-t border-border bg-card p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-2xl"
+            className="fixed inset-x-0 bottom-0 z-modal rounded-t-2xl border-t border-border bg-card p-4 pb-[max(1rem,env(safe-area-inset-bottom))]"
           >
             <div className="mb-3 flex items-center justify-between">
               <span className="text-sm font-medium text-foreground">More</span>

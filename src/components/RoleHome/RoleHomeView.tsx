@@ -155,14 +155,16 @@ const RoleCard = ({ personaId, onSelect }: RoleCardProps) => {
       aria-label={accessibleName}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      className="glass-panel flex h-full cursor-pointer select-none flex-col gap-3 p-5 text-left transition-all duration-200 hover:border-primary/50 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] flex h-full cursor-pointer select-none flex-col gap-3 p-5 text-left transition-all duration-200 hover:border-primary/50 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:outline-solid"
     >
       <div className="flex items-center gap-3">
-        <span className="rounded-lg bg-primary/10 p-2">
-          <Icon size={20} className="text-primary" aria-hidden="true" />
+        <span className="rounded-full bg-chip p-2">
+          <Icon size={20} className="text-chip-foreground" aria-hidden="true" />
         </span>
         <div>
-          <p className="font-bold leading-tight text-foreground">{persona.label}</p>
+          <p className="font-display text-base font-semibold leading-tight text-heading">
+            {persona.label}
+          </p>
           <p className="text-xs text-muted-foreground">{persona.subtitle}</p>
         </div>
       </div>
@@ -170,7 +172,7 @@ const RoleCard = ({ personaId, onSelect }: RoleCardProps) => {
       <p className="text-sm leading-relaxed text-foreground/80">{copy.urgency}</p>
 
       <div className="mt-auto space-y-1 border-t border-border/50 pt-3">
-        <p className="text-xs font-semibold text-accent">{copy.firstWin}</p>
+        <p className="text-xs font-bold text-accent-legible">{copy.firstWin}</p>
         <p className="text-xs text-muted-foreground">{trackLine(persona, copy.track)}</p>
       </div>
     </div>
@@ -208,14 +210,16 @@ const SkipCard = ({ onSkip }: SkipCardProps) => {
       aria-label="Show me everything"
       onClick={onSkip}
       onKeyDown={handleKeyDown}
-      className="glass-panel flex h-full cursor-pointer select-none flex-col gap-3 border-dashed p-5 text-left transition-all duration-200 hover:border-primary/50 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] flex h-full cursor-pointer select-none flex-col gap-3 border-dashed p-5 text-left transition-all duration-200 hover:border-primary/50 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:outline-solid"
     >
       <div className="flex items-center gap-3">
-        <span className="rounded-lg bg-muted p-2">
-          <LayoutGrid size={20} className="text-muted-foreground" aria-hidden="true" />
+        <span className="rounded-full bg-chip p-2">
+          <LayoutGrid size={20} className="text-chip-foreground" aria-hidden="true" />
         </span>
         <div>
-          <p className="font-bold leading-tight text-foreground">Show me everything</p>
+          <p className="font-display text-base font-semibold leading-tight text-heading">
+            Show me everything
+          </p>
           <p className="text-xs text-muted-foreground">No filtering</p>
         </div>
       </div>
@@ -248,14 +252,14 @@ export const RoleHomeView = ({ onSelectPersona, onSkip }: RoleHomeViewProps) => 
       aria-labelledby="role-home-heading"
       className="mx-auto w-full max-w-5xl px-4 py-10 sm:py-14"
     >
-      <p className="mb-3 text-sm font-mono uppercase tracking-widest text-muted-foreground">
+      <p className="mb-3 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
         Post-quantum cryptography, explained and provable
       </p>
       {/* Wave A (2026-09-18): h1 — this screen is the whole front door until a
           role is picked, and it rendered no level-one heading. */}
       <h1
         id="role-home-heading"
-        className="text-gradient text-4xl font-extrabold leading-tight sm:text-[40px]"
+        className="font-display text-heading text-4xl font-extrabold leading-tight sm:text-[40px]"
       >
         Who's asking?
       </h1>

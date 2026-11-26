@@ -70,9 +70,9 @@ describe('PersonaBoardView', () => {
 
       // The highlight must show up as an actual visual treatment too, not
       // just the data attribute.
-      expect(card2.className).toMatch(/border-accent/)
-      expect(card0.className).not.toMatch(/border-accent\/50/)
-      expect(card1.className).not.toMatch(/border-accent\/50/)
+      expect(card2.className).toMatch(/border-highlight-border/)
+      expect(card0.className).not.toMatch(/border-highlight-border/)
+      expect(card1.className).not.toMatch(/border-highlight-border/)
     }
   )
 

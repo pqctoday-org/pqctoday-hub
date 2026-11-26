@@ -10,23 +10,23 @@ export const buttonVariants = cva(
         // Storybook Blue: pill buttons with an ink outline. The primary carries the flat
         // offset edge; the others do not. Phone height is at least 44px.
         default:
-          'rounded-full font-bold border-2 border-ink bg-primary text-primary-foreground shadow-[0_4px_0_hsl(var(--edge))] hover:bg-primary/90 active:translate-y-[3px] active:shadow-none max-md:min-h-[44px]',
+          'rounded-full font-bold border-2 border-ink bg-primary text-primary-foreground shadow-[0_4px_0_hsl(var(--edge))] hover:bg-primary/90 active:translate-y-[3px] active:shadow-none max-md:min-h-[44px] [&.h-auto]:rounded-2xl [&.h-auto]:whitespace-normal',
         destructive:
-          'rounded-full font-bold border-2 border-ink bg-destructive text-destructive-foreground hover:bg-destructive/90 max-md:min-h-[44px]',
+          'rounded-full font-bold border-2 border-ink bg-destructive text-destructive-foreground hover:bg-destructive/90 max-md:min-h-[44px] [&.h-auto]:rounded-2xl [&.h-auto]:whitespace-normal',
         outline:
-          'rounded-full font-bold border-2 border-ink bg-card text-card-foreground hover:bg-muted max-md:min-h-[44px]',
+          'rounded-full font-bold border-2 border-ink bg-card text-card-foreground hover:bg-muted max-md:min-h-[44px] [&.h-auto]:rounded-2xl [&.h-auto]:whitespace-normal',
         // a11y (WS9, 2026-08-02): this paired `bg-secondary` with `text-foreground`
         // — near-white on light lavender in dark mode, 2.63:1, well under the
         // 4.5:1 WCAG AA floor. Secondary buttons now take the chip fill, whose
         // paired foreground token is measured against it.
         secondary:
-          'rounded-full font-bold border-2 border-ink bg-chip text-chip-foreground hover:bg-chip/90 max-md:min-h-[44px]',
+          'rounded-full font-bold border-2 border-ink bg-chip text-chip-foreground hover:bg-chip/90 max-md:min-h-[44px] [&.h-auto]:rounded-2xl [&.h-auto]:whitespace-normal',
         ghost: 'rounded-lg hover:bg-muted/20 hover:text-foreground',
         link: 'rounded-lg text-primary underline-offset-4 hover:underline',
         // Kept as a name for the many call sites that ask for the call-to-action look;
         // it is the primary button (no gradient).
         gradient:
-          'rounded-full font-bold border-2 border-ink bg-primary text-primary-foreground shadow-[0_4px_0_hsl(var(--edge))] hover:bg-primary/90 active:translate-y-[3px] active:shadow-none max-md:min-h-[44px]',
+          'rounded-full font-bold border-2 border-ink bg-primary text-primary-foreground shadow-[0_4px_0_hsl(var(--edge))] hover:bg-primary/90 active:translate-y-[3px] active:shadow-none max-md:min-h-[44px] [&.h-auto]:rounded-2xl [&.h-auto]:whitespace-normal',
       },
       size: {
         default: 'h-10 px-4 py-2',

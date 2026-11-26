@@ -9,7 +9,7 @@ export function TransparencyBanner() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.4 }}
-      className="glass-panel p-4 flex items-start gap-3"
+      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 flex items-start gap-3"
     >
       <Construction size={18} className="text-primary mt-0.5 shrink-0" />
       <div className="flex-1">

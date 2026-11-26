@@ -144,7 +144,7 @@ function GraduateCTA() {
   if (!showGraduate) return null
 
   return (
-    <div className="mt-4 p-4 glass-panel border-primary/20 bg-primary/5 rounded-xl space-y-3">
+    <div className="glass-panel backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-4 p-4 bg-primary/5 space-y-3">
       <div className="flex items-center gap-2">
         <Sparkles size={16} className="text-primary shrink-0" />
         <p className="text-sm font-semibold text-foreground">Ready to specialize?</p>
@@ -186,7 +186,7 @@ export function ScoreCard({ embedded = false }: { embedded?: boolean }) {
   const moduleCount = pathModuleCount(selectedPersona)
   return (
     <section aria-label="Optional learning path" data-testid="scorecard-optional">
-      <div className="glass-panel p-4">
+      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
         <Button
           variant="ghost"
           size="sm"
@@ -239,7 +239,7 @@ function ScoreCardBody({ embedded }: { embedded: boolean }) {
     const teaserContent = (
       <>
         <div
-          className={`flex flex-col sm:flex-row items-center gap-6 ${embedded ? '' : 'glass-panel p-6'}`}
+          className={`flex flex-col sm:flex-row items-center gap-6 ${embedded ? '' : 'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6'}`}
         >
           <div className="flex flex-col items-center gap-2 shrink-0">
             <div className="flex gap-1.5 items-end">
@@ -261,7 +261,7 @@ function ScoreCardBody({ embedded }: { embedded: boolean }) {
           </div>
           <div className="flex-1 text-center sm:text-left">
             <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
-              <p className="text-xs font-mono uppercase tracking-widest text-primary">
+              <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                 Learning Journey
                 {personaLabel && (
                   <span className="ml-2 normal-case tracking-normal text-secondary font-medium">
@@ -282,7 +282,10 @@ function ScoreCardBody({ embedded }: { embedded: boolean }) {
                 </Button>
               </span>
             </div>
-            <h2 id="scorecard-heading" className="text-lg font-bold mb-1.5">
+            <h2
+              id="scorecard-heading"
+              className="text-lg font-bold mb-1.5 font-display text-heading"
+            >
               Earn your first belt
             </h2>
             <p className="text-sm text-muted-foreground mb-4 max-w-md">
@@ -317,12 +320,18 @@ function ScoreCardBody({ embedded }: { embedded: boolean }) {
   // ── Active scorecard (compact) ─────────────────────────────────────────────
   const activeContent = (
     <>
-      <div className={embedded ? '' : 'glass-panel p-6'}>
+      <div
+        className={
+          embedded
+            ? ''
+            : 'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6'
+        }
+      >
         {/* ── Header row ─────────────────────────────────────────────────── */}
         <div className="flex items-center gap-4">
           <BeltSwatch belt={belt} size="md" />
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-0.5">
+            <p className="uppercase mb-0.5 text-[11px] font-extrabold tracking-[0.14em] text-heading">
               Learning Journey
               {personaLabel && (
                 <span className="ml-2 normal-case tracking-normal text-secondary font-medium">
@@ -332,7 +341,7 @@ function ScoreCardBody({ embedded }: { embedded: boolean }) {
             </p>
             <div className="flex items-baseline gap-2 flex-wrap">
               <span
-                className="text-2xl font-bold text-gradient"
+                className="text-2xl font-bold text-heading"
                 aria-label={`Awareness score: ${score} out of 100`}
               >
                 {score}

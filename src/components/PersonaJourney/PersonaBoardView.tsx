@@ -71,10 +71,10 @@ type SideCardProvenance = PersonaJourneyBoard['sideCard']['provenance']
  *  see IMPLEMENTATION-PLAN-2026-08-01.md §5 on the info/cyan vs --info hue
  *  distinction), accent -> accent. */
 const TONE_BORDER_BG: Record<SideCardTone, string> = {
-  bad: 'border-critical/40 bg-critical/5',
-  warn: 'border-warning/40 bg-warning/5',
-  info: 'border-primary/40 bg-primary/5',
-  accent: 'border-accent/40 bg-accent/5',
+  bad: 'bg-critical/5',
+  warn: 'bg-warning/5',
+  info: 'bg-primary/5',
+  accent: 'bg-accent/5',
 }
 
 const TONE_TEXT: Record<SideCardTone, string> = {
@@ -119,17 +119,17 @@ export const WORKSHOP_NAME_BY_ID: Record<string, string> = Object.fromEntries(
 )
 
 const PROVENANCE_CLASS: Record<SideCardProvenance, string> = {
-  sourced: 'border-accent/30 bg-accent/10 text-accent-legible',
-  illustrative: 'border-border bg-muted/40 text-muted-foreground',
+  sourced: 'bg-accent/10 text-accent-legible',
+  illustrative: 'bg-muted text-muted-foreground',
   // Distinct from illustrative: this is us talking, not your data pending.
-  guidance: 'border-primary/25 bg-primary/5 text-primary/90',
+  guidance: 'bg-chip text-chip-foreground',
 }
 
 function ProvenanceChip({ provenance, label }: { provenance: SideCardProvenance; label: string }) {
   return (
     <span
       className={cn(
-        'inline-flex w-fit items-center rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide',
+        'inline-flex w-fit items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide',
         PROVENANCE_CLASS[provenance]
       )}
     >
@@ -202,10 +202,10 @@ export function PersonaBoardView({
                 onSelectVariant?.(v.id)
               }}
               className={cn(
-                'h-auto rounded-full border px-4 py-1.5 text-xs font-semibold transition-colors',
+                'h-auto rounded-full border-2 border-ink px-4 py-1.5 text-xs font-bold transition-colors',
                 selected
-                  ? 'border-primary/50 bg-primary/10 text-primary-legible'
-                  : 'border-border bg-muted/30 text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                  ? 'bg-highlight text-heading'
+                  : 'bg-chip text-chip-foreground hover:bg-highlight hover:text-heading'
               )}
             >
               {v.chipLabel}
@@ -218,7 +218,7 @@ export function PersonaBoardView({
 
   const heroText = (
     <>
-      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
+      <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-heading">
         {board.heroEyebrow}
       </p>
 
@@ -228,7 +228,7 @@ export function PersonaBoardView({
         </div>
       )}
 
-      <h1 className="text-gradient mt-3 text-3xl font-extrabold leading-tight sm:text-4xl">
+      <h1 className="font-display text-heading mt-3 text-3xl font-extrabold leading-tight sm:text-4xl">
         {board.headline}
       </h1>
 
@@ -267,10 +267,8 @@ export function PersonaBoardView({
         <li
           key={chip}
           className={cn(
-            'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs',
-            i === 0
-              ? 'border-accent/30 bg-accent/10 text-accent-legible'
-              : 'border-border bg-muted/30 text-muted-foreground'
+            'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold',
+            i === 0 ? 'bg-accent/10 text-accent-legible' : 'bg-chip text-chip-foreground'
           )}
         >
           {i === 0 && <Check size={12} aria-hidden="true" />}
@@ -287,7 +285,7 @@ export function PersonaBoardView({
       ) : (
         <div
           className={cn(
-            'glass-panel flex h-full flex-col gap-3 p-5',
+            'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] flex h-full flex-col gap-3 p-5',
             TONE_BORDER_BG[board.sideCard.tone]
           )}
           data-testid="default-side-card"
@@ -297,7 +295,12 @@ export function PersonaBoardView({
             label={PROVENANCE_LABEL[board.sideCard.provenance]}
           />
 
-          <h2 className={cn('text-lg font-bold', TONE_TEXT[board.sideCard.tone])}>
+          <h2
+            className={cn(
+              'text-lg font-bold font-display text-heading',
+              TONE_TEXT[board.sideCard.tone]
+            )}
+          >
             {board.sideCard.title}
           </h2>
 
@@ -338,7 +341,7 @@ export function PersonaBoardView({
     <>
       {/* 3-card grid */}
       <div>
-        <h2 className="text-lg font-bold text-foreground">{board.gridTitle}</h2>
+        <h2 className="text-lg font-bold font-display text-heading">{board.gridTitle}</h2>
         <p className="mt-1 text-sm text-muted-foreground">{board.gridSub}</p>
 
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -346,13 +349,13 @@ export function PersonaBoardView({
             const highlighted = i === 2
             const body = (
               <>
-                <h3 className="text-sm font-bold text-foreground">{card.title}</h3>
+                <h3 className="text-sm font-bold font-display text-heading">{card.title}</h3>
                 <p className="text-xs leading-relaxed text-muted-foreground">{card.body}</p>
               </>
             )
             const className = cn(
-              'glass-panel flex flex-col gap-2 p-4',
-              highlighted && 'border-accent/50 bg-accent/5',
+              'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] flex flex-col gap-2 p-4',
+              highlighted && 'bg-highlight! border-highlight-border!',
               // Only linked cards get affordances — an unlinked card must stay
               // visually identical to how every card rendered before hrefs existed.
               card.href && 'transition-colors hover:border-primary/40 hover:bg-primary/5'
@@ -400,7 +403,7 @@ export function PersonaBoardView({
               <li key={l.to}>
                 <Link
                   to={l.to}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/30 px-3 py-1 text-xs text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs transition-colors bg-chip text-chip-foreground font-bold border-2 border-ink hover:bg-highlight hover:text-heading"
                 >
                   {l.kind === 'module' ? (
                     <BookOpen size={12} aria-hidden="true" />
@@ -446,7 +449,7 @@ export function PersonaBoardView({
 
         {/* Your next step — the one thing this board asks of a sponsor. */}
         <section
-          className="glass-panel mt-6 flex flex-col gap-3 border-primary/40 bg-primary/5 p-5"
+          className="glass-panel backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-6 flex flex-col gap-3 bg-primary/5 p-5"
           aria-labelledby={nextHeadingId}
           data-testid="exec-next-step"
         >
@@ -492,7 +495,7 @@ export function PersonaBoardView({
 
         {/* Track strip — the essentials only; the full path is optional. */}
         <div className="mt-8 border-t border-border pt-6" data-testid="exec-essentials-track">
-          <h2 className="text-base font-bold text-foreground">
+          <h2 className="text-base font-bold font-display text-heading">
             Background, if you want it: {persona.essentials.length} essentials,{' '}
             {formatTrackMinutes(persona.essentialsMinutes)}
           </h2>
@@ -504,7 +507,7 @@ export function PersonaBoardView({
                 <li key={chip}>
                   <Link
                     to={`/learn/${moduleId}`}
-                    className="rounded-full border border-border bg-muted/30 px-3 py-1 text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
+                    className="rounded-full px-3 py-1 text-xs transition-colors bg-chip text-chip-foreground font-bold border-2 border-ink hover:bg-highlight hover:text-heading"
                   >
                     {chip}
                   </Link>
@@ -584,7 +587,7 @@ export function PersonaBoardView({
 
       {/* Track strip */}
       <div className="mt-8 border-t border-border pt-6">
-        <h2 className="text-base font-bold text-foreground">{board.trackTitle}</h2>
+        <h2 className="text-base font-bold font-display text-heading">{board.trackTitle}</h2>
         {board.trackNote && <p className="mt-1 text-xs text-muted-foreground">{board.trackNote}</p>}
 
         <ul className="mt-3 flex flex-wrap gap-2">
@@ -600,7 +603,7 @@ export function PersonaBoardView({
               <li key={chip}>
                 <Link
                   to={`/learn/${moduleId}`}
-                  className="rounded-full border border-border bg-muted/30 px-3 py-1 text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
+                  className="rounded-full px-3 py-1 text-xs transition-colors bg-chip text-chip-foreground font-bold border-2 border-ink hover:bg-highlight hover:text-heading"
                 >
                   {chip}
                 </Link>
@@ -612,7 +615,7 @@ export function PersonaBoardView({
           {board.capstoneChip && (
             <li
               data-testid="capstone-chip"
-              className="rounded-full border border-accent/40 bg-accent/10 px-3 py-1 text-xs font-semibold text-accent"
+              className="rounded-full bg-accent/10 px-3 py-1 text-xs font-bold text-accent-legible"
             >
               {board.capstoneChip.label}
             </li>
