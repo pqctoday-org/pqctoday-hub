@@ -391,6 +391,8 @@ export function buildPreview(input: PreviewInput): ObjectivePreview {
   if (scored.length === 0) {
     // Nothing says it: a word only held as a tag or track is "not covered" for building required lessons.
     const said = coveredInText(specific)
+    // The words of a phrase the model found teaching lessons are not "not covered", even when no lesson scores enough to match.
+    for (const r of input.named ?? []) for (const w of r.phrase.split(' ')) said.add(stem(w))
     return { ...empty, state: 'gap', notCovered: specific.filter((w) => !said.has(w)) }
   }
 

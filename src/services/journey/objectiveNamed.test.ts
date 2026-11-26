@@ -197,7 +197,58 @@ describe('linkEvidence', () => {
   })
 })
 
+describe('a record named twice, and punctuation from a pasted goal', () => {
+  it('counts a record once per lesson however many phrases of the goal name it', () => {
+    // "zorbkem" (its label) and "zorb" (its alias) name the same record in different words of the goal.
+    const named = resolveNamed(reader, 'zorbkem and zorb')
+    expect(named.filter((n) => n.id === 'GL:zorbkem').length).toBeGreaterThan(1)
+    expect(linkEvidence(named).get('LM-901')?.score).toBe(6)
+    expect(linkEvidence(named).get('LM-901')?.reasons).toHaveLength(1)
+  })
+
+  it('still adds up two different records that teach one lesson', () => {
+    const r = readerWith({
+      records: [rec('GL:quux', 'glossary term', 'Quux')],
+      aliases: { quux: [['GL:quux', 'label']] },
+      links: [['GL:quux', 'taught_in', 'LM-901', 'declared', 'x']],
+    })
+    expect(linkEvidence(resolveNamed(r, 'zorbkem and quux')).get('LM-901')?.score).toBe(9)
+  })
+
+  it('reads a typographic dash or a non-breaking hyphen as a space, as the word scoring does', () => {
+    for (const goal of [
+      'hybrid\u2011zorb',
+      'hybrid\u2013zorb',
+      'hybrid\u2014zorb',
+      'hybrid zorb',
+    ]) {
+      expect(resolveNamed(reader, goal).map((n) => n.id)).toEqual(['GL:hybrid-zorb'])
+    }
+    expect(resolveNamed(reader, 'understand zörbkem').map((n) => n.id)).toEqual(['GL:zorbkem'])
+  })
+})
+
 describe('buildPreview with the knowledge model', () => {
+  it('does not report a named term as "not covered" when its links are too weak to build a step', () => {
+    // A term taught in five lessons scores 2 a lesson: under the match minimum, so the preview is a gap,
+    // but the Hub does teach it, so its words are not "not covered".
+    const r = readerWith({
+      records: [rec('GL:quark', 'glossary term', 'Quark')],
+      aliases: { quark: [['GL:quark', 'label']] },
+      links: Array.from({ length: 5 }, (_, i) => [
+        'GL:quark',
+        'taught_in',
+        `LM-9${String(i + 3).padStart(2, '0')}`,
+        'declared',
+        'x',
+      ]) as KnowledgeLink[],
+    })
+    const p = buildPreview({ ...base, goal: 'quark', named: resolveNamed(r, 'quark') })
+    expect(p.state).toBe('gap')
+    expect(p.notCovered).toEqual([])
+    expect(buildPreview({ ...base, goal: 'quark' }).notCovered).toEqual(['quark'])
+  })
+
   it('a named term taught in one lesson makes that lesson a required match with its take-first lesson, with the reason', () => {
     const p = tags('understand zorbkem')
     const req = p.steps.filter((s) => s.required)

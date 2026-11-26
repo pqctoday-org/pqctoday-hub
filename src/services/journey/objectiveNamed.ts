@@ -105,6 +105,18 @@ function teachingLessons(
 }
 
 /**
+ * The goal with every character outside ASCII that is not a letter's accent turned into a space. The reader's own
+ * name rule deletes such characters, so a pasted en dash or non-breaking hyphen ("PKCS–11", "ML‑KEM") would join
+ * the words ("pkcs11") and miss the name the table holds ("pkcs 11"); the word scoring already splits there.
+ */
+export function asciiWords(goal: string): string {
+  return goal
+    .normalize('NFKD')
+    .replace(/\p{M}/gu, '')
+    .replace(/[\u0080-\uffff]/g, ' ')
+}
+
+/**
  * The records a goal names. Phrases are tried longest first at every position; a phrase that names records with
  * teaching lessons claims its words, so a shorter phrase inside it ("tls" in "tls 1 3") is not read again. A phrase
  * made only of stop words and subject words ("post quantum cryptography", "pqc") names nothing.
@@ -114,7 +126,7 @@ export function resolveNamed(
   goal: string,
   hasLesson: (lmId: string) => boolean = (t) => lessonByTag(t) !== undefined
 ): NamedRecord[] {
-  const words = normName(goal).split(' ').filter(Boolean)
+  const words = normName(asciiWords(goal)).split(' ').filter(Boolean)
   const claimed = new Array<boolean>(words.length).fill(false)
   const out: NamedRecord[] = []
   for (let len = Math.min(MAX_PHRASE_WORDS, words.length); len >= 1; len--) {
@@ -165,14 +177,20 @@ export function linkScore(record: NamedRecord, lesson: TeachingLesson): number {
 }
 
 /**
- * Per lesson, the link score of a goal and why. Records named by the same words (a glossary term and the protocol
- * of the same name) count once, by the strongest; different named things that teach the same lesson add up to LINK_CAP.
+ * Per lesson, the link score of a goal and why. A record counts once however many phrases of the goal name it
+ * ("NIS2 Directive and NIS2" names the same record twice); records named by the same words (a glossary term and the
+ * protocol of the same name) count once, by the strongest; different named things that teach the same lesson add up
+ * to LINK_CAP.
  */
 export function linkEvidence(
   named: readonly NamedRecord[]
 ): Map<string, { score: number; reasons: LessonReason[] }> {
   const byPhraseLesson = new Map<string, Map<string, { score: number; reasons: LessonReason[] }>>()
+  const counted = new Set<string>()
   for (const r of named) {
+    // The score of a record does not depend on which words named it: the first phrase (the longest) stands for it.
+    if (counted.has(r.id)) continue
+    counted.add(r.id)
     const perLesson = byPhraseLesson.get(r.phrase) ?? new Map()
     for (const t of r.lessons) {
       const strength = linkScore(r, t)
