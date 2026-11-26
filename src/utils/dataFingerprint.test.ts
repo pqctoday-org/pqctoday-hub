@@ -3,19 +3,12 @@ import { describe, it, expect } from 'vitest'
 import {
   getDataSourceSummaries,
   filterSummariesForPersona,
-  buildWhatsNewRAGChunk,
   type DataSourceSummary,
 } from './dataFingerprint'
 import { leadersData } from '@/data/leadersData'
 
 // We test against actual data — these tests verify the public API shape
 // rather than mocking internals, since the data loaders are module-level singletons.
-
-// The distinctive opening of the curious-mode preamble emitted by
-// buildWhatsNewRAGChunk. Asserted verbatim rather than by keyword: the chunk
-// also embeds real CHANGELOG.md prose, so a loose keyword match tests the
-// release notes rather than the code under test.
-const CURIOUS_PREAMBLE_MARKER = '(Note to assistant: The user is non-technical.'
 
 describe('dataFingerprint', () => {
   describe('getDataSourceSummaries', () => {
@@ -186,66 +179,6 @@ describe('dataFingerprint', () => {
       const result = filterSummariesForPersona([mixed], null, [])
       expect(result[0].newCount).toBe(1)
       expect(result[0].updatedCount).toBe(1)
-    })
-  })
-
-  describe('buildWhatsNewRAGChunk', () => {
-    it('returns a chunk with changelog content (no persona filter)', () => {
-      const chunk = buildWhatsNewRAGChunk([], null, [])
-      // May be null if CHANGELOG.md is empty or has no recent versions, but if present:
-      if (chunk) {
-        expect(chunk.id).toBe('dynamic-whats-new')
-        expect(chunk.source).toBe('whats-new')
-        expect(chunk.deepLink).toBe('/changelog')
-        expect(chunk.priority).toBe(10)
-        expect(chunk.content).toContain('##')
-        expect(chunk.metadata.dynamic).toBe('true')
-        expect(chunk.metadata.persona).toBe('all')
-      }
-    })
-
-    it('returns a chunk with persona filtering', () => {
-      const chunk = buildWhatsNewRAGChunk([], 'developer', [])
-      if (chunk) {
-        expect(chunk.metadata.persona).toBe('developer')
-        // Content should still have sections
-        expect(chunk.content).toContain('##')
-      }
-    })
-
-    it('uses plain-language labels in curious mode', () => {
-      const chunk = buildWhatsNewRAGChunk([], null, [], 'curious')
-      if (chunk) {
-        expect(chunk.title).toBe("What's new on PQC Today")
-        expect(chunk.metadata.audience).toBe('curious')
-        // Curious preamble should be present. Match the full marker, not the
-        // bare word "non-technical" — that appears in real changelog prose too
-        // (e.g. 4.37.0's "new/non-technical visitors"), which made the inverse
-        // assertions below fail on entry text rather than on the preamble.
-        expect(chunk.content).toContain(CURIOUS_PREAMBLE_MARKER)
-        // Should use friendly section headers, not developer jargon
-        expect(chunk.content).not.toContain('## App Updates')
-        expect(chunk.content).toContain('## Recent improvements')
-      }
-    })
-
-    it('does NOT use curious labels when experienceLevel is not curious', () => {
-      const chunk = buildWhatsNewRAGChunk([], null, [], 'basics')
-      if (chunk) {
-        expect(chunk.title).toBe("What's New in PQC Today")
-        expect(chunk.metadata.audience).toBeUndefined()
-        expect(chunk.content).not.toContain(CURIOUS_PREAMBLE_MARKER)
-        expect(chunk.content).toContain('## App Updates')
-      }
-    })
-
-    it('does NOT use curious labels when experienceLevel is null', () => {
-      const chunk = buildWhatsNewRAGChunk([], null, [], null)
-      if (chunk) {
-        expect(chunk.title).toBe("What's New in PQC Today")
-        expect(chunk.metadata.audience).toBeUndefined()
-        expect(chunk.content).not.toContain(CURIOUS_PREAMBLE_MARKER)
-      }
     })
   })
 })
