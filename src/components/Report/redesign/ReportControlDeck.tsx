@@ -35,14 +35,14 @@ export function ReportControlDeck({ fullTrack, shared = false }: ReportControlDe
   if (shared) return null
 
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] flex flex-wrap items-center gap-x-4 gap-y-2 p-3 print:hidden">
+    <div className="glass-panel rounded-2xl flex flex-wrap items-center gap-x-4 gap-y-2 p-3 print:hidden">
       <span className="flex items-center gap-1.5">
         <span className="font-mono uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
           Track
         </span>
         <span
           className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[12px] font-bold ${
-            fullTrack ? 'bg-success/15 text-success' : 'bg-warning/15 text-warning'
+            fullTrack ? 'bg-success/15 text-success-legible' : 'bg-warning/15 text-warning'
           }`}
         >
           {fullTrack ? (

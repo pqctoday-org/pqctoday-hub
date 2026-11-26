@@ -43,7 +43,7 @@ function Section({
     <section
       id={`terms-${slug}`}
       tabIndex={-1}
-      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 scroll-mt-20 focus-visible:ring-2 focus-visible:ring-primary"
+      className="glass-panel p-6 scroll-mt-20 focus-visible:ring-2 focus-visible:ring-primary"
     >
       <h2 className="text-lg font-semibold mb-4 font-display text-heading">
         {number}. {title}
@@ -78,10 +78,7 @@ export function TermsView() {
         </p>
       </div>
 
-      <nav
-        aria-label="Table of contents"
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 mb-6"
-      >
+      <nav aria-label="Table of contents" className="glass-panel p-4 mb-6">
         <h2 className="text-sm font-semibold mb-2 font-display text-heading">Contents</h2>
         <ol className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm list-decimal list-inside">
           {TOC_SECTIONS.map((s) => (

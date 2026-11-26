@@ -110,7 +110,7 @@ export function TryToolModalHost() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={close}
-            className={`fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm print:hidden ${mobileShell ? 'z-overlay' : 'z-50'}`}
+            className={`fixed inset-0 embed-backdrop bg-scrim/60 backdrop-blur-sm print:hidden ${mobileShell ? 'z-overlay' : 'z-50'}`}
           />
           <div
             data-testid="try-tool-modal-layer"
@@ -121,7 +121,7 @@ export function TryToolModalHost() {
                 initial={{ opacity: 0, scale: 0.97, y: 16 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.97, y: 16 }}
-                className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] flex max-h-[90dvh] w-[min(72rem,92vw)] flex-col overflow-hidden"
+                className="glass-panel flex max-h-[90dvh] w-[min(72rem,92vw)] flex-col overflow-hidden"
                 ref={dialogRef}
                 role="dialog"
                 aria-modal="true"

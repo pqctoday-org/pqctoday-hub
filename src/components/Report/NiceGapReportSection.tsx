@@ -37,11 +37,11 @@ const CA_COLORS: Partial<Record<NiceCompetencyAreaId, string>> = {
   'CA-CRYPTO': 'bg-primary/10 text-primary',
   'CA-RISK': 'bg-warning/10 text-warning',
   'CA-GOVCOMP': 'bg-destructive/10 text-destructive',
-  'CA-NETDEF': 'bg-success/10 text-success',
+  'CA-NETDEF': 'bg-success/10 text-success-legible',
   'CA-IDENT': 'bg-primary/15 text-primary',
   'CA-DATASEC': 'bg-warning/15 text-warning',
   'CA-SYSARCH': 'bg-muted-foreground/15 text-muted-foreground',
-  'CA-SECPROG': 'bg-success/15 text-success',
+  'CA-SECPROG': 'bg-success/15 text-success-legible',
 }
 
 // ---------------------------------------------------------------------------
@@ -112,10 +112,7 @@ export const NiceGapReportSection: React.FC<NiceGapReportSectionProps> = ({ resu
             const caColor = CA_COLORS[gap.competencyAreaId] ?? 'bg-muted text-foreground'
             const ca = NICE_COMPETENCY_AREAS[gap.competencyAreaId]
             return (
-              <div
-                key={gap.competencyAreaId}
-                className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-2"
-              >
+              <div key={gap.competencyAreaId} className="glass-panel p-4 space-y-2">
                 <div className="flex items-start justify-between gap-2 flex-wrap">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className={`text-xs font-mono px-2 py-0.5 rounded ${caColor}`}>
@@ -181,10 +178,7 @@ export const NiceGapReportSection: React.FC<NiceGapReportSectionProps> = ({ resu
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {report.workRoleRecommendations.map((role) => (
-              <div
-                key={role.workRoleId}
-                className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-1.5"
-              >
+              <div key={role.workRoleId} className="glass-panel p-4 space-y-1.5">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-mono text-muted-foreground">{role.niceCode}</span>
                   <span className="text-sm font-medium text-foreground">{role.title}</span>
@@ -229,7 +223,7 @@ export const NiceGapReportSection: React.FC<NiceGapReportSectionProps> = ({ resu
                 <Link
                   key={step.moduleId}
                   to={`/learn/${step.moduleId}`}
-                  className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] flex items-center gap-3 px-3 py-2.5 hover:bg-muted/30 transition-colors group"
+                  className="glass-panel rounded-2xl flex items-center gap-3 px-3 py-2.5 hover:bg-muted/30 transition-colors group"
                 >
                   <span className="text-xs font-mono text-muted-foreground w-5 shrink-0 text-right">
                     {idx + 1}

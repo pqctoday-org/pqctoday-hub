@@ -156,7 +156,7 @@ export const GanttDetailPopover = ({
     <>
       {/* Backdrop */}
       <div
-        className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-overlay bg-black/60`}
+        className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-overlay bg-scrim/60`}
         onClick={onClose}
         aria-hidden="true"
       />
@@ -168,7 +168,7 @@ export const GanttDetailPopover = ({
         <FocusLock returnFocus>
           <div
             ref={popoverRef}
-            className="w-[90vw] max-w-[36rem] bg-popover text-popover-foreground animate-in zoom-in-95 duration-200 border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))]"
+            className="w-[90vw] max-w-[36rem] bg-popover text-popover-foreground animate-in zoom-in-95 duration-200 glass-panel rounded-2xl"
             style={isEmbedded ? { zIndex: 9999, ...positionStyle } : undefined}
             role="dialog"
             aria-modal="true"

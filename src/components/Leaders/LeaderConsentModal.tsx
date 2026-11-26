@@ -93,14 +93,14 @@ export function LeaderConsentModal({ isOpen, onClose }: LeaderConsentModalProps)
       {/* Backdrop */}
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div
-        className="fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm z-50 print:hidden"
+        className="fixed inset-0 embed-backdrop bg-scrim/60 backdrop-blur-sm z-50 print:hidden"
         onClick={onClose}
       />
 
       <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4 print:hidden pointer-events-none">
         <FocusLock returnFocus>
           <div
-            className="glass-panel backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] bg-card max-w-lg w-full max-h-[85dvh] flex flex-col overflow-hidden pointer-events-auto"
+            className="glass-panel bg-card max-w-lg w-full max-h-[85dvh] flex flex-col overflow-hidden pointer-events-auto"
             role="dialog"
             aria-modal="true"
             aria-labelledby="leader-consent-title"

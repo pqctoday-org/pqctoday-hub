@@ -12,7 +12,7 @@ import { buttonVariants } from '@/components/ui/button-variants'
  */
 export function ExecutiveAboutSummary() {
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 md:p-6">
+    <div className="glass-panel p-4 md:p-6">
       <div className="flex items-start gap-3">
         <div className="p-2 rounded-lg bg-primary/10 shrink-0">
           <Briefcase className="text-primary" size={22} aria-hidden="true" />

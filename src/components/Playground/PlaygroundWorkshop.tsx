@@ -332,7 +332,7 @@ const ToolCardView: React.FC<ToolCardProps> = ({
         data-playground-result={tool.id}
         onClick={() => onOpen(tool)}
         className={cn(
-          'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3.5 cursor-pointer transition-colors hover:border-primary/50',
+          'glass-panel rounded-2xl p-3.5 cursor-pointer transition-colors hover:border-primary/50',
           locked && 'opacity-60'
         )}
       >
@@ -436,7 +436,7 @@ const FeatureCard: React.FC<{ item: (typeof FEATURE_PLAYGROUNDS)[number] }> = ({
     <Link
       to={item.to}
       onClick={() => logEvent('Playground', 'Full Playground Open', item.title)}
-      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] group flex flex-col p-4 transition-colors hover:border-primary/50"
+      className="glass-panel group flex flex-col p-4 transition-colors hover:border-primary/50"
     >
       <div className="flex items-center gap-2.5">
         <span
@@ -518,7 +518,7 @@ const ToolDetailModal: React.FC<ToolModalProps> = ({
 
   const Icon = tool.icon
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-6">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-scrim/60 p-6">
       {/* Click-outside backdrop as a real, labelled close affordance. */}
       <Button
         variant="ghost"
@@ -531,7 +531,7 @@ const ToolDetailModal: React.FC<ToolModalProps> = ({
           role="dialog"
           aria-modal="true"
           aria-label={tool.name}
-          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] relative w-[480px] max-w-full p-6"
+          className="glass-panel relative w-[480px] max-w-full p-6"
         >
           <div className="flex items-start gap-3">
             <span className="shrink-0 w-[42px] h-[42px] rounded-xl bg-primary/12 flex items-center justify-center">
@@ -722,7 +722,7 @@ const ToolDetailModal: React.FC<ToolModalProps> = ({
 // ---------------------------------------------------------------------------
 
 const EmptyResults: React.FC<{ title: string; subtitle: string }> = ({ title, subtitle }) => (
-  <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-6 p-10 text-center">
+  <div className="glass-panel mt-6 p-10 text-center">
     <span className="mx-auto flex w-[42px] h-[42px] items-center justify-center rounded-xl bg-muted text-muted-foreground">
       <Search className="w-5 h-5" aria-hidden="true" />
     </span>
@@ -820,7 +820,7 @@ const SandboxRuntimeToggle: React.FC = () => {
         <div
           role="dialog"
           aria-label="Sandbox access"
-          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] absolute bottom-full left-0 right-0 z-40 mb-2 space-y-2 p-3"
+          className="glass-panel rounded-2xl absolute bottom-full left-0 right-0 z-40 mb-2 space-y-2 p-3"
         >
           <div className="flex items-start gap-2">
             <Container className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
@@ -1476,7 +1476,7 @@ export const PlaygroundWorkshop = () => {
         {cat === 'HSM / PKCS#11' && (
           <Link
             to="/playground/hsm"
-            className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-4 flex items-center gap-3.5 p-4 transition-colors hover:border-primary/50"
+            className="glass-panel mt-4 flex items-center gap-3.5 p-4 transition-colors hover:border-primary/50"
           >
             <span className="flex w-[38px] h-[38px] items-center justify-center rounded-lg bg-secondary/15 text-secondary">
               <HsmIcon className="w-4 h-4" aria-hidden="true" />
@@ -1675,7 +1675,7 @@ export const PlaygroundWorkshop = () => {
           </div>
         )}
         {roleJourney && (
-          <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-3 flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="glass-panel mt-3 flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-muted-foreground">{roleJourney.rationale}</p>
             <Link
               to={roleJourney.learnTo}
@@ -1689,7 +1689,7 @@ export const PlaygroundWorkshop = () => {
         <Link
           to={KMIP_PLAYGROUND_ROUTE}
           onClick={() => logEvent('Playground', 'Full Playground Open', 'KMIP Banner')}
-          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-5 flex items-center gap-4 p-5 transition-colors hover:border-primary/50"
+          className="glass-panel mt-5 flex items-center gap-4 p-5 transition-colors hover:border-primary/50"
         >
           <span className="flex w-[42px] h-[42px] shrink-0 items-center justify-center rounded-xl bg-primary/14 text-primary">
             <Container className="w-5 h-5" aria-hidden="true" />
@@ -1896,7 +1896,7 @@ export const PlaygroundWorkshop = () => {
         )}
       </div>
 
-      <details className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-6 p-4">
+      <details className="glass-panel mt-6 p-4">
         <summary className="cursor-pointer text-sm font-semibold text-foreground">
           Browse all {GRID_TOOL_COUNT} tools and {FULL_PLAYGROUND_COUNT} full playgrounds
         </summary>

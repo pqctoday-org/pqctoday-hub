@@ -105,7 +105,7 @@ export function PatentsRoleLens({
   if (summary.relevantCount === 0) return null
 
   return (
-    <section className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
+    <section className="glass-panel p-4">
       <div className="mb-2 flex items-center gap-2">
         <Scale size={16} className="shrink-0 text-primary" aria-hidden="true" />
         <h2 className="text-sm font-semibold font-display text-heading">

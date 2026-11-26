@@ -269,7 +269,7 @@ export const InfraModernizationPlanner: React.FC = () => {
         </div>
       </header>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">PKI Modernization</h3>
         <p className="text-[11px] text-muted-foreground rounded-md border border-border bg-muted/30 p-2">
           <span className="font-semibold text-foreground">Why these defaults:</span> the
@@ -360,7 +360,7 @@ export const InfraModernizationPlanner: React.FC = () => {
         </div>
       </section>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">
           HSM &amp; KMS Upgrade Schedule
         </h3>
@@ -464,7 +464,7 @@ export const InfraModernizationPlanner: React.FC = () => {
         </div>
       </section>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">
           Network &amp; Middleboxes · {protocolCount} protocol{protocolCount === 1 ? '' : 's'}{' '}
           selected
@@ -503,7 +503,7 @@ export const InfraModernizationPlanner: React.FC = () => {
         </div>
       </section>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">Capacity Plan</h3>
         <p className="text-[11px] text-muted-foreground rounded-md border border-border bg-muted/30 p-2">
           The worksheet flags a stated CPU impact of at least 20% and a storage multiplier of at

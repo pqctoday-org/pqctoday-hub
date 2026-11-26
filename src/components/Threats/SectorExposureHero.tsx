@@ -43,11 +43,7 @@ function sectorDataLifetime(industry: string): number {
 }
 
 const Card = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-  <div
-    className={`glass-panel bg-card backdrop-blur-none border border-border rounded-2xl shadow-none p-4 ${className}`}
-  >
-    {children}
-  </div>
+  <div className={`glass-panel glass-panel-row p-4 ${className}`}>{children}</div>
 )
 
 const Eyebrow = ({ children }: { children: React.ReactNode }) => (

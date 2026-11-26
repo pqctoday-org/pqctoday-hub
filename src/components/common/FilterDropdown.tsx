@@ -307,7 +307,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
           maxWidth: 'calc(100vw - 16px)',
           zIndex: 9999,
         }}
-        className="bg-popover border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))] overflow-hidden transform origin-top"
+        className="bg-popover glass-panel rounded-2xl overflow-hidden transform origin-top"
       >
         {/* Search input */}
         {searchable && (

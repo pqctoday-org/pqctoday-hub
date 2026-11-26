@@ -61,7 +61,7 @@ const SECTION_CONFIG = {
     Icon: Plus,
     borderClass: 'border-success',
     bgClass: 'bg-success/10',
-    textClass: 'text-success',
+    textClass: 'text-success-legible',
   },
   changed: {
     label: 'Improvements',
@@ -411,7 +411,7 @@ export const ChangelogView = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 mb-6"
+        className="glass-panel p-6 mb-6"
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -439,7 +439,7 @@ export const ChangelogView = () => {
         </div>
       </motion.div>
 
-      <PersonaPageNote route="/changelog" />
+      <PersonaPageNote route="/changelog" className="mb-6" />
 
       {/* Sponsor thanks — real, wired to src/data/sponsors.ts (the same
           registry that drives the /migrate "Sponsor" badge). Renders nothing
@@ -452,7 +452,7 @@ export const ChangelogView = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.03 }}
-          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 mb-6"
+          className="glass-panel p-4 mb-6"
         >
           <div className="flex items-center gap-2 mb-2 text-sm font-medium text-foreground">
             <Heart size={14} className="text-primary shrink-0" aria-hidden="true" />
@@ -480,7 +480,7 @@ export const ChangelogView = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] px-4 py-3 mb-6"
+          className="glass-panel rounded-2xl px-4 py-3 mb-6"
         >
           <div className="flex flex-wrap items-center gap-2">
             <div
@@ -530,7 +530,7 @@ export const ChangelogView = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 mb-6"
+        className="glass-panel p-4 mb-6"
       >
         <div className="relative mb-3">
           <Search
@@ -598,7 +598,7 @@ export const ChangelogView = () => {
               className={clsx(
                 'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
                 filters.added
-                  ? 'bg-success/20 border-success/50 text-success'
+                  ? 'bg-success/20 border-success/50 text-success-legible'
                   : 'bg-muted/20 border-border text-muted-foreground hover:text-foreground'
               )}
             >
@@ -736,7 +736,7 @@ export const ChangelogView = () => {
       )}
 
       {groupedByDate.length === 0 && (
-        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] my-4 space-y-2 p-4 text-sm">
+        <div className="glass-panel my-4 space-y-2 p-4 text-sm">
           <p role="status">No releases match these filters.</p>
           {searchQuery && (
             <Button
@@ -806,7 +806,7 @@ export const ChangelogView = () => {
 
               <div
                 className={clsx(
-                  'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 transition-shadow duration-500',
+                  'glass-panel p-6 transition-shadow duration-500',
                   groupHighlighted && 'ring-2 ring-primary'
                 )}
               >

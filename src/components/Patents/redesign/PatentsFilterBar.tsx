@@ -268,7 +268,7 @@ export function PatentsFilterBar({
   }
 
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3">
+    <div className="glass-panel rounded-2xl p-3">
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative min-w-[200px] flex-1">
           <Search

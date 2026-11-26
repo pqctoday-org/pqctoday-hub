@@ -53,7 +53,7 @@ export function TimelineMilestoneComparison() {
     <details
       open={open}
       onToggle={(event) => setOpen(event.currentTarget.open)}
-      className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] my-4 p-3"
+      className="glass-panel my-4 p-3"
     >
       <summary className="min-h-8 cursor-pointer font-semibold text-foreground">
         Compare published milestones

@@ -617,7 +617,7 @@ function UseCaseCard({
   )
   return (
     <div
-      className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4"
+      className="glass-panel p-4"
       data-use-case={uc.useCaseId}
       data-deeplink-id={`usecase-${uc.useCaseId}`}
     >
@@ -1726,7 +1726,7 @@ export function IndustryLandscapeView() {
             }
             return (
               <>
-                <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mb-4 flex flex-wrap items-center gap-3 p-4">
+                <div className="glass-panel mb-4 flex flex-wrap items-center gap-3 p-4">
                   <IndIcon size={26} className="text-primary" />
                   <h3
                     ref={industryHeadingRef}

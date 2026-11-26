@@ -117,7 +117,7 @@ function DrawerPanel({ algo, onClose }: { algo: AlgorithmDetail; onClose: () => 
           variant="ghost"
           aria-label="Close detail"
           onClick={onClose}
-          className="absolute inset-0 h-full w-full cursor-default rounded-none bg-black/60 hover:bg-black/60"
+          className="absolute inset-0 h-full w-full cursor-default rounded-none bg-scrim/60 hover:bg-scrim/60"
         />
 
         {/* panel */}

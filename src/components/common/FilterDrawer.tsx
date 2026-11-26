@@ -54,7 +54,7 @@ export const FilterDrawer: React.FC<FilterDrawerProps> = ({
           >
             {/* Backdrop */}
             <div
-              className="absolute inset-0 bg-black/60"
+              className="absolute inset-0 bg-scrim/60"
               onClick={() => setIsOpen(false)}
               role="presentation"
             />

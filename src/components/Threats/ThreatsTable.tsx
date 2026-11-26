@@ -91,7 +91,7 @@ export const ThreatsTable = ({
   const columnCount = 5 + (showIndustry ? 1 : 0) + (showEvidence ? 1 : 0)
 
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border border-border rounded-2xl shadow-none overflow-hidden">
+    <div className="glass-panel glass-panel-row overflow-hidden">
       <div className="overflow-x-auto">
         <table
           className={clsx(

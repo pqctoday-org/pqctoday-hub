@@ -38,7 +38,7 @@ export function ControlDeck({ count }: ControlDeckProps) {
   const regionName = (region && REGION_LABEL[region]) || 'Global'
 
   return (
-    <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] space-y-3 p-4">
+    <div className="glass-panel space-y-3 p-4">
       <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
         {count && (
           <span className="text-xs text-muted-foreground">

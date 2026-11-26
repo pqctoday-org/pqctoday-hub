@@ -115,7 +115,7 @@ function MultiplierBadge({ value }: { value: number }) {
         isNeutral
           ? 'bg-muted text-muted-foreground'
           : isDiscount
-            ? 'bg-success/10 text-success'
+            ? 'bg-success/10 text-success-legible'
             : 'bg-destructive/10 text-destructive'
       }`}
     >
@@ -201,7 +201,7 @@ function ComputationBreakdown({
       </Button>
 
       {open && (
-        <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-3 p-4 space-y-4">
+        <div className="glass-panel mt-3 p-4 space-y-4">
           {/* Migration Cost Derivation */}
           <div>
             <p className="uppercase mb-2 text-[11px] font-extrabold tracking-[0.14em] text-heading">
@@ -602,21 +602,21 @@ export const ROICalculatorSection: React.FC<ROICalculatorSectionProps> = ({
 
       {/* KPI summary row */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
-        <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 text-center">
+        <div className="glass-panel p-4 text-center">
           <DollarSign size={16} className="text-muted-foreground mx-auto mb-1" />
           <p className="text-xs text-muted-foreground">Total Cost ({horizon}yr)</p>
           <p className="text-lg font-bold text-foreground">
             {formatUSD(computed.totalCost ?? computed.migrationCost)}
           </p>
         </div>
-        <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 text-center">
+        <div className="glass-panel p-4 text-center">
           <TrendingDown size={16} className="text-status-warning mx-auto mb-1" />
           <p className="text-xs text-muted-foreground">Cost of Inaction</p>
           <p className="text-lg font-bold text-status-warning">
             {formatUSD(computed.costOfInaction ?? 0)}
           </p>
         </div>
-        <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 text-center">
+        <div className="glass-panel p-4 text-center">
           <TrendingUp size={16} className="mx-auto mb-1" style={{ color: roiColor }} />
           <p className="text-xs text-muted-foreground">NPV @ {discountRatePct}%</p>
           <p
@@ -628,14 +628,14 @@ export const ROICalculatorSection: React.FC<ROICalculatorSectionProps> = ({
             {formatUSD(computed.npv ?? 0)}
           </p>
         </div>
-        <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 text-center">
+        <div className="glass-panel p-4 text-center">
           <TrendingUp size={16} className="mx-auto mb-1" style={{ color: roiColor }} />
           <p className="text-xs text-muted-foreground">Net ROI ({horizon}yr)</p>
           <p className="text-lg font-bold" style={{ color: roiColor }}>
             {formatPercent(computed.netRoiPercent)}
           </p>
         </div>
-        <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 text-center">
+        <div className="glass-panel p-4 text-center">
           <Clock size={16} className="text-muted-foreground mx-auto mb-1" />
           <p className="text-xs text-muted-foreground">Payback</p>
           <p className="text-lg font-bold text-foreground">

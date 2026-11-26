@@ -66,7 +66,7 @@ export const CoverageByRegion = ({ data, selectedRegion, onSelectRegion }: Props
   return (
     <section
       aria-label="Coverage by region"
-      className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-3 p-3"
+      className="glass-panel mt-3 p-3"
       data-testid="timeline-coverage-by-region"
     >
       <div className="flex items-center gap-2 mb-2">

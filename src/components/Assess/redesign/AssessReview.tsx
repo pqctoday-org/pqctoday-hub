@@ -46,7 +46,7 @@ export const AssessReview: React.FC<AssessReviewProps> = ({ mode, onEdit, onBack
 
   return (
     <div className="mx-auto max-w-[760px]">
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-5 sm:p-6">
+      <div className="glass-panel p-5 sm:p-6">
         <h2 className="mb-1 text-xl font-bold font-display text-heading">Review your answers</h2>
         <p className="mb-5 text-[12.5px] text-muted-foreground">
           Edit anything before we generate your {mode === 'quick' ? 'fast-track' : 'full'} report.{' '}

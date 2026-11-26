@@ -67,7 +67,7 @@ export function LibraryDocumentCard({
     <div
       data-deeplink-id={item.referenceId}
       onClick={() => onOpen(item.referenceId)}
-      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] flex min-w-0 min-h-[172px] cursor-pointer flex-col p-3.5 transition-colors hover:border-primary/40 hover:bg-card focus-within:border-primary/40"
+      className="glass-panel rounded-2xl flex min-w-0 min-h-[172px] cursor-pointer flex-col p-3.5 transition-colors hover:border-primary/40 hover:bg-card focus-within:border-primary/40"
     >
       <div className="flex items-start justify-between gap-2">
         <span className="min-w-0 break-all font-mono text-[12px] font-semibold text-primary">
@@ -76,7 +76,9 @@ export function LibraryDocumentCard({
         {item.status && (
           <span
             className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
-              item.status === 'New' ? 'bg-success/15 text-success' : 'bg-primary/15 text-primary'
+              item.status === 'New'
+                ? 'bg-success/15 text-success-legible'
+                : 'bg-primary/15 text-primary'
             }`}
           >
             {item.status}

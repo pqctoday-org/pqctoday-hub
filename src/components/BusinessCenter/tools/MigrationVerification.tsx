@@ -449,7 +449,7 @@ export const MigrationVerification: React.FC = () => {
       </header>
 
       {/* 1 — Verification recorder */}
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">
           Verification records · {verifiedTotal}/{state.records.length} evidence complete
         </h3>
@@ -497,7 +497,7 @@ export const MigrationVerification: React.FC = () => {
                 key={r.id}
                 role="group"
                 aria-label={r.system.trim() || 'Unnamed system'}
-                className="glass-panel bg-card backdrop-blur-none border border-border rounded-2xl shadow-none p-3 space-y-2"
+                className="glass-panel glass-panel-row p-3 space-y-2"
               >
                 <div className="flex items-center gap-2">
                   <Input
@@ -601,7 +601,7 @@ export const MigrationVerification: React.FC = () => {
       </section>
 
       {/* 2 — Decommissioning log */}
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">
           Decommissioning log (classical material)
         </h3>
@@ -712,7 +712,7 @@ export const MigrationVerification: React.FC = () => {
       </section>
 
       {/* 3 — Closure & BAU handover */}
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">
           Closure &amp; BAU handover
         </h3>

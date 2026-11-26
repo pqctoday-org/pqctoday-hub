@@ -16,7 +16,7 @@ export function CryptoBuffSection() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.44 }}
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 md:p-6"
+        className="glass-panel p-4 md:p-6"
       >
         <div className="flex items-center gap-3 mb-4">
           <BookOpen className="text-primary shrink-0" size={24} />
@@ -140,7 +140,7 @@ export function CryptoBuffSection() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.46 }}
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 md:p-6 text-center"
+        className="glass-panel p-4 md:p-6 text-center"
       >
         <h3 className="text-lg font-semibold mb-2 font-display text-heading">
           AI Technology Acknowledgment

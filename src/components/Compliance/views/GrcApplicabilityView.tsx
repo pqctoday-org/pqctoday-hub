@@ -72,10 +72,7 @@ export function GrcApplicabilityView({
         <ProfileSummary profile={profile} editable />
       </div>
 
-      <section
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-2"
-        aria-labelledby="grc-reasoning-lesson"
-      >
+      <section className="glass-panel p-4 space-y-2" aria-labelledby="grc-reasoning-lesson">
         <h3 id="grc-reasoning-lesson" className="text-base font-semibold font-display text-heading">
           Applicability reasoning lesson
         </h3>
@@ -91,10 +88,7 @@ export function GrcApplicabilityView({
       </section>
 
       {/* ── Recent revisions — what changed since you last checked ── */}
-      <section
-        data-section-id="grc-updates"
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-2 scroll-mt-20"
-      >
+      <section data-section-id="grc-updates" className="glass-panel p-4 space-y-2 scroll-mt-20">
         <header className="flex items-center gap-2">
           <Calendar size={16} className="text-status-info" />
           <h3 className="text-base font-semibold font-display text-heading">Recent revisions</h3>
@@ -124,7 +118,7 @@ export function GrcApplicabilityView({
             {sorted.map((r) => (
               <li
                 key={r.item.id}
-                className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 flex items-start justify-between gap-3"
+                className="glass-panel rounded-2xl p-3 flex items-start justify-between gap-3"
               >
                 <div className="min-w-0 flex-1">
                   <Button
@@ -216,7 +210,7 @@ export function GrcApplicabilityView({
             {derivedFrameworks.map((d: DerivedResult) => (
               <li
                 key={d.standardId}
-                className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-2.5 flex items-center justify-between gap-2"
+                className="glass-panel rounded-2xl p-2.5 flex items-center justify-between gap-2"
               >
                 <span className="text-sm text-foreground truncate min-w-0">{d.standardLabel}</span>
                 <TrustPathPopover path={d.bestPath} standardLabel={d.standardLabel} />

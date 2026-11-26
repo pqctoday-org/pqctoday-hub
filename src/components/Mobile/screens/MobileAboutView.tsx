@@ -146,10 +146,7 @@ export function MobileAboutView() {
           const isOpen = openGroup === group.id
           const Icon = group.icon
           return (
-            <div
-              key={group.id}
-              className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] overflow-hidden"
-            >
+            <div key={group.id} className="glass-panel overflow-hidden">
               <Button
                 type="button"
                 variant="ghost"

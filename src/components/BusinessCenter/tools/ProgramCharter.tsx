@@ -346,7 +346,7 @@ export const ProgramCharter: React.FC = () => {
         </div>
       </header>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3">
+      <section className="glass-panel rounded-2xl p-3">
         <div className="flex items-start gap-2 text-xs text-foreground/80">
           <Info size={14} className="text-primary shrink-0 mt-0.5" />
           <div className="space-y-1">
@@ -377,7 +377,7 @@ export const ProgramCharter: React.FC = () => {
         </div>
       </section>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">Program</h3>
         <div className="block">
           <label
@@ -396,7 +396,7 @@ export const ProgramCharter: React.FC = () => {
         </div>
       </section>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">Purpose &amp; scope</h3>
         <div className="block">
           <label htmlFor="charter-purpose" className="text-xs font-medium text-muted-foreground">
@@ -441,7 +441,7 @@ export const ProgramCharter: React.FC = () => {
         </div>
       </section>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">Executive sponsorship</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="block">
@@ -519,7 +519,7 @@ export const ProgramCharter: React.FC = () => {
         </div>
       </section>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">
           Steering Committee · {seatCount} seat{seatCount === 1 ? '' : 's'}
         </h3>
@@ -590,7 +590,7 @@ export const ProgramCharter: React.FC = () => {
         </div>
       </section>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">Budget commitment</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="block">
@@ -657,7 +657,7 @@ export const ProgramCharter: React.FC = () => {
         </div>
       </section>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">
           Workstreams (optional) · {WORKSTREAMS.filter((w) => state.workstreams[w.id]).length}{' '}
           selected

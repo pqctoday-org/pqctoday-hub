@@ -155,7 +155,7 @@ const RoleCard = ({ personaId, onSelect }: RoleCardProps) => {
       aria-label={accessibleName}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] flex h-full cursor-pointer select-none flex-col gap-3 p-5 text-left transition-all duration-200 hover:border-primary/50 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:outline-solid"
+      className="glass-panel flex h-full cursor-pointer select-none flex-col gap-3 p-5 text-left transition-all duration-200 hover:border-primary/50 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:outline-solid"
     >
       <div className="flex items-center gap-3">
         <span className="rounded-full bg-chip p-2">
@@ -210,7 +210,7 @@ const SkipCard = ({ onSkip }: SkipCardProps) => {
       aria-label="Show me everything"
       onClick={onSkip}
       onKeyDown={handleKeyDown}
-      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] flex h-full cursor-pointer select-none flex-col gap-3 border-dashed p-5 text-left transition-all duration-200 hover:border-primary/50 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:outline-solid"
+      className="glass-panel flex h-full cursor-pointer select-none flex-col gap-3 border-dashed p-5 text-left transition-all duration-200 hover:border-primary/50 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:outline-solid"
     >
       <div className="flex items-center gap-3">
         <span className="rounded-full bg-chip p-2">

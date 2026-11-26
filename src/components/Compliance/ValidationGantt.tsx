@@ -93,7 +93,7 @@ export const ValidationGantt: React.FC<Props> = ({
   return (
     <section
       data-section-id="compliance-validation-gantt"
-      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3 scroll-mt-20"
+      className="glass-panel p-4 space-y-3 scroll-mt-20"
       aria-label="Compliance deadline timeline"
     >
       <header className="flex items-center gap-2 flex-wrap">

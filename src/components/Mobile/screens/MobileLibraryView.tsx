@@ -562,7 +562,7 @@ export function MobileLibraryView() {
             <article
               key={item.referenceId}
               data-deeplink-id={item.referenceId}
-              className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] relative flex flex-col p-3.5"
+              className="glass-panel rounded-2xl relative flex flex-col p-3.5"
             >
               <Button
                 type="button"
@@ -611,7 +611,7 @@ export function MobileLibraryView() {
                       className={cn(
                         'ml-1.5 rounded px-1.5 py-px text-sim-chip font-bold uppercase tracking-wide',
                         item.status === 'New'
-                          ? 'bg-success/15 text-success'
+                          ? 'bg-success/15 text-success-legible'
                           : 'bg-primary/15 text-primary'
                       )}
                     >

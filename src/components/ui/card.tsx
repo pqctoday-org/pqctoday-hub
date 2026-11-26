@@ -8,8 +8,8 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
       ref={ref}
       className={cn(
         // Sticker card: ink outline, large radius, flat offset edge. 'glass-panel' stays as the
-        // hook for print rules and tests; the utilities below take over its look.
-        'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl text-foreground shadow-[0_6px_0_hsl(var(--edge))]',
+        // hook for print rules and tests; its look is defined once in index.css.
+        'glass-panel text-foreground',
         className
       )}
       {...props}

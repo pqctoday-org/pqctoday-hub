@@ -7,7 +7,7 @@ export function SecretEnvelopeExercise() {
   const [result, setResult] = useState<ReturnType<typeof runSecretEnvelopeSample> | null>(null)
   const [error, setError] = useState('')
   return (
-    <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+    <section className="glass-panel p-4 space-y-3">
       <h3 className="font-bold">Run a real PQC secret envelope</h3>
       <p className="text-sm">
         This fictional application encrypts a sample token with a key derived from ML-KEM-768 using

@@ -21,9 +21,7 @@ export const GanttLegend = ({ className = '' }: GanttLegendProps) => {
   ]
 
   return (
-    <div
-      className={`glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 ${className}`}
-    >
+    <div className={`glass-panel p-4 ${className}`}>
       <h3 className="text-sm font-bold mb-4 border-b border-border pb-2 font-display text-heading">
         Phase Color Code
       </h3>

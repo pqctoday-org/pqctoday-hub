@@ -467,7 +467,7 @@ export function ProtocolDetailModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 embed-backdrop bg-scrim/60 backdrop-blur-sm z-50"
           />
 
           {/* Modal */}
@@ -475,7 +475,7 @@ export function ProtocolDetailModal({
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className={`glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 max-w-5xl w-full max-h-[88dvh] overflow-y-auto z-50 ${
+            className={`glass-panel p-6 max-w-5xl w-full max-h-[88dvh] overflow-y-auto z-50 ${
               isEmbedded ? '' : 'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'
             }`}
             ref={dialogRef}

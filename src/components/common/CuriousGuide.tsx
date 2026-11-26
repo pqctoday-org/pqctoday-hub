@@ -163,7 +163,7 @@ export const CuriousGuide: React.FC = () => {
         role="dialog"
         aria-labelledby="curious-guide-title"
         aria-describedby="curious-guide-body"
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] fixed bottom-4 right-4 z-overlay w-[min(360px,calc(100vw-2rem))] p-5"
+        className="glass-panel fixed bottom-4 right-4 z-overlay w-[min(360px,calc(100vw-2rem))] p-5"
         data-testid="curious-guide"
       >
         <div className="flex items-start justify-between gap-2 mb-3">

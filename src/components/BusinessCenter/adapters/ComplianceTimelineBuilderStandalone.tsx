@@ -141,7 +141,7 @@ export function ComplianceTimelineBuilderStandalone() {
       )}
 
       {pqcImpacts.length > 0 && (
-        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 border-l-4">
+        <div className="glass-panel rounded-2xl p-3 border-l-4">
           <div className="text-xs font-semibold text-foreground mb-1.5">
             Frameworks requiring PQC (from your assessment)
           </div>
@@ -208,7 +208,7 @@ export function ComplianceTimelineBuilderStandalone() {
         </div>
       )}
 
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <div className="glass-panel p-4 space-y-3">
         <div className="flex items-center gap-2">
           <Globe size={16} className="text-primary" />
           <h2 className="text-sm font-semibold font-display text-heading">Select jurisdictions</h2>

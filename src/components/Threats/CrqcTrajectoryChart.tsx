@@ -38,7 +38,7 @@ export const CrqcTrajectoryChart: React.FC = () => {
 
   return (
     <section
-      className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-3"
+      className="glass-panel p-3"
       aria-labelledby="crqc-trajectory-heading"
       data-testid="crqc-trajectory-chart"
     >
@@ -95,7 +95,7 @@ export const CrqcTrajectoryChart: React.FC = () => {
               </div>
               <div className="text-[10px] text-muted-foreground">{track.vendors}</div>
               <p className="mt-1.5 text-[10px] leading-snug text-muted-foreground">
-                <span className="font-semibold text-success">Recent progress: </span>
+                <span className="font-semibold text-success-legible">Recent progress: </span>
                 {track.recentProgress}
               </p>
               <p className="mt-1 text-[10px] leading-snug text-muted-foreground">

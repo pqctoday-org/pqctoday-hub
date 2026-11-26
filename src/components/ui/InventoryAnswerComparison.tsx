@@ -16,7 +16,7 @@ export function InventoryAnswerComparison({
   const alternative = unknown ? 'Use a sample RSA-2048 inventory' : 'Mark algorithms as unknown'
 
   return (
-    <details className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-4 p-3 text-sm print:hidden">
+    <details className="glass-panel mt-4 p-3 text-sm print:hidden">
       <summary className="cursor-pointer font-semibold">Compare one assessment answer</summary>
       <p className="my-2 text-muted-foreground">
         See how the recommendations respond to a change in your answer about algorithms in use. This

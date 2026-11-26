@@ -107,7 +107,7 @@ export const TimelineDocumentDetailPopover = ({
     <>
       {/* Backdrop */}
       <div
-        className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-overlay bg-black/60`}
+        className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-overlay bg-scrim/60`}
         onClick={onClose}
         aria-hidden="true"
       />
@@ -119,7 +119,7 @@ export const TimelineDocumentDetailPopover = ({
         <FocusLock returnFocus>
           <div
             ref={popoverRef}
-            className="w-[95vw] sm:w-[85vw] md:w-[60vw] max-w-[1200px] max-h-[85dvh] overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))]"
+            className="w-[95vw] sm:w-[85vw] md:w-[60vw] max-w-[1200px] max-h-[85dvh] overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground glass-panel rounded-2xl"
             style={isEmbedded ? { zIndex: 9999, ...positionStyle } : undefined}
             role="dialog"
             aria-modal="true"
@@ -323,7 +323,7 @@ export const TimelineDocumentDetailPopover = ({
               {(row.confidenceScore !== undefined ||
                 row.trustedSourceIdStatus ||
                 row.dataQualityNotes) && (
-                <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-2">
+                <div className="glass-panel p-4 space-y-2">
                   <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                     Source Evidence
                   </p>

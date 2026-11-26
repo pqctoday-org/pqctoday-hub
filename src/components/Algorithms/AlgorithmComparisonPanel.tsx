@@ -116,7 +116,7 @@ export function AlgorithmComparisonPanel({
   }
 
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 md:p-6 animate-fade-in">
+    <div className="glass-panel p-4 md:p-6 animate-fade-in">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold font-display text-heading">
           Comparing {algorithms.length} Algorithms

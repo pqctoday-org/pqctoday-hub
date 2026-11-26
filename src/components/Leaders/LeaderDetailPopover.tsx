@@ -78,7 +78,7 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
     <FocusLock returnFocus>
       <div
         ref={popoverRef}
-        className="w-[95vw] sm:w-[75vw] md:w-[50vw] max-w-[700px] max-h-[85vh] overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))]"
+        className="w-[95vw] sm:w-[75vw] md:w-[50vw] max-w-[700px] max-h-[85vh] overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground glass-panel rounded-2xl"
         style={{ zIndex: 9999, ...positionStyle }}
         role="dialog"
         aria-modal="true"
@@ -214,7 +214,7 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
           )}
 
           {/* Bio */}
-          <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
+          <div className="glass-panel p-4">
             <p className="text-sm text-muted-foreground leading-relaxed italic">
               &ldquo;{leader.bio}&rdquo;
             </p>
@@ -356,7 +356,7 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
       </div>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 embed-backdrop bg-black/60"
+        className="fixed inset-0 embed-backdrop bg-scrim/60"
         style={{ zIndex: -1 }}
         aria-hidden="true"
       />

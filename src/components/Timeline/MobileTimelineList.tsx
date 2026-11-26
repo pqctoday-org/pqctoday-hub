@@ -229,7 +229,7 @@ export const MobileTimelineList = ({
           return (
             <div
               key={`compact-${country.countryName}`}
-              className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 flex flex-col gap-3"
+              className="glass-panel p-4 flex flex-col gap-3"
               data-testid={`country-card-compact-${country.countryName}`}
             >
               <div className="flex items-center gap-3">
@@ -319,7 +319,7 @@ export const MobileTimelineList = ({
           return (
             <div
               key={country.countryName}
-              className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 flex flex-col gap-3"
+              className="glass-panel p-4 flex flex-col gap-3"
               data-testid={`country-card-${country.countryName}`}
             >
               {/* Header: Flag + Name + Org */}

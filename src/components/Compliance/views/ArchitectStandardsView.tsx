@@ -96,7 +96,7 @@ export function ArchitectStandardsView({
           profile={profile}
           message="Set your stack first — pick an industry and country so the maturity dashboard and jurisdiction map can show the standards that may be relevant to your system."
         />
-        <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 flex items-center justify-between gap-4">
+        <div className="glass-panel p-4 flex items-center justify-between gap-4">
           <div className="min-w-0">
             <p className="text-sm font-medium text-foreground">
               Want a deeper inventory? Take the full assessment.
@@ -126,7 +126,7 @@ export function ArchitectStandardsView({
       {/* ── Top widget: Maturity dashboard ───────────────────────── */}
       <section
         data-section-id="architect-maturity"
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-2 scroll-mt-20"
+        className="glass-panel p-4 space-y-2 scroll-mt-20"
       >
         <header className="flex items-center gap-2">
           <Layers size={16} className="text-secondary" />
@@ -166,10 +166,7 @@ export function ArchitectStandardsView({
             {orderedRegions.map((region) => {
               const fws = byRegion.get(region) ?? []
               return (
-                <div
-                  key={region}
-                  className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 space-y-2 min-w-0"
-                >
+                <div key={region} className="glass-panel rounded-2xl p-3 space-y-2 min-w-0">
                   <div className="flex items-baseline justify-between gap-2">
                     <h4 className="text-sm font-semibold font-display text-heading">{region}</h4>
                     <span className="text-[11px] text-muted-foreground">

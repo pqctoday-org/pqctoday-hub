@@ -152,7 +152,7 @@ export function ComplianceDetailDrawer({
           type="button"
           variant="ghost"
           aria-label="Close detail"
-          className="absolute inset-0 h-full w-full rounded-none bg-black/60 hover:bg-black/60"
+          className="absolute inset-0 h-full w-full rounded-none bg-scrim/60 hover:bg-scrim/60"
           onClick={onClose}
         />
         {/* Panel */}
@@ -212,7 +212,7 @@ export function ComplianceDetailDrawer({
               trustedSource ||
               framework.enforcementBody ||
               (framework.bindingStatus && bindingDataPresent())) && (
-              <section className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-3.5">
+              <section className="glass-panel p-3.5">
                 <h3 className="mb-2 flex items-center gap-1.5 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                   <ShieldCheck size={13} />
                   Source &amp; trust

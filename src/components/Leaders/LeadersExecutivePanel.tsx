@@ -61,7 +61,7 @@ export function LeadersExecutivePanel({
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
+      <div className="glass-panel p-4">
         <div className="flex items-center gap-2 mb-3">
           <Building2 size={16} className="text-primary" aria-hidden="true" />
           <h2 className="text-sm font-semibold font-display text-heading">
@@ -96,7 +96,7 @@ export function LeadersExecutivePanel({
         </ol>
       </div>
 
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
+      <div className="glass-panel p-4">
         <div className="flex items-center gap-2 mb-3">
           <Compass size={16} className="text-primary" aria-hidden="true" />
           <h2 className="text-sm font-semibold font-display text-heading">

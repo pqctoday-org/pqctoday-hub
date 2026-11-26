@@ -46,10 +46,10 @@ export const CategoryBreakdown = ({
   }
 
   const getScoreColor = (score: number) => {
-    if (score <= 25) return 'text-success'
+    if (score <= 25) return 'text-success-legible'
     if (score <= 55) return 'text-warning'
     if (score <= 75) return 'text-destructive'
-    return 'text-critical'
+    return 'text-destructive-legible'
   }
 
   return (

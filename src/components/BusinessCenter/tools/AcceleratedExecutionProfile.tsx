@@ -231,7 +231,7 @@ export const AcceleratedExecutionProfile: React.FC = () => {
         </div>
       </header>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">
           1. Trigger conditions · {triggerCount} selected
         </h3>
@@ -274,7 +274,7 @@ export const AcceleratedExecutionProfile: React.FC = () => {
         </div>
       </section>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">2. Compressed sequence</h3>
         <div className="block">
           <label
@@ -294,10 +294,7 @@ export const AcceleratedExecutionProfile: React.FC = () => {
         </div>
       </section>
 
-      <section
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3"
-        aria-labelledby="aep-schedule-check"
-      >
+      <section className="glass-panel p-4 space-y-3" aria-labelledby="aep-schedule-check">
         <h3 id="aep-schedule-check" className="text-sm font-semibold font-display text-heading">
           Check the shortened schedule
         </h3>
@@ -334,7 +331,7 @@ export const AcceleratedExecutionProfile: React.FC = () => {
         </p>
       </section>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">
           3. Pre-approved risk acceptances
         </h3>
@@ -356,7 +353,7 @@ export const AcceleratedExecutionProfile: React.FC = () => {
         </div>
       </section>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">
           4. Emergency resource request
         </h3>
@@ -378,7 +375,7 @@ export const AcceleratedExecutionProfile: React.FC = () => {
         </div>
       </section>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">5. Activation authority</h3>
         <div className="block">
           <label

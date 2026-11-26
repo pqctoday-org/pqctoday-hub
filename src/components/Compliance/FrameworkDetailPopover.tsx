@@ -96,12 +96,12 @@ export const FrameworkDetailPopover = ({
 
   const content = (
     <>
-      <div className="fixed inset-0 z-overlay bg-black/60" onClick={onClose} aria-hidden="true" />
+      <div className="fixed inset-0 z-overlay bg-scrim/60" onClick={onClose} aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-4" style={{ zIndex: 9999 }}>
         <FocusLock returnFocus>
           <div
             ref={popoverRef}
-            className="w-[95vw] sm:w-[80vw] md:w-[60vw] max-w-[900px] max-h-[85dvh] overflow-hidden flex flex-col bg-popover text-popover-foreground animate-in zoom-in-95 duration-200 border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))]"
+            className="w-[95vw] sm:w-[80vw] md:w-[60vw] max-w-[900px] max-h-[85dvh] overflow-hidden flex flex-col bg-popover text-popover-foreground animate-in zoom-in-95 duration-200 glass-panel rounded-2xl"
             role="dialog"
             aria-modal="true"
             aria-labelledby="framework-popover-title"
@@ -197,7 +197,7 @@ export const FrameworkDetailPopover = ({
             <div className="overflow-y-auto p-4 space-y-4">
               {curiousPreface && (
                 <section
-                  className="glass-panel backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] bg-primary/5 p-3"
+                  className="glass-panel rounded-2xl bg-primary/5 p-3"
                   aria-label="Plain-English explainer"
                 >
                   <div className="flex items-start gap-2">

@@ -184,7 +184,7 @@ export function OpsRotationView({ profileOverride, onSelectFramework }: OpsRotat
           profile={profile}
           message="Choose an industry and country to compare the dates associated with that educational scenario."
         />
-        <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 flex items-center justify-between gap-4">
+        <div className="glass-panel p-4 flex items-center justify-between gap-4">
           <div className="min-w-0">
             <p className="text-sm font-medium text-foreground">
               For a fleet inventory and rotation plan, take the full assessment.
@@ -214,7 +214,7 @@ export function OpsRotationView({ profileOverride, onSelectFramework }: OpsRotat
       {/* ── Rotation clock ──────────────────────────────────────── */}
       <section
         data-section-id="ops-rotation-clock"
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3 scroll-mt-20"
+        className="glass-panel p-4 space-y-3 scroll-mt-20"
       >
         <header className="flex items-center gap-2">
           <Clock size={16} className="text-secondary" />
@@ -267,7 +267,7 @@ export function OpsRotationView({ profileOverride, onSelectFramework }: OpsRotat
       {/* ── Toolchain quick jumps ───────────────────────────────── */}
       <section
         data-section-id="ops-toolchain-jump"
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3 scroll-mt-20"
+        className="glass-panel p-4 space-y-3 scroll-mt-20"
       >
         <header className="flex items-center gap-2">
           <Wrench size={16} className="text-primary" />
@@ -306,7 +306,7 @@ export function OpsRotationView({ profileOverride, onSelectFramework }: OpsRotat
             Top {Math.min(applicable.length, 10)} applicable to your profile
           </span>
         </header>
-        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-2">
+        <div className="glass-panel rounded-2xl p-2">
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>

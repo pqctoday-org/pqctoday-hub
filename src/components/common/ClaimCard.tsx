@@ -240,10 +240,7 @@ export const ClaimCard: React.FC<ClaimCardProps> = ({
       data-testid="claim-card"
       data-claim-id={claim.id}
       data-state={claim.state}
-      className={cn(
-        'bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] space-y-3 p-4',
-        className
-      )}
+      className={cn('glass-panel space-y-3 p-4', className)}
     >
       <div className="flex flex-wrap items-center gap-2">
         <ClaimStateMark state={claim.state} />

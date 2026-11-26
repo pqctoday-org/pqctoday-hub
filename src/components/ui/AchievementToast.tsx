@@ -101,9 +101,7 @@ export function AchievementToast() {
           aria-live="polite"
           aria-label={`Achievement unlocked: ${achievement.title}`}
         >
-          <div
-            className={`glass-panel backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 ${rarityStyle}`}
-          >
+          <div className={`glass-panel p-4 ${rarityStyle}`}>
             <div className="flex items-start gap-3">
               <div className="p-2 rounded-lg bg-primary/20 shrink-0">
                 {IconComponent && <IconComponent size={20} className="text-primary" />}

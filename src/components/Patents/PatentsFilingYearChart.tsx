@@ -70,7 +70,7 @@ export function PatentsFilingYearChart({
   const hasClassical = data.some((d) => d.classical > 0)
 
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border border-border rounded-2xl shadow-none p-3">
+    <div className="glass-panel glass-panel-row p-3">
       <div className="mb-1 flex flex-wrap items-baseline justify-between gap-x-3">
         <h3 className="text-sm font-medium font-display text-heading">Patents by filing year</h3>
         <div className="flex items-center gap-3 text-xs text-muted-foreground">

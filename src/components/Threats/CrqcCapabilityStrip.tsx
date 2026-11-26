@@ -121,7 +121,7 @@ export const CrqcCapabilityStrip: React.FC<{
 
   return (
     <section
-      className="glass-panel bg-card backdrop-blur-none border border-border rounded-2xl shadow-none p-4 mb-4"
+      className="glass-panel glass-panel-row p-4 mb-4"
       aria-labelledby="crqc-strip-heading"
       data-testid="crqc-capability-strip"
     >

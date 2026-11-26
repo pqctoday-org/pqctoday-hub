@@ -25,10 +25,7 @@ export function MobilePersonaPageNote({ route, className }: MobilePersonaPageNot
     <section
       aria-label="What this means for you"
       data-testid="persona-page-note"
-      className={cn(
-        'rounded-2xl border-2 border-ink bg-card p-3 shadow-[0_6px_0_hsl(var(--edge))]',
-        className
-      )}
+      className={cn('glass-panel rounded-2xl p-3', className)}
     >
       <p className="text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-heading">
         What this means for you

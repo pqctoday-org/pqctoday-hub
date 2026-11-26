@@ -154,7 +154,7 @@ export const SkillsTeamPlan: React.FC = () => {
           the same headline shown in the export.
         </p>
       </header>
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <label htmlFor="skills-estate-instances" className="block text-sm font-semibold">
           Estate-size estimate
         </label>
@@ -261,7 +261,7 @@ export const SkillsTeamPlan: React.FC = () => {
           </>
         )}
       />
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 text-xs text-muted-foreground">
+      <section className="glass-panel p-4 text-xs text-muted-foreground">
         <h3 className="font-semibold">Where this sizing comes from</h3>
         <p>
           Reference:{' '}

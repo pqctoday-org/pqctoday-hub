@@ -37,7 +37,7 @@ const ROW_BASE =
 
 function RailCard({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-2.5">
+    <div className="glass-panel rounded-2xl p-2.5">
       <div className="mb-2 px-1 font-mono uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
         {label}
       </div>

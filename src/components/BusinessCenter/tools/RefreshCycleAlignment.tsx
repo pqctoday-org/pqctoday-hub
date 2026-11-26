@@ -299,7 +299,7 @@ export const RefreshCycleAlignment: React.FC = () => {
         </div>
       </header>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">Planning horizon</h3>
         <div className="block">
           <label htmlFor="refresh-horizon" className="text-xs font-medium text-muted-foreground">
@@ -337,7 +337,7 @@ export const RefreshCycleAlignment: React.FC = () => {
         )}
       </section>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">
           Refresh programs · {rowCount} program{rowCount === 1 ? '' : 's'}
         </h3>

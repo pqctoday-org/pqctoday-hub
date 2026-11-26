@@ -44,7 +44,7 @@ export const ResearchWorkspacePanel: FC = () => {
     <section
       ref={ref}
       id={PANEL_ID}
-      className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mb-6 scroll-mt-20 space-y-3 p-4"
+      className="glass-panel mb-6 scroll-mt-20 space-y-3 p-4"
       data-testid={PANEL_ID}
       aria-labelledby={`${PANEL_ID}-title`}
     >

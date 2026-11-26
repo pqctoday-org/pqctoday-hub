@@ -9,7 +9,7 @@ import { TrendingUp } from 'lucide-react'
 
 export function KpiEmptyState() {
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] flex items-center gap-3 p-4">
+    <div className="glass-panel flex items-center gap-3 p-4">
       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
         <TrendingUp size={16} aria-hidden="true" />
       </span>
@@ -30,7 +30,7 @@ export function KpiEmptyState() {
  *  bars only — no fabricated scores — so nothing legible leaks behind the blur. */
 export function CategoryBreakdownPreviewSkeleton() {
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
+    <div className="glass-panel p-4">
       <div className="mb-4 h-3 w-32 rounded bg-muted" />
       <div className="space-y-4">
         {[70, 52, 61, 44].map((w, i) => (
@@ -52,7 +52,7 @@ export function CategoryBreakdownPreviewSkeleton() {
 /** Static skeleton used as the blurred preview behind the locked overlay. */
 export function KpiPreviewSkeleton() {
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
+    <div className="glass-panel p-4">
       <div className="mb-3 h-3 w-40 rounded bg-muted" />
       <div className="flex h-24 items-end gap-2">
         {[60, 48, 40].map((h, i) => (

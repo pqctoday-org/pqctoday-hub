@@ -344,7 +344,7 @@ function ToolCardMobile({
 
   return (
     <article
-      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] relative flex flex-col p-3.5"
+      className="glass-panel rounded-2xl relative flex flex-col p-3.5"
       data-playground-result={tool.id}
     >
       <Button

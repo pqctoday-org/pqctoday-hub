@@ -23,7 +23,7 @@ const priorityConfig = {
   Critical: { color: 'text-destructive', bg: 'bg-destructive/10' },
   High: { color: 'text-warning', bg: 'bg-warning/10' },
   Medium: { color: 'text-primary', bg: 'bg-primary/10' },
-  Low: { color: 'text-success', bg: 'bg-success/10' },
+  Low: { color: 'text-success-legible', bg: 'bg-success/10' },
 } as const
 
 interface MigrationToolkitProps {
@@ -155,7 +155,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
   // Selected mode: all bookmarked products are hidden
   if (useSelectedMode && selectedProducts.length === 0) {
     return (
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6">
+      <div className="glass-panel p-6">
         {titleRow}
         <div className="text-center py-6 mt-4">
           <p className="text-sm text-muted-foreground mb-3">
@@ -172,7 +172,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
   // Recommended mode: no infra selected, or no matches
   if (!useSelectedMode && selectedProducts.length === 0) {
     return (
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6">
+      <div className="glass-panel p-6">
         {titleRow}
         <div className="text-center py-6 mt-4">
           <p className="text-sm text-muted-foreground mb-3">
@@ -200,7 +200,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
   }
 
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 print:border print:border-border">
+    <div className="glass-panel p-6 print:border print:border-border">
       <Button
         variant="ghost"
         onClick={() => setOpen((o) => !o)}
@@ -326,9 +326,9 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
                           className={clsx(
                             'text-xs',
                             item.pqcSupport.toLowerCase().startsWith('yes')
-                              ? 'text-success'
+                              ? 'text-success-legible'
                               : isPsk
-                                ? 'text-info'
+                                ? 'text-info-legible'
                                 : item.pqcSupport.toLowerCase().startsWith('partial') ||
                                     item.pqcSupport.toLowerCase().startsWith('limited') ||
                                     item.pqcSupport.toLowerCase().startsWith('planned') ||

@@ -52,7 +52,7 @@ const URGENCY_CONFIG: Record<Urgency, { label: string; color: string; bg: string
   },
   planning: {
     label: 'PLANNING',
-    color: 'text-success',
+    color: 'text-success-legible',
     bg: 'bg-success/10 border-success/20',
   },
 }
@@ -138,7 +138,7 @@ export const ThreatEconomicsHeader: React.FC<{ defaultExpanded?: boolean }> = ({
 
   return (
     <section
-      className="glass-panel bg-card backdrop-blur-none border border-border rounded-2xl shadow-none p-4 mb-4"
+      className="glass-panel glass-panel-row p-4 mb-4"
       aria-labelledby="threat-economics-heading"
       data-testid="threat-economics-header"
     >

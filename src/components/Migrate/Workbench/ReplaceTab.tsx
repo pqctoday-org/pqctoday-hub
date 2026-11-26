@@ -536,7 +536,7 @@ function AssetDetailCard({
 }) {
   const decision = DECISIONS[asset.decision]
   return (
-    <div className="rounded-3xl border-2 border-ink bg-card shadow-[0_6px_0_hsl(var(--edge))] p-4">
+    <div className="glass-panel p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2">
           <h2 className="text-base font-bold font-display text-heading">{asset.label}</h2>

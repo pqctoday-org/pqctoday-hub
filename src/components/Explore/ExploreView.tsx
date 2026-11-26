@@ -125,7 +125,7 @@ export function ExploreView({
                 onLeave?.()
                 navigate(destination)
               }}
-              className={`glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] h-auto p-5 flex-col items-start text-left whitespace-normal hover:bg-transparent hover:border-primary/40 group relative ${isRecommended ? 'border-primary/30' : ''}`}
+              className={`glass-panel h-auto p-5 flex-col items-start text-left whitespace-normal hover:bg-transparent hover:border-primary/40 group relative ${isRecommended ? 'border-primary/30' : ''}`}
             >
               {isRecommended && (
                 <span className="absolute top-2.5 right-2.5 flex items-center gap-1 text-[10px] font-semibold text-primary bg-primary/10 px-1.5 py-0.5 rounded">
@@ -157,7 +157,7 @@ export function ExploreView({
 
       {/* Advanced unlock prompt for curious persona */}
       {showUnlockPrompt && (
-        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-8 p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <div className="glass-panel mt-8 p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
           <div className="p-2.5 rounded-lg bg-primary/10 shrink-0">
             <Unlock size={20} className="text-primary" aria-hidden="true" />
           </div>

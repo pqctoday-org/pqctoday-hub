@@ -36,7 +36,7 @@ export const AssessControlDeck: React.FC<AssessControlDeckProps> = ({
   const info = isFast ? TRACK_INFO.quick : TRACK_INFO.comprehensive
 
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] mb-4 flex flex-wrap items-center gap-4 px-3.5 py-2.5">
+    <div className="glass-panel rounded-2xl mb-4 flex flex-wrap items-center gap-4 px-3.5 py-2.5">
       <div className="flex flex-wrap items-center gap-2.5 sm:flex-nowrap">
         <span className="text-[10.5px] font-bold uppercase tracking-wide text-muted-foreground">
           Track

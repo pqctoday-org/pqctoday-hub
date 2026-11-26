@@ -24,7 +24,7 @@ const RISK_LEVEL_STYLES: Record<string, string> = {
   critical: 'text-destructive bg-destructive/10 border-destructive/20',
   high: 'text-warning bg-warning/10 border-warning/20',
   medium: 'text-status-info bg-status-info',
-  low: 'text-success bg-success/10 border-success/20',
+  low: 'text-success-legible bg-success/10 border-success/20',
 }
 
 // KPI Card Component
@@ -48,7 +48,7 @@ const KPICard = ({
   const colorMap = {
     red: 'text-destructive bg-destructive/10 border-destructive/20',
     amber: 'text-warning bg-warning/10 border-warning/20',
-    green: 'text-success bg-success/10 border-success/20',
+    green: 'text-success-legible bg-success/10 border-success/20',
     blue: 'text-status-info bg-status-info',
   }
 
@@ -60,7 +60,7 @@ const KPICard = ({
     >
       <Link
         to={link}
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-5 flex flex-col items-center text-center hover:border-primary/30 transition-colors block"
+        className="glass-panel p-5 flex flex-col items-center text-center hover:border-primary/30 transition-colors block"
       >
         {/* eslint-disable-next-line security/detect-object-injection */}
         <div className={clsx('p-3 rounded-full mb-3 border', colorMap[color])}>
@@ -137,7 +137,7 @@ export const ExecutiveView: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 mb-8 print:border print:border-border print:mb-4"
+          className="glass-panel p-6 mb-8 print:border print:border-border print:mb-4"
         >
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
@@ -211,7 +211,7 @@ export const ExecutiveView: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 mb-8 border-l-4 border-l-primary print:hidden"
+          className="glass-panel p-6 mb-8 border-l-4 border-l-primary print:hidden"
         >
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="p-3 rounded-full bg-primary/10 self-start sm:self-auto shrink-0">
@@ -280,7 +280,7 @@ export const ExecutiveView: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 mb-8 border-l-4 border-l-warning print:border print:border-border print:mb-4"
+        className="glass-panel p-6 mb-8 border-l-4 border-l-warning print:border print:border-border print:mb-4"
       >
         <h2 className="text-lg font-bold mb-3 flex items-center gap-2 font-display text-heading">
           <AlertTriangle className="text-warning" size={20} />
@@ -296,7 +296,7 @@ export const ExecutiveView: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 mb-8 print:border print:border-border print:mb-4"
+        className="glass-panel p-6 mb-8 print:border print:border-border print:mb-4"
       >
         <h2 className="text-lg font-bold mb-4 font-display text-heading">
           {lastResult ? 'Recommended Actions' : 'Top Priority Actions'}

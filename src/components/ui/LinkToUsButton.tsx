@@ -39,7 +39,7 @@ export function LinkToUsButton({ variant = 'inline' }: LinkToUsButtonProps) {
           variant="ghost"
           type="button"
           onClick={() => setIsOpen(true)}
-          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 flex items-center gap-3 hover:border-accent/50 transition-colors text-left w-full"
+          className="glass-panel rounded-2xl p-3 flex items-center gap-3 hover:border-accent/50 transition-colors text-left w-full"
         >
           <div className="p-2 shrink-0 rounded-full bg-chip text-chip-foreground">
             <Code2 size={18} aria-hidden="true" />
@@ -105,10 +105,10 @@ function LinkToUsModal({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center bg-black/60 p-4">
+    <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center bg-scrim/60 p-4">
       <div
         ref={panelRef}
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto"
+        className="glass-panel p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto"
         role="dialog"
         aria-label="Link to Us — embed code"
       >

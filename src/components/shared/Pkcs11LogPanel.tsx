@@ -523,7 +523,7 @@ export const Pkcs11LogPanel = ({
     // length, not the filtered/visible count, so a panel that is collapsed or
     // filtered down to nothing still reports what the engine actually recorded.
     <div
-      className={`glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 ${className}`}
+      className={`glass-panel rounded-2xl p-3 ${className}`}
       data-testid="pkcs11-log-panel"
       data-pkcs11-log-entries={log.length}
       data-pkcs11-crypto-entries={countCryptoCalls(log)}

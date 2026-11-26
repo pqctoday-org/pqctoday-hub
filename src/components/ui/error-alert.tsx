@@ -8,7 +8,7 @@ interface ErrorAlertProps {
 
 export function ErrorAlert({ message, onRetry }: ErrorAlertProps) {
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] border-l-4 border-l-destructive p-4">
+    <div className="glass-panel border-l-4 border-l-destructive p-4">
       <p className="text-sm text-status-error">{message}</p>
       {onRetry && (
         <Button variant="ghost" size="sm" className="mt-2" onClick={onRetry}>

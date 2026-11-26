@@ -160,7 +160,7 @@ export const PageHeader = ({
               </Button>
               {mobileMenuOpen && (
                 <div
-                  className="absolute right-0 top-full mt-1 z-50 bg-popover border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))] p-2 flex flex-col gap-1 min-w-[180px]"
+                  className="absolute right-0 top-full mt-1 z-50 bg-popover glass-panel rounded-2xl p-2 flex flex-col gap-1 min-w-[180px]"
                   role="menu"
                 >
                   {actions}

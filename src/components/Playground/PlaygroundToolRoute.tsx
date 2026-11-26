@@ -174,10 +174,7 @@ export const PlaygroundToolRoute = () => {
       {/* B+ round 8, Wave C (2026-09-18): intro strip — what you will do, and one
           concrete run written from the tool's real steps. Mirrors the business
           tools' "What this is for" section so both tool families open the same way. */}
-      <section
-        aria-label="What you will do"
-        className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-3"
-      >
+      <section aria-label="What you will do" className="glass-panel p-3">
         <p className="text-sm leading-relaxed text-muted-foreground">
           <span className="font-semibold text-foreground">What you will do:</span>{' '}
           {tool.intro?.whatYouWillDo ?? tool.description}

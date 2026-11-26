@@ -135,7 +135,7 @@ export const ImplementationAttacksView: React.FC<ImplementationAttacksViewProps>
   return (
     <div className="space-y-6">
       {/* Introductory context */}
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 md:p-6">
+      <div className="glass-panel p-4 md:p-6">
         <div className="flex items-start gap-3 p-4 bg-warning/12 border border-border rounded-2xl">
           <AlertTriangle className="text-status-warning flex-shrink-0 mt-0.5" size={20} />
           <div className="text-sm">
@@ -153,7 +153,7 @@ export const ImplementationAttacksView: React.FC<ImplementationAttacksViewProps>
       </div>
 
       {/* Attack category + severity legend */}
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <div className="glass-panel p-4 space-y-3">
         <div className="flex flex-wrap gap-4 justify-center">
           {Object.entries(ATTACK_CATEGORY_META).map(([key, meta]) => {
             const Icon = meta.icon
@@ -201,7 +201,7 @@ export const ImplementationAttacksView: React.FC<ImplementationAttacksViewProps>
             key={profile.algorithm}
             data-deeplink-id={`attack-${attackProfileId(profile)}`}
             className={clsx(
-              'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-5 flex flex-col gap-4 hover:border-primary/50 transition-colors',
+              'glass-panel p-5 flex flex-col gap-4 hover:border-primary/50 transition-colors',
               profile.algorithm === highlightProfile ? 'border-primary/60' : 'border-border'
             )}
           >

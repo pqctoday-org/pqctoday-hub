@@ -474,7 +474,7 @@ export const AssessViewRedesign: React.FC<{
           className="mb-6"
           data-testid="assess-phase-banner"
         >
-          <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] border-l-4 border-l-primary p-4">
+          <div className="glass-panel border-l-4 border-l-primary p-4">
             <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
               <div>
                 <p className="text-sm font-semibold text-foreground">
@@ -515,7 +515,7 @@ export const AssessViewRedesign: React.FC<{
           animate={{ opacity: 1, y: 0 }}
           className="mb-6"
         >
-          <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] border-l-4 border-l-success p-4">
+          <div className="glass-panel border-l-4 border-l-success p-4">
             <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
               <p className="text-sm text-foreground">
                 Your assessment is complete. Edit any answer below to update it, view your
@@ -558,7 +558,7 @@ export const AssessViewRedesign: React.FC<{
             animate={{ opacity: 1, y: 0 }}
             className="mb-6"
           >
-            <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] border-l-4 border-l-primary p-4">
+            <div className="glass-panel border-l-4 border-l-primary p-4">
               <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
                 <div>
                   <p className="text-sm font-semibold text-foreground">Resume saved assessment?</p>

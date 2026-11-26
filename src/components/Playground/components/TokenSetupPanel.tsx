@@ -147,7 +147,7 @@ export const TokenSetupPanel = () => {
     })
 
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-4">
+    <div className="glass-panel p-4 space-y-4">
       <h3 className="font-semibold text-sm flex items-center gap-2 font-display text-heading">
         <Shield size={14} className="text-primary" /> Token Setup
         {sessionOpen && (

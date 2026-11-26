@@ -22,7 +22,7 @@ export function CSWP39SectionsNav({ onZoneSelect }: CSWP39SectionsNavProps) {
   const [open, setOpen] = useState(false)
 
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-0 overflow-hidden">
+    <div className="glass-panel p-0 overflow-hidden">
       <Button
         variant="ghost"
         className="w-full justify-between px-4 py-3 rounded-none"

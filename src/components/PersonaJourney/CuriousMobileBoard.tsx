@@ -102,8 +102,8 @@ const ROUTED_BOTTOM_TABS: RoutedTabDef[] = [
 const TONE_CLASS: Record<string, { panel: string; label: string; punchline: string }> = {
   bad: {
     panel: 'bg-critical/5',
-    label: 'text-critical',
-    punchline: 'text-critical',
+    label: 'text-destructive-legible',
+    punchline: 'text-destructive-legible',
   },
   warn: {
     panel: 'bg-warning/5',
@@ -279,13 +279,7 @@ export function CuriousMobileBoard({ variantId, onSelectVariant }: CuriousMobile
         {/* Side card — rows stacked (not side-by-side). Tone, title, rows and
             punchline all come from the active board, so each option gets its
             own card rather than every option showing the HNDL one. */}
-        <section
-          data-testid="hndl-card"
-          className={cn(
-            'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-6 p-4',
-            tone.panel
-          )}
-        >
+        <section data-testid="hndl-card" className={cn('glass-panel mt-6 p-4', tone.panel)}>
           <span
             data-testid="side-card-provenance"
             className="mb-2 inline-flex w-fit items-center rounded-full border border-border bg-background/60 px-2 py-0.5 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading"
@@ -313,10 +307,7 @@ export function CuriousMobileBoard({ variantId, onSelectVariant }: CuriousMobile
         </section>
 
         {/* Honest labs-gating note — plain callout, not an error state */}
-        <section
-          data-testid="labs-gating"
-          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-4 p-4"
-        >
+        <section data-testid="labs-gating" className="glass-panel mt-4 p-4">
           <p className="text-sm font-bold text-foreground">Want the hands-on labs?</p>
           <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
             They run real cryptography and need a laptop. We&rsquo;ll send you a link — or carry on
@@ -353,7 +344,7 @@ export function CuriousMobileBoard({ variantId, onSelectVariant }: CuriousMobile
         <>
           <div
             data-testid="more-menu-backdrop"
-            className="fixed inset-0 z-nav-backdrop bg-black/60"
+            className="fixed inset-0 z-nav-backdrop bg-scrim/60"
             onClick={() => setMoreOpen(false)}
             aria-hidden="true"
           />

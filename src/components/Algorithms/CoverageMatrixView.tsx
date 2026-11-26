@@ -374,7 +374,7 @@ export function CoverageMatrixView({
           return (
             <section
               key={e}
-              className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] min-w-0 max-w-full p-3"
+              className="glass-panel rounded-2xl min-w-0 max-w-full p-3"
               aria-label={`${ENGINE_LABEL[e]} totals`}
             >
               <h4 className="text-sm font-semibold font-display text-heading">
@@ -467,10 +467,7 @@ export function CoverageMatrixView({
       </div>
 
       {/* Definitions — always visible */}
-      <section
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3"
-        aria-label="Definitions"
-      >
+      <section className="glass-panel rounded-2xl p-3" aria-label="Definitions">
         <h4 className="text-sm font-semibold font-display text-heading">
           How these numbers are computed
         </h4>
@@ -565,7 +562,7 @@ export function CoverageMatrixView({
 
       {/* Matrix */}
       <div
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] relative w-full min-w-0 max-w-full overflow-x-auto"
+        className="glass-panel relative w-full min-w-0 max-w-full overflow-x-auto"
         role="region"
         aria-label="Capability coverage matrix; scroll horizontally for all columns"
         tabIndex={0}
@@ -619,10 +616,7 @@ export function CoverageMatrixView({
       </div>
 
       {/* Open gaps register (J-7) */}
-      <section
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] overflow-hidden"
-        aria-label="Open gaps register"
-      >
+      <section className="glass-panel overflow-hidden" aria-label="Open gaps register">
         <div className="border-b border-border bg-muted/20 p-4">
           <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-start">
             <div className="max-w-3xl space-y-1">

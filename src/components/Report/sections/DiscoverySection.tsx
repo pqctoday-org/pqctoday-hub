@@ -54,7 +54,7 @@ export function DiscoverySection({
         </p>
 
         {algorithmUnknown ? (
-          <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 border-l-4 border-l-warning">
+          <div className="glass-panel rounded-2xl p-3 border-l-4 border-l-warning">
             <p className="text-sm text-foreground font-medium">
               You told us your cryptography isn&apos;t inventoried yet.
             </p>

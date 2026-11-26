@@ -271,7 +271,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
       </div>
 
       {isLoading ? (
-        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-12 flex items-center justify-center">
+        <div className="glass-panel p-12 flex items-center justify-center">
           <div className="flex flex-col items-center gap-4">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             <p className="text-muted-foreground">Loading algorithms data...</p>
@@ -334,7 +334,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
           </div>
 
           {/* Desktop View */}
-          <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] hidden md:block overflow-hidden">
+          <div className="glass-panel hidden md:block overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse table-fixed">
                 <caption className="sr-only">

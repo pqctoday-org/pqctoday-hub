@@ -92,7 +92,7 @@ export const AssetsWire: React.FC<AssetsWireProps> = ({ metrics }) => {
 
   if (products.length === 0) {
     return (
-      <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] border-dashed p-4 space-y-3">
+      <div className="glass-panel border-dashed p-4 space-y-3">
         <div className="flex items-start gap-3">
           <Boxes size={20} className="text-muted-foreground shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">

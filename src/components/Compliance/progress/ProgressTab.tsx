@@ -44,7 +44,7 @@ export function ProgressTab({ profile, onOpenDetail, currentYear }: ProgressTabP
 
   if (entries.length === 0) {
     return (
-      <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 text-center">
+      <div className="glass-panel p-6 text-center">
         <CalendarClock size={24} className="mx-auto text-muted-foreground" />
         <p className="mt-2 text-sm font-semibold text-foreground">Nothing to show yet</p>
         <p className="mt-1 text-xs text-muted-foreground">
@@ -57,7 +57,7 @@ export function ProgressTab({ profile, onOpenDetail, currentYear }: ProgressTabP
 
   return (
     <div className="space-y-4">
-      <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
+      <div className="glass-panel p-4">
         <p className="text-xs text-muted-foreground">
           {next ? (
             <>

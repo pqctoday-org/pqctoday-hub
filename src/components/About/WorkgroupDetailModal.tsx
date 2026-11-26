@@ -26,7 +26,7 @@ export function WorkgroupDetailModal({ workgroup, onClose }: WorkgroupDetailModa
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 embed-backdrop bg-scrim/60 backdrop-blur-sm z-50"
           />
           <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4">
             <FocusLock returnFocus>
@@ -34,7 +34,7 @@ export function WorkgroupDetailModal({ workgroup, onClose }: WorkgroupDetailModa
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="glass-panel backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] bg-card max-w-lg w-full max-h-[85dvh] flex flex-col overflow-hidden"
+                className="glass-panel bg-card max-w-lg w-full max-h-[85dvh] flex flex-col overflow-hidden"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="workgroup-modal-title"

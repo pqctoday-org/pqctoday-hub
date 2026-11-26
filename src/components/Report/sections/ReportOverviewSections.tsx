@@ -15,6 +15,14 @@ import { ReportTimelineStrip } from '../ReportTimelineStrip'
 import { CollapsibleSection } from './reportContentShared'
 import { RiskScoreWorking } from '../RiskScoreWorking'
 
+// The risk level colours only the left bar; the card keeps its ink outline.
+const RISK_LEFT_BAR: Record<string, string> = {
+  'border-success': 'border-l-success',
+  'border-warning': 'border-l-warning',
+  'border-destructive': 'border-l-destructive',
+  'border-critical': 'border-l-critical',
+}
+
 export const CountryTimelineSection = ({
   country,
   defaultOpen,
@@ -65,7 +73,7 @@ export const RiskScoreSection = ({
       title="Educational Priority Index"
       icon={<ShieldAlert className={config.color} size={20} />}
       defaultOpen={defaultOpen}
-      className={clsx('border-l-4', config.border)}
+      className={clsx('border-l-4', RISK_LEFT_BAR[config.border])}
       infoTip="riskScore"
     >
       <RiskGauge score={result.riskScore} level={result.riskLevel} />
@@ -79,7 +87,7 @@ export const RiskScoreSection = ({
             className={clsx(
               'text-xs font-mono px-2 py-0.5 rounded-full',
               result.riskScore < previousRiskScore
-                ? 'bg-success/10 text-success'
+                ? 'bg-success/10 text-success-legible'
                 : 'bg-destructive/10 text-destructive'
             )}
           >

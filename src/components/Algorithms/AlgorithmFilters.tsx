@@ -245,7 +245,7 @@ export function AlgorithmFilters({
   }
 
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 md:p-4 space-y-3">
+    <div className="glass-panel rounded-2xl p-3 md:p-4 space-y-3">
       {/* Row 1 — primary controls, always visible */}
       <div className="flex flex-wrap items-center gap-2">
         {/* Search (primary) */}

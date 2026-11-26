@@ -144,7 +144,7 @@ function GraduateCTA() {
   if (!showGraduate) return null
 
   return (
-    <div className="glass-panel backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-4 p-4 bg-primary/5 space-y-3">
+    <div className="glass-panel mt-4 p-4 bg-primary/5 space-y-3">
       <div className="flex items-center gap-2">
         <Sparkles size={16} className="text-primary shrink-0" />
         <p className="text-sm font-semibold text-foreground">Ready to specialize?</p>
@@ -186,7 +186,7 @@ export function ScoreCard({ embedded = false }: { embedded?: boolean }) {
   const moduleCount = pathModuleCount(selectedPersona)
   return (
     <section aria-label="Optional learning path" data-testid="scorecard-optional">
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
+      <div className="glass-panel p-4">
         <Button
           variant="ghost"
           size="sm"
@@ -239,7 +239,7 @@ function ScoreCardBody({ embedded }: { embedded: boolean }) {
     const teaserContent = (
       <>
         <div
-          className={`flex flex-col sm:flex-row items-center gap-6 ${embedded ? '' : 'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6'}`}
+          className={`flex flex-col sm:flex-row items-center gap-6 ${embedded ? '' : 'glass-panel p-6'}`}
         >
           <div className="flex flex-col items-center gap-2 shrink-0">
             <div className="flex gap-1.5 items-end">
@@ -320,13 +320,7 @@ function ScoreCardBody({ embedded }: { embedded: boolean }) {
   // ── Active scorecard (compact) ─────────────────────────────────────────────
   const activeContent = (
     <>
-      <div
-        className={
-          embedded
-            ? ''
-            : 'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6'
-        }
-      >
+      <div className={embedded ? '' : 'glass-panel p-6'}>
         {/* ── Header row ─────────────────────────────────────────────────── */}
         <div className="flex items-center gap-4">
           <BeltSwatch belt={belt} size="md" />

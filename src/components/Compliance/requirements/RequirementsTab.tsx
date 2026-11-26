@@ -184,7 +184,7 @@ export function RequirementsTab({
         {/* Reading pane */}
         <div className="min-w-0 space-y-4">
           {selected ? (
-            <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
+            <div className="glass-panel p-4">
               <InstrumentHeading
                 ref={readingHeading}
                 tabIndex={-1}
@@ -241,7 +241,7 @@ export function RequirementsTab({
 
           {selected &&
             (docs.length === 0 ? (
-              <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 text-center">
+              <div className="glass-panel p-6 text-center">
                 <BookOpen size={22} className="mx-auto text-muted-foreground" />
                 <p className="mt-2 text-sm font-semibold text-foreground">
                   No extracted practices for this one

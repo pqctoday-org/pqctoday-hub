@@ -41,7 +41,7 @@ export const AssessTrackChooser: React.FC<AssessTrackChooserProps> = ({
   return (
     <div className="grid max-w-[840px] grid-cols-1 gap-4 sm:grid-cols-2">
       {/* FAST TRACK */}
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] flex flex-col p-5">
+      <div className="glass-panel flex flex-col p-5">
         <div className="mb-2 flex items-center gap-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-status-warning/15">
             <Zap className="text-status-warning" size={18} />
@@ -82,7 +82,7 @@ export const AssessTrackChooser: React.FC<AssessTrackChooserProps> = ({
       </div>
 
       {/* FULL TRACK */}
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] relative flex flex-col p-5">
+      <div className="glass-panel relative flex flex-col p-5">
         <div className="absolute -top-2.5 right-5 rounded-full bg-primary px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-primary-foreground">
           Most complete
         </div>
@@ -127,7 +127,7 @@ export const AssessTrackChooser: React.FC<AssessTrackChooserProps> = ({
           the tool, so it is offered to everyone rather than gated. It is placed
           last and styled quieter than the two real tracks, because assessing
           somebody else's estate is the fallback, not the goal. */}
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] flex flex-col p-5 sm:col-span-2">
+      <div className="glass-panel flex flex-col p-5 sm:col-span-2">
         <div className="mb-2 flex flex-wrap items-center gap-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-muted">
             <FlaskConical className="text-muted-foreground" size={18} />

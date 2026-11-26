@@ -53,7 +53,7 @@ export function PatentsKpiStrip({ kpis, onDrill }: PatentsKpiStripProps) {
       label: 'Core-invention quantum',
       value: String(kpis.coreQuantum),
       sub: 'quantum is the invention',
-      tint: 'text-info',
+      tint: 'text-info-legible',
       drill: { quantumRelevance: 'core_invention' },
     },
     {
@@ -62,7 +62,7 @@ export function PatentsKpiStrip({ kpis, onDrill }: PatentsKpiStripProps) {
       label: 'Map to FIPS 203/4/5',
       value: String(kpis.fipsMapped),
       sub: 'standardised algorithms',
-      tint: 'text-success',
+      tint: 'text-success-legible',
       drill: { fips: '1' },
     },
     {

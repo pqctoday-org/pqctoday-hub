@@ -822,7 +822,7 @@ export const LeadersGrid = ({
       />
 
       {/* Controls Bar */}
-      <div className="bg-card p-2 flex flex-col md:flex-row items-center gap-3 border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))]">
+      <div className="bg-card p-2 flex flex-col md:flex-row items-center gap-3 glass-panel rounded-2xl">
         {/* Mobile: Category dropdown (hidden on lg where pills show) */}
         <div className="flex items-center gap-2 w-full lg:hidden text-xs">
           <div className="flex-1 min-w-[150px]">
@@ -1042,9 +1042,7 @@ export const LeadersGrid = ({
             onSelectLayer={(l) => filters.set({ layer: l })}
             items={filteredLeaders}
             expandedContent={
-              <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 md:p-6 mt-4">
-                {renderCardGrid(visibleLeaders)}
-              </div>
+              <div className="glass-panel p-4 md:p-6 mt-4">{renderCardGrid(visibleLeaders)}</div>
             }
           />
           {/* No layer chosen: every matching person is listed under the stack

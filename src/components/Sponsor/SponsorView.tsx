@@ -218,7 +218,7 @@ function Hero() {
 
 function MarketContext() {
   return (
-    <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 md:p-8 mb-8">
+    <section className="glass-panel p-6 md:p-8 mb-8">
       <h2 className="text-xl md:text-2xl font-bold mb-4 flex items-center gap-2 font-display text-heading">
         <Globe className="text-primary shrink-0" size={22} aria-hidden="true" />
         Why this matters now
@@ -249,10 +249,7 @@ function SponsorAudiences() {
         {SPONSOR_AUDIENCES.map((audience) => {
           const Icon = audience.icon
           return (
-            <div
-              key={audience.title}
-              className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 flex flex-col"
-            >
+            <div key={audience.title} className="glass-panel p-6 flex flex-col">
               <div className="flex items-center gap-3 mb-3">
                 <div className="p-2 rounded-lg bg-primary/10">
                   <Icon className="text-primary" size={22} aria-hidden="true" />
@@ -297,7 +294,7 @@ function TierCard({ tier, mode }: { tier: Tier; mode: BillingMode }) {
 
   return (
     <div
-      className={`glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 flex flex-col ${
+      className={`glass-panel p-6 flex flex-col ${
         tier.highlight ? 'border-primary/40 ring-1 ring-primary/20' : ''
       }`}
     >
@@ -399,7 +396,7 @@ function Tiers() {
 
 function EditorialPromise() {
   return (
-    <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 md:p-8 mb-12">
+    <section className="glass-panel p-6 md:p-8 mb-12">
       <div className="flex items-start gap-4">
         <div className="p-3 rounded-lg bg-primary/10 shrink-0">
           <ShieldCheck className="text-primary" size={28} aria-hidden="true" />
@@ -436,7 +433,7 @@ function EditorialPromise() {
 
 function Goal() {
   return (
-    <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 md:p-8 mb-12">
+    <section className="glass-panel p-6 md:p-8 mb-12">
       <h2 className="text-xl md:text-2xl font-bold mb-4 flex items-center gap-2 font-display text-heading">
         <Briefcase className="text-primary shrink-0" size={22} aria-hidden="true" />
         Where your sponsorship goes

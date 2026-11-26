@@ -479,7 +479,7 @@ export const ChatPanelContent: React.FC = () => {
                   <div className="shrink-0 w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center">
                     <Bot size={14} className="text-accent" />
                   </div>
-                  <div className="glass-panel rounded-lg px-3 py-2">
+                  <div className="glass-panel glass-panel-row rounded-lg px-3 py-2">
                     <div className="flex gap-1">
                       <span
                         className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce"

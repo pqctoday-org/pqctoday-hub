@@ -42,7 +42,7 @@ const Step4Sensitivity = ({ hideHeading = false, hideHints = false }: EmbeddedSt
       value: 'low',
       label: 'Low',
       description: 'Public data, marketing content, non-sensitive business data',
-      color: 'border-success bg-success/10 text-success',
+      color: 'border-success bg-success/10 text-success-legible',
     },
     {
       value: 'medium',
@@ -88,7 +88,7 @@ const Step4Sensitivity = ({ hideHeading = false, hideHints = false }: EmbeddedSt
 
       {!hideHints && <PersonaHint stepKey="sensitivity" />}
 
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 border-l-4 border-l-warning mb-4">
+      <div className="glass-panel p-4 border-l-4 border-l-warning mb-4">
         <div className="flex items-start gap-2">
           <Info size={16} className="text-warning shrink-0 mt-0.5" />
           <p className="text-xs text-muted-foreground">
@@ -125,7 +125,7 @@ const Step4Sensitivity = ({ hideHeading = false, hideHints = false }: EmbeddedSt
         {/* ── Industry-specific data types ── */}
         {industrySensitivities.length > 0 && (
           <>
-            <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 border-l-4 border-l-primary">
+            <div className="glass-panel rounded-2xl p-3 border-l-4 border-l-primary">
               <div className="flex items-center gap-2">
                 <Info size={14} className="text-primary shrink-0" />
                 <p className="text-xs text-muted-foreground">
@@ -224,7 +224,7 @@ const SENSITIVITY_SCORE_TO_LEVEL: Record<number, 'low' | 'medium' | 'high' | 'cr
   25: 'critical',
 }
 const SENSITIVITY_BADGE_STYLES: Record<string, { text: string; bg: string; label: string }> = {
-  low: { text: 'text-success', bg: 'bg-success/15', label: 'Low' },
+  low: { text: 'text-success-legible', bg: 'bg-success/15', label: 'Low' },
   medium: { text: 'text-primary', bg: 'bg-primary/15', label: 'Medium' },
   high: { text: 'text-warning', bg: 'bg-warning/15', label: 'High' },
   critical: { text: 'text-destructive', bg: 'bg-destructive/15', label: 'Critical' },

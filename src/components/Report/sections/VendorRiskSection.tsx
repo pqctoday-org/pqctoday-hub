@@ -49,7 +49,7 @@ const VENDOR_MODEL_COPY: Record<VendorModel, { label: string; framing: string }>
 }
 
 const PQC_COMMITMENT_STYLE: Record<string, { label: string; className: string }> = {
-  Active: { label: 'Active PQC support', className: 'text-success' },
+  Active: { label: 'Active PQC support', className: 'text-success-legible' },
   Partial: { label: 'Partial PQC support', className: 'text-warning' },
   Announced: { label: 'PQC roadmap announced', className: 'text-warning' },
   None: { label: 'No PQC commitment yet', className: 'text-destructive' },

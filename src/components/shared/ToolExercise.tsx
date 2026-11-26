@@ -60,10 +60,7 @@ function ExerciseQuestions({ toolId, family = 'playground', className }: ToolExe
     <section
       aria-label="Try it"
       data-testid="tool-exercise"
-      className={cn(
-        'bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4',
-        className
-      )}
+      className={cn('glass-panel p-4', className)}
     >
       <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
         Try it

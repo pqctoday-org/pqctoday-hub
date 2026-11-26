@@ -67,7 +67,7 @@ const SECTION_ICONS: Record<SectionType, typeof Plus> = {
 }
 
 const SECTION_COLORS: Record<SectionType, string> = {
-  added: 'text-success',
+  added: 'text-success-legible',
   changed: 'text-primary',
   fixed: 'text-warning',
   data: 'text-status-info',
@@ -379,7 +379,7 @@ export const WhatsNewModal = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-overlay bg-black/60 print:hidden`}
+            className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-overlay bg-scrim/60 print:hidden`}
             onClick={handleDismiss}
             aria-hidden="true"
           />
@@ -398,7 +398,7 @@ export const WhatsNewModal = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] w-full max-w-lg max-h-[90dvh] sm:max-h-[80dvh] flex flex-col print:hidden pointer-events-auto"
+              className="glass-panel w-full max-w-lg max-h-[90dvh] sm:max-h-[80dvh] flex flex-col print:hidden pointer-events-auto"
               role="dialog"
               aria-modal="true"
               aria-labelledby="whats-new-modal-title"
@@ -589,7 +589,7 @@ export const WhatsNewModal = () => {
                         </span>
                         <span className="text-xs text-muted-foreground tabular-nums">
                           {summary.newCount > 0 && (
-                            <span className="text-success">{summary.newCount} new</span>
+                            <span className="text-success-legible">{summary.newCount} new</span>
                           )}
                           {summary.newCount > 0 && summary.updatedCount > 0 && ', '}
                           {summary.updatedCount > 0 && (
@@ -648,7 +648,9 @@ export const WhatsNewModal = () => {
                       </span>
                       <span className="text-xs text-muted-foreground tabular-nums space-x-1">
                         {moduleChanges.added.length > 0 && (
-                          <span className="text-success">{moduleChanges.added.length} new</span>
+                          <span className="text-success-legible">
+                            {moduleChanges.added.length} new
+                          </span>
                         )}
                         {moduleChanges.updated.length > 0 && (
                           <span className="text-primary">
@@ -672,7 +674,7 @@ export const WhatsNewModal = () => {
                       <div className="mt-1 space-y-2 pl-1">
                         <ModuleChangeGroup
                           label="New"
-                          colorClass="text-success"
+                          colorClass="text-success-legible"
                           icon={Plus}
                           ids={moduleChanges.added}
                           onNavigate={handleItemClick}

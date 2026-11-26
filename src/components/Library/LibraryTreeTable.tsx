@@ -404,7 +404,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
 
   return (
     <>
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] overflow-hidden">
+      <div className="glass-panel overflow-hidden">
         {/* A-003: Added aria-controls for expand/collapse buttons */}
         <div className="px-4 py-2 flex items-center justify-between bg-muted/20 border-b border-border">
           <span className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">

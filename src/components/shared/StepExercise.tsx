@@ -67,10 +67,7 @@ export function StepExercise({ moduleId, stepId, className }: StepExerciseProps)
     <section
       aria-label="Try it"
       data-testid="step-exercise"
-      className={cn(
-        'bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-6 p-4',
-        className
-      )}
+      className={cn('glass-panel mt-6 p-4', className)}
     >
       <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
         Try it

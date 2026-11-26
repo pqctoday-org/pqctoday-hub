@@ -514,10 +514,7 @@ export function TransitionMap({
       </div>
     ) : null
   return (
-    <section
-      className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mb-6 p-3"
-      data-testid="transition-map"
-    >
+    <section className="glass-panel mb-6 p-3" data-testid="transition-map">
       <h3 className="mb-2 text-sm font-medium font-display text-heading">
         The transition at a glance
       </h3>

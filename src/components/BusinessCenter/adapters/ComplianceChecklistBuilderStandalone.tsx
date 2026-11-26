@@ -511,10 +511,7 @@ export const ComplianceChecklistBuilderStandalone: React.FC = () => {
         />
       )}
 
-      <section
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3"
-        aria-labelledby="cc-add-frameworks"
-      >
+      <section className="glass-panel p-4 space-y-3" aria-labelledby="cc-add-frameworks">
         <div className="flex flex-wrap items-center gap-2">
           <h2 id="cc-add-frameworks" className="text-sm font-semibold font-display text-heading">
             Add frameworks to this checklist
@@ -629,7 +626,7 @@ export const ComplianceChecklistBuilderStandalone: React.FC = () => {
       </section>
 
       {!hasFrameworks && (
-        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 text-center space-y-2">
+        <div className="glass-panel p-4 text-center space-y-2">
           <p className="text-sm text-muted-foreground">
             No framework checklist yet — add one above, load the sample, or star frameworks on the
             Compliance page. The Scope &amp; Context section below still works on its own.

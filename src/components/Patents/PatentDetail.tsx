@@ -51,11 +51,11 @@ type TagVariant =
   'pqc' | 'classical' | 'quantum' | 'protocol' | 'info' | 'warning' | 'threat' | 'default'
 
 const TAG_CLASSES: Record<TagVariant, string> = {
-  pqc: 'border-success/40 text-success bg-success/10',
+  pqc: 'border-success/40 text-success-legible bg-success/10',
   classical: 'border-destructive/40 text-destructive bg-destructive/10',
   quantum: 'border-warning/40 text-warning bg-warning/10',
   protocol: 'border-primary/40 text-primary bg-primary/10',
-  info: 'border-info/40 text-info bg-info/10',
+  info: 'border-info/40 text-info-legible bg-info/10',
   warning: 'border-warning/40 text-warning bg-warning/10',
   threat: 'border-destructive/40 text-destructive bg-destructive/10',
   default: 'border-border text-foreground bg-muted',
@@ -170,9 +170,7 @@ function GridCard({
   full?: boolean
 }) {
   return (
-    <div
-      className={`glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-2.5 space-y-1.5 ${full ? 'sm:col-span-2' : ''}`}
-    >
+    <div className={`glass-panel rounded-2xl p-2.5 space-y-1.5 ${full ? 'sm:col-span-2' : ''}`}>
       <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
         {title}
       </div>
@@ -523,7 +521,7 @@ export function PatentDetail({
       {/* Scrollable body */}
       <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
         {/* Impact score */}
-        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 space-y-2">
+        <div className="glass-panel rounded-2xl p-3 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-foreground">
               Hub catalogue analysis score

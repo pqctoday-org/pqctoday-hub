@@ -557,7 +557,7 @@ function ProtocolCard({
   return (
     <div
       data-deeplink-id={p.id}
-      className={`glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] overflow-hidden transition-colors ${
+      className={`glass-panel overflow-hidden transition-colors ${
         expanded ? 'border-primary/40' : ''
       } ${p.recommended ? 'ring-1 ring-inset ring-status-warning/20' : ''}`}
     >
@@ -1061,7 +1061,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
       )}
       {/* Reviewed deployment evidence — detailed view only */}
       {!isHeatmap && RECOMMENDED_ROWS.length > 0 && (
-        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+        <div className="glass-panel p-4 space-y-3">
           <div className="flex items-center gap-2">
             <Star size={15} className="text-status-warning shrink-0" />
             <h2 className="text-sm font-semibold font-display text-heading">
@@ -1105,7 +1105,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
       )}
 
       {/* Intro panel + view toggle */}
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] space-y-3 p-4">
+      <div className="glass-panel space-y-3 p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex-1 space-y-2">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -1284,7 +1284,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
       </div>
 
       {/* Filter & sort toolbar — single row, no inline labels (dropdowns self-describe) */}
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] flex flex-wrap items-center gap-2 p-2">
+      <div className="glass-panel rounded-2xl flex flex-wrap items-center gap-2 p-2">
         <div className="relative flex-1 min-w-[200px]">
           <Search
             size={14}
@@ -1417,7 +1417,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
 
       {/* Heatmap mode — compact protocol × dimension grid */}
       {isHeatmap && (
-        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] overflow-x-auto">
+        <div className="glass-panel overflow-x-auto">
           <table className="w-full text-sm">
             <caption className="sr-only">
               PQC protocol support heatmap: standardisation stage of each protocol for pure KEM,
@@ -1663,7 +1663,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
       {!isHeatmap && (
         <div className="space-y-2">
           {filteredRows.length === 0 ? (
-            <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] px-3 py-8 text-center text-sm text-muted-foreground">
+            <div className="glass-panel px-3 py-8 text-center text-sm text-muted-foreground">
               No protocols match the current filters.{' '}
               <Button
                 type="button"
@@ -1698,7 +1698,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
 
       {/* Transport-layer blockers panel (detailed view only) */}
       {!isHeatmap && TRANSPORT_ISSUES.length > 0 && (
-        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] space-y-3 p-4">
+        <div className="glass-panel space-y-3 p-4">
           <div className="flex items-center justify-between">
             <h2 className="flex items-center gap-2 text-lg font-semibold font-display text-heading">
               <Zap size={18} className="text-status-warning" />

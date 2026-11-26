@@ -189,7 +189,7 @@ export function MobileBusinessToolsView() {
       )}
 
       {!search.trim() && !category && advancedFilters.length === 0 && (
-        <section className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mb-4 p-3.5">
+        <section className="glass-panel mb-4 p-3.5">
           <h2 className="text-[12px] font-bold text-foreground">{startHere.heading}</h2>
           <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
             {startHere.guidance}
@@ -266,7 +266,7 @@ function ToolCardMobile({ tool, onSelect }: { tool: BusinessTool; onSelect: () =
   const Icon = tool.icon
   return (
     <article
-      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] flex flex-col gap-1.5 p-3.5"
+      className="glass-panel rounded-2xl flex flex-col gap-1.5 p-3.5"
       data-business-result={tool.id}
     >
       <Button

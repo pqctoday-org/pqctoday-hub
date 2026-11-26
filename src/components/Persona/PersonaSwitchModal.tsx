@@ -147,7 +147,7 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
   return createPortal(
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 z-overlay bg-black/60" onClick={onClose} aria-hidden="true" />
+      <div className="fixed inset-0 z-overlay bg-scrim/60" onClick={onClose} aria-hidden="true" />
 
       {/* Modal */}
       <div
@@ -164,7 +164,7 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
         // into empty space and the tiles never move, whatever the copy length.
         className="fixed inset-0 z-overlay flex items-start justify-center overflow-y-auto p-4 pt-[8vh] pointer-events-none outline-none"
       >
-        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 w-full max-w-lg pointer-events-auto">
+        <div className="glass-panel p-6 w-full max-w-lg pointer-events-auto">
           <div className="flex items-center justify-between mb-5">
             <div>
               <h2

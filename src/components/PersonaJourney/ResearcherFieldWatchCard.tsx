@@ -109,7 +109,7 @@ export function ResearcherFieldWatchCard() {
 
   return (
     <div
-      className="glass-panel backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] flex h-full flex-col gap-3 bg-primary/5 p-5"
+      className="glass-panel flex h-full flex-col gap-3 bg-primary/5 p-5"
       data-testid="field-watch-card"
     >
       <span className="inline-flex w-fit items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide bg-chip text-chip-foreground">

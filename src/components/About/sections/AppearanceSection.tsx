@@ -12,7 +12,7 @@ export function AppearanceSection() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5 }}
-      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 md:p-6 flex flex-col items-center justify-center gap-4"
+      className="glass-panel p-4 md:p-6 flex flex-col items-center justify-center gap-4"
     >
       <h2 className="text-lg font-semibold font-display text-heading">Appearance</h2>
       <p className="text-sm text-muted-foreground text-center max-w-md">

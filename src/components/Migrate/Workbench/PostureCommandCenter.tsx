@@ -42,7 +42,7 @@ export function PostureCommandCenter({
   }
 
   return (
-    <div className="rounded-3xl border-2 border-ink bg-card shadow-[0_6px_0_hsl(var(--edge))] p-4">
+    <div className="glass-panel p-4">
       <div className="flex flex-col gap-4 lg:flex-row">
         {/* planning coverage — deliberately not a readiness score */}
         <div className="min-w-[188px]">

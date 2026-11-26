@@ -49,7 +49,7 @@ export const ModuleCertificationStatus: React.FC<Props> = ({ records, closingNot
   return (
     <section
       data-section-id="developer-module-cert-status"
-      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3 scroll-mt-20"
+      className="glass-panel p-4 space-y-3 scroll-mt-20"
       aria-label="Crypto module certification status"
     >
       <header className="flex items-center gap-2 flex-wrap">

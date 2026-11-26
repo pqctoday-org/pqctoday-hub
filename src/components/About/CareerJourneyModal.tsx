@@ -87,7 +87,7 @@ export function CareerJourneyModal({ isOpen, onClose }: CareerJourneyModalProps)
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] relative w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col"
+            className="glass-panel relative w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-3 md:p-4 border-b border-border">

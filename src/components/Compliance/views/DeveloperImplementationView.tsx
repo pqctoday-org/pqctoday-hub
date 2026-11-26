@@ -204,10 +204,7 @@ function CIGateSnippet() {
   }
 
   return (
-    <section
-      data-section-id="developer-ci-gate"
-      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3 scroll-mt-20"
-    >
+    <section data-section-id="developer-ci-gate" className="glass-panel p-4 space-y-3 scroll-mt-20">
       <header className="flex items-center gap-2 flex-wrap">
         <Terminal size={16} className="text-primary" />
         <h3 className="text-base font-semibold font-display text-heading">
@@ -342,7 +339,7 @@ export function DeveloperImplementationView({
           profile={profile}
           message="Set your stack first — pick an industry and country so we can match required algorithms to library implementations and test vectors."
         />
-        <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 flex items-center justify-between gap-4">
+        <div className="glass-panel p-4 flex items-center justify-between gap-4">
           <div className="min-w-0">
             <p className="text-sm font-medium text-foreground">
               Want algorithm-level recommendations? Take the full assessment.
@@ -372,7 +369,7 @@ export function DeveloperImplementationView({
       {/* ── Algorithm coverage strip ─────────────────────────────── */}
       <section
         data-section-id="developer-algorithm-coverage"
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3 scroll-mt-20"
+        className="glass-panel p-4 space-y-3 scroll-mt-20"
       >
         <header className="flex items-center gap-2">
           <FlaskConical size={16} className="text-secondary" />
@@ -418,7 +415,7 @@ export function DeveloperImplementationView({
       {/* ── Implementation jump bar ─────────────────────────────── */}
       <section
         data-section-id="developer-implementation-jump"
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3 scroll-mt-20"
+        className="glass-panel p-4 space-y-3 scroll-mt-20"
       >
         <header className="flex items-center gap-2">
           <Code2 size={16} className="text-primary" />
@@ -455,7 +452,7 @@ export function DeveloperImplementationView({
       {/* ── Standards → library cross-links ─────────────────────── */}
       <section
         data-section-id="developer-standards-impl"
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3 scroll-mt-20"
+        className="glass-panel p-4 space-y-3 scroll-mt-20"
       >
         <header className="flex items-center gap-2">
           <ExternalLink size={16} className="text-secondary" />

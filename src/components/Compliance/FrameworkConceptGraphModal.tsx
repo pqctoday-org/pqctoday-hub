@@ -58,11 +58,11 @@ export function FrameworkConceptGraphModal({
   const content = (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- not an interactive control: `display: contents` boundary that only stops portal events reaching the card; keyboard access stays on the controls inside.
     <div className="contents" onClick={keepInsideModal} onWheel={keepInsideModal}>
-      <div className="fixed inset-0 z-overlay bg-black/60" onClick={onClose} aria-hidden="true" />
+      <div className="fixed inset-0 z-overlay bg-scrim/60" onClick={onClose} aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-4" style={{ zIndex: 9999 }}>
         <FocusLock returnFocus>
           <div
-            className="w-[95vw] sm:w-[88vw] md:w-[80vw] max-w-[1200px] max-h-[88dvh] overflow-hidden flex flex-col bg-popover text-popover-foreground animate-in zoom-in-95 duration-200 border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))]"
+            className="w-[95vw] sm:w-[88vw] md:w-[80vw] max-w-[1200px] max-h-[88dvh] overflow-hidden flex flex-col bg-popover text-popover-foreground animate-in zoom-in-95 duration-200 glass-panel rounded-2xl"
             ref={dialogRef}
             role="dialog"
             aria-modal="true"

@@ -43,7 +43,7 @@ export const WorkflowBanner: React.FC = () => {
 
   return (
     <div
-      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 mb-4 print:hidden"
+      className="glass-panel rounded-2xl p-3 mb-4 print:hidden"
       role="status"
       aria-label="Migration planning workflow progress"
     >
@@ -74,7 +74,7 @@ export const WorkflowBanner: React.FC = () => {
 
           {isComplete ? (
             <div className="flex items-center gap-2 min-w-0">
-              <CheckCircle2 size={16} className="text-success flex-shrink-0" />
+              <CheckCircle2 size={16} className="text-success-legible flex-shrink-0" />
               <span className="text-sm font-medium text-foreground truncate">
                 Migration planning complete
               </span>

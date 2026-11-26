@@ -113,7 +113,7 @@ export function AboutNextStepCTA() {
 
   return (
     <div
-      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-5 md:p-6 flex flex-col md:flex-row gap-4 md:items-center md:justify-between print:hidden"
+      className="glass-panel p-5 md:p-6 flex flex-col md:flex-row gap-4 md:items-center md:justify-between print:hidden"
       data-section-id="about-next-step"
     >
       <div className="flex items-start gap-3 min-w-0">

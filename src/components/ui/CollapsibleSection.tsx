@@ -46,13 +46,7 @@ export function CollapsibleSection({
   }, [collapseToken])
 
   return (
-    <div
-      id={id}
-      className={clsx(
-        'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 print:border print:border-border',
-        className
-      )}
-    >
+    <div id={id} className={clsx('glass-panel p-6 print:border print:border-border', className)}>
       <div className="flex items-center justify-between w-full print:hidden gap-2">
         <Button
           variant="ghost"

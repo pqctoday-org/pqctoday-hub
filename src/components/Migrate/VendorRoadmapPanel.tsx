@@ -242,7 +242,7 @@ export const VendorRoadmapPanel = ({
         <section
           aria-labelledby={otherHeadingId}
           data-testid="analysis-other-source"
-          className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] space-y-2 p-3"
+          className="glass-panel space-y-2 p-3"
         >
           <h3 id={otherHeadingId} className="text-xs font-semibold font-display text-heading">
             Analysis from another source

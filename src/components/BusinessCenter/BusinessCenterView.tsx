@@ -122,7 +122,7 @@ function WelcomeState({ onExploreZones }: { onExploreZones: () => void }) {
 
   return (
     <div className="space-y-6">
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 md:p-8 text-center">
+      <div className="glass-panel p-6 md:p-8 text-center">
         <LayoutDashboard size={44} className="mx-auto mb-4 text-muted-foreground" />
         <h2 className="text-xl font-semibold mb-2 font-display text-heading">
           Welcome to your PQC Command Center
@@ -144,7 +144,7 @@ function WelcomeState({ onExploreZones }: { onExploreZones: () => void }) {
             <Link
               key={item.q}
               to={item.to}
-              className="glass-panel bg-card backdrop-blur-none border border-border rounded-2xl shadow-none p-4 hover:border-primary/40 transition-colors group"
+              className="glass-panel glass-panel-row p-4 hover:border-primary/40 transition-colors group"
             >
               <p className="font-semibold text-foreground group-hover:text-primary transition-colors">
                 {item.q}
@@ -173,7 +173,7 @@ function WelcomeState({ onExploreZones }: { onExploreZones: () => void }) {
                 <Link
                   key={tool.id}
                   to={`/business/tools/${tool.id}`}
-                  className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 hover:border-primary/40 transition-colors group flex items-start gap-3"
+                  className="glass-panel p-4 hover:border-primary/40 transition-colors group flex items-start gap-3"
                 >
                   <Icon className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                   <div className="min-w-0">
@@ -278,7 +278,7 @@ function PhaseToolsView({ onClearPhase }: { onClearPhase: () => void }) {
 
   return (
     <div className="space-y-4">
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 flex flex-wrap items-start justify-between gap-3">
+      <div className="glass-panel p-4 flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="text-[10px] font-semibold text-primary uppercase tracking-widest mb-1">
             Phase view
@@ -305,7 +305,7 @@ function PhaseToolsView({ onClearPhase }: { onClearPhase: () => void }) {
       </div>
 
       {phaseTools.length === 0 ? (
-        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 text-sm text-muted-foreground text-center">
+        <div className="glass-panel p-6 text-sm text-muted-foreground text-center">
           No business tools are tagged for this phase yet.
         </div>
       ) : (
@@ -316,7 +316,7 @@ function PhaseToolsView({ onClearPhase }: { onClearPhase: () => void }) {
               <Link
                 key={tool.id}
                 to={`/business/tools/${tool.id}`}
-                className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 h-auto text-left hover:border-primary/40 transition-colors cursor-pointer group items-start justify-start flex"
+                className="glass-panel p-4 h-auto text-left hover:border-primary/40 transition-colors cursor-pointer group items-start justify-start flex"
               >
                 <div className="flex items-start gap-3 w-full">
                   <Icon className="w-5 h-5 text-primary mt-0.5 shrink-0" />

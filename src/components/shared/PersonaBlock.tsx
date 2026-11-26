@@ -24,10 +24,7 @@ export function PersonaBlock({ route, className }: PersonaBlockProps) {
   // eslint-disable-next-line security/detect-object-injection -- PersonaId from the typed union
   const listed = PERSONA_IDS.filter((p) => blocks[p])
   if (listed.length === 0) return null
-  const box = cn(
-    'rounded-3xl border-2 border-ink bg-card p-4 shadow-[0_6px_0_hsl(var(--edge))]',
-    className
-  )
+  const box = cn('glass-panel p-4', className)
   if (selectedPersona) {
     // eslint-disable-next-line security/detect-object-injection -- PersonaId from the typed union
     const text = blocks[selectedPersona]

@@ -265,10 +265,7 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
       </h2>
       <div className="flex flex-col gap-2">
         {result.recommendedActions.map((a) => (
-          <div
-            key={a.priority}
-            className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] flex items-start gap-2.5 p-3"
-          >
+          <div key={a.priority} className="glass-panel rounded-2xl flex items-start gap-2.5 p-3">
             <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/15 text-[10px] font-bold text-primary">
               {a.priority}
             </span>

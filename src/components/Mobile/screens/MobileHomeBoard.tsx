@@ -254,10 +254,7 @@ export function MobileHomeBoard({
     <>
       {/* Side card */}
       <section
-        className={cn(
-          'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] mt-5 flex flex-col gap-2.5 p-3.5',
-          tone.panel
-        )}
+        className={cn('glass-panel rounded-2xl mt-5 flex flex-col gap-2.5 p-3.5', tone.panel)}
       >
         <span className="w-fit rounded-full bg-chip px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-chip-foreground">
           {PROVENANCE_LABEL[board.sideCard.provenance]}
@@ -422,7 +419,7 @@ export function MobileHomeBoard({
 
         {/* Your next step — the one thing this board asks of a sponsor. */}
         <section
-          className="glass-panel backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] mt-4 flex flex-col gap-2.5 bg-primary/5 p-3.5"
+          className="glass-panel rounded-2xl mt-4 flex flex-col gap-2.5 bg-primary/5 p-3.5"
           aria-labelledby={nextHeadingId}
           data-testid="exec-next-step"
         >

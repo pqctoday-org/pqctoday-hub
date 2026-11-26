@@ -14,7 +14,7 @@ export function CommunitySection() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15 }}
-      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 md:p-6"
+      className="glass-panel p-4 md:p-6"
     >
       <div className="flex items-center gap-3 mb-2">
         <MessageSquare className="text-primary shrink-0" size={24} />

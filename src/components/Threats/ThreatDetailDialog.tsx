@@ -117,7 +117,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
       <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4">
         {/* Isolated backdrop */}
         <div
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm z-[-1]"
+          className="absolute inset-0 bg-scrim/60 backdrop-blur-sm z-[-1]"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -127,7 +127,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
           role="dialog"
           aria-modal="true"
           aria-labelledby="threat-dialog-title"
-          className="bg-card w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col relative border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))]"
+          className="bg-card w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col relative glass-panel rounded-2xl"
         >
           <div className="p-6 border-b border-border flex justify-between items-start sticky top-0 bg-card z-10 shrink-0">
             <div>

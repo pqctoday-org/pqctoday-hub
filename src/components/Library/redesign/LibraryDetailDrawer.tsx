@@ -243,7 +243,7 @@ function DrawerPanel({
             scrimBlockedRef.current = false
             if (!blocked) onClose()
           }}
-          className="absolute inset-0 h-full w-full cursor-default rounded-none bg-black/60 hover:bg-black/60"
+          className="absolute inset-0 h-full w-full cursor-default rounded-none bg-scrim/60 hover:bg-scrim/60"
         />
         <span className="sr-only" aria-live="polite" />
 
@@ -272,7 +272,7 @@ function DrawerPanel({
                   <span
                     className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase ${
                       item.status === 'New'
-                        ? 'bg-success/15 text-success'
+                        ? 'bg-success/15 text-success-legible'
                         : 'bg-primary/15 text-primary'
                     }`}
                   >

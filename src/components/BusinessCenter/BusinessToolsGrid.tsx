@@ -360,7 +360,7 @@ export const BusinessToolsGrid = () => {
           suggested path without fighting an active search, category, zone,
           phase or audience filter. */}
       {isUnfilteredView && (
-        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
+        <div className="glass-panel p-4">
           <p className="uppercase mb-2 text-[11px] font-extrabold tracking-[0.14em] text-heading">
             {startHere.heading}
           </p>
@@ -419,7 +419,7 @@ export const BusinessToolsGrid = () => {
                     state={toolLinkState}
                     data-business-result={tool.id}
                     data-business-open
-                    className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 h-auto text-left hover:border-primary/40 transition-colors cursor-pointer group items-start justify-start flex"
+                    className="glass-panel p-4 h-auto text-left hover:border-primary/40 transition-colors cursor-pointer group items-start justify-start flex"
                   >
                     <div className="flex items-start gap-3 w-full">
                       <Icon className="w-5 h-5 text-primary mt-0.5 shrink-0" />

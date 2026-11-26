@@ -1004,7 +1004,7 @@ export const MainLayout = () => {
             className="m-4 sticky top-[max(1rem,env(safe-area-inset-top))] z-50 transition-all duration-300 print:hidden"
             role="banner"
           >
-            <div className="glass-panel p-2 lg:p-4 flex w-full items-center gap-2 relative">
+            <div className="glass-panel glass-panel-row p-2 lg:p-4 flex w-full items-center gap-2 relative">
               {/* Mobile brand — always a button; toggles Airplane Mode on/off.
                 Desktop copy lives in the rail above. */}
               <Button

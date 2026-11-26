@@ -56,7 +56,7 @@ const CRYPTO_CATEGORIES: CryptoCategory[] = [
     label: 'Symmetric Encryption',
     icon: ShieldCheck,
     borderColor: 'border-success',
-    iconColor: 'text-success',
+    iconColor: 'text-success-legible',
   },
   {
     id: 'Hash & MAC',
@@ -211,10 +211,7 @@ const Step3Crypto = ({ hideHeading = false, hideHints = false }: EmbeddedStepPro
               const algos = algosByCategory[cat.id] ?? []
               if (algos.length === 0) return null
               return (
-                <div
-                  key={cat.id}
-                  className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 space-y-2"
-                >
+                <div key={cat.id} className="glass-panel rounded-2xl p-3 space-y-2">
                   <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                     {cat.label} — specific algorithms
                     <span className="normal-case font-normal ml-1 text-muted-foreground">

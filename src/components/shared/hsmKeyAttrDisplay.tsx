@@ -597,11 +597,11 @@ export const KeyAttrModal = ({
   return createPortal(
     <div
       role="presentation"
-      className="fixed inset-0 embed-backdrop bg-black/60 flex items-center justify-center z-[100] p-4"
+      className="fixed inset-0 embed-backdrop bg-scrim/60 flex items-center justify-center z-[100] p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
       onKeyDown={(e) => e.key === 'Escape' && onClose()}
     >
-      <div className="glass-panel backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] w-full max-w-lg max-h-[85vh] overflow-y-auto p-5 space-y-4 z-[101] bg-background">
+      <div className="glass-panel w-full max-w-lg max-h-[85vh] overflow-y-auto p-5 space-y-4 z-[101] bg-background">
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
           <div>

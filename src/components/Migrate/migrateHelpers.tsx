@@ -213,7 +213,7 @@ const CertTypePopover: React.FC<{
       ref={panelRef}
       role="menu"
       style={{ position: 'fixed', zIndex: 9999, ...position }}
-      className="w-64 space-y-1 overflow-y-auto bg-background p-2 border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))]"
+      className="w-64 space-y-1 overflow-y-auto bg-background p-2 glass-panel rounded-2xl"
     >
       {certs.map((cert) => {
         const hasPqc =

@@ -62,7 +62,7 @@ function CapabilityWarning({
   onFallback: () => void
 }) {
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-5 space-y-4 mx-4 my-6">
+    <div className="glass-panel p-5 space-y-4 mx-4 my-6">
       <div className="flex items-start gap-3">
         <AlertTriangle size={20} className="text-status-warning shrink-0 mt-0.5" />
         <div className="space-y-2">
@@ -95,10 +95,7 @@ function LaunchNotice() {
   const reason = algorithmLaunchPhoneReason('interactive', search, true)
   if (!reason) return null
   return (
-    <div
-      role="alert"
-      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] mx-3 my-2 p-3 flex items-start gap-2"
-    >
+    <div role="alert" className="glass-panel rounded-2xl mx-3 my-2 p-3 flex items-start gap-2">
       <AlertTriangle size={16} className="text-status-warning shrink-0 mt-0.5" />
       <p className="text-xs text-foreground leading-relaxed">{reason}</p>
     </div>

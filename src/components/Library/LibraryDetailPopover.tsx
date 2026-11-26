@@ -93,7 +93,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
   const content = (
     <>
       {/* Backdrop — dims background, existing mousedown handler closes on outside click */}
-      <div className="fixed inset-0 embed-backdrop bg-black/60 z-50" aria-hidden="true" />
+      <div className="fixed inset-0 embed-backdrop bg-scrim/60 z-50" aria-hidden="true" />
 
       {/* A-002: Focus trap for accessibility */}
       <FocusLock returnFocus>
@@ -129,7 +129,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                 onClose()
               }
             }}
-            className="w-full max-h-[90dvh] md:max-h-[85dvh] rounded-t-2xl md:w-[80vw] md:max-w-[1200px] md:rounded-xl overflow-hidden flex flex-col bg-popover text-popover-foreground pointer-events-auto border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))]"
+            className="w-full max-h-[90dvh] md:max-h-[85dvh] rounded-t-2xl md:w-[80vw] md:max-w-[1200px] md:rounded-xl overflow-hidden flex flex-col bg-popover text-popover-foreground pointer-events-auto glass-panel rounded-2xl"
             role="dialog"
             aria-modal="true"
             aria-labelledby="popover-title"
@@ -256,7 +256,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                     }))
                     .filter((g) => g.items.length > 0)
                   return (
-                    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3">
+                    <div className="glass-panel rounded-2xl p-3">
                       <Button
                         variant="ghost"
                         onClick={() => setCswp39Open((o) => !o)}
@@ -405,7 +405,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                       {item.priorRevisions.map((rev) => (
                         <li
                           key={rev.referenceId}
-                          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-2.5 flex items-start justify-between gap-2"
+                          className="glass-panel rounded-2xl p-2.5 flex items-start justify-between gap-2"
                         >
                           <div className="min-w-0">
                             <p

@@ -133,7 +133,7 @@ export function CSWP39AgilityExplorer({
   return (
     <div className="space-y-4" id="cswp39-cross-walk">
       {/* Compact hero */}
-      <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="glass-panel flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <RefreshCw size={20} />
@@ -306,7 +306,7 @@ function CycleView({
       </p>
 
       {/* Selected-step detail */}
-      <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-5">
+      <div className="glass-panel p-5">
         <div className="mb-1 flex flex-wrap items-center gap-2">
           <h3 className="text-base font-bold font-display text-heading">{sel.title}</h3>
           <span className={pillClasses(selTone)}>{sel.cpmPillar}</span>
@@ -469,7 +469,7 @@ function MaturityView({ tier, onTierChange }: { tier: number; onTierChange: (t: 
 
       {/* You are here + to reach next */}
       <div className="grid gap-4 md:grid-cols-2">
-        <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-5">
+        <div className="glass-panel p-5">
           <div className="mb-2 flex items-center gap-2">
             <span className={`h-2.5 w-2.5 rounded-full ${TONES[TIER_TONE[cur.tone]].solidBg}`} />
             <h3 className="text-sm font-bold font-display text-heading">
@@ -492,7 +492,7 @@ function MaturityView({ tier, onTierChange }: { tier: number; onTierChange: (t: 
             </p>
           </div>
         ) : (
-          <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] border-dashed p-5">
+          <div className="glass-panel border-dashed p-5">
             <h3 className="mb-2 text-sm font-bold font-display text-heading">
               Explore next · {next!.name}
             </h3>
@@ -557,7 +557,7 @@ function EvidenceView({
   return (
     <div className="space-y-5">
       {/* Extracted candidate mappings need source and applicability review. */}
-      <section className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-5">
+      <section className="glass-panel p-5">
         <div className="mb-4 flex items-center gap-3">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <Database size={18} />
@@ -642,10 +642,7 @@ function EvidenceView({
         </h3>
         <div className="grid gap-3 sm:grid-cols-2">
           {HYBRID_ROWS.map((h) => (
-            <div
-              key={h.regime}
-              className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4"
-            >
+            <div key={h.regime} className="glass-panel p-4">
               <div className="mb-1.5 flex items-center justify-between gap-2">
                 <span className="text-sm font-bold text-foreground">{h.regime}</span>
                 <span className={pillClasses(h.tone)}>{h.stance}</span>

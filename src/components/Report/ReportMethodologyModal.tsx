@@ -56,7 +56,7 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm z-50 print:hidden"
+            className="fixed inset-0 embed-backdrop bg-scrim/60 backdrop-blur-sm z-50 print:hidden"
           />
 
           <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4 print:hidden">
@@ -64,7 +64,7 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="glass-panel backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] bg-card max-w-lg w-full max-h-[85dvh] flex flex-col overflow-hidden"
+              className="glass-panel bg-card max-w-lg w-full max-h-[85dvh] flex flex-col overflow-hidden"
               role="dialog"
               aria-modal="true"
               aria-labelledby="methodology-modal-title"
@@ -277,7 +277,7 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
                     How Actions Are Prioritized
                   </p>
                   <div className="flex items-start gap-3">
-                    <CheckCircle size={16} className="text-success mt-0.5 shrink-0" />
+                    <CheckCircle size={16} className="text-success-legible mt-0.5 shrink-0" />
                     <div>
                       <p className="text-xs text-muted-foreground leading-relaxed">
                         Suggested actions are generated from your inputs: algorithms, use cases,

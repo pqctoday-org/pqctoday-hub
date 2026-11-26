@@ -45,7 +45,7 @@ export const LeaderCard = ({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.2 }}
       className={clsx(
-        'glass-panel backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 flex flex-col h-full hover:border-secondary/50 transition-colors bg-card/50',
+        'glass-panel p-6 flex flex-col h-full hover:border-secondary/50 transition-colors bg-card/50',
         isExpanded && 'border-primary/60 ring-1 ring-primary/30'
       )}
     >

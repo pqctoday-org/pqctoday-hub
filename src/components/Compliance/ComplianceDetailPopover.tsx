@@ -566,7 +566,7 @@ export const ComplianceDetailPopover = ({
     <>
       {/* Backdrop */}
       <div
-        className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-overlay bg-black/60 backdrop-blur-sm embed-backdrop`}
+        className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-overlay bg-scrim/60 backdrop-blur-sm embed-backdrop`}
         onClick={onClose}
         aria-hidden="true"
       />
@@ -578,7 +578,7 @@ export const ComplianceDetailPopover = ({
         <FocusLock returnFocus>
           <div
             ref={popoverRef}
-            className="w-[92vw] md:w-[60vw] max-w-[800px] max-h-[85dvh] overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))]"
+            className="w-[92vw] md:w-[60vw] max-w-[800px] max-h-[85dvh] overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground glass-panel rounded-2xl"
             style={isEmbedded ? { zIndex: 9999, ...positionStyle } : undefined}
             role="dialog"
             aria-modal="true"

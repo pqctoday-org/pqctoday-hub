@@ -22,10 +22,7 @@ export function RelatedContentPanel({ id, entries, className }: RelatedContentPa
     <section
       aria-labelledby={`related-content-${id}`}
       data-testid="related-content"
-      className={cn(
-        'rounded-3xl border-2 border-ink bg-card p-4 shadow-[0_6px_0_hsl(var(--edge))] sm:p-5',
-        className
-      )}
+      className={cn('glass-panel p-4 sm:p-5', className)}
     >
       <div className="mb-3 flex items-center gap-2">
         <Network size={18} className="shrink-0 text-primary" aria-hidden="true" />

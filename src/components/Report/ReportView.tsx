@@ -494,7 +494,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
           className="mb-4"
         >
           {sharedView.sample ? (
-            <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 border-l-4 border-l-primary flex flex-wrap items-center gap-3">
+            <div className="glass-panel rounded-2xl p-3 border-l-4 border-l-primary flex flex-wrap items-center gap-3">
               <FileBarChart size={16} className="text-primary shrink-0" />
               <span className="text-sm text-foreground flex-1 min-w-[12rem]">
                 This is a sample report for a fictional US bank. Run your own assessment to see
@@ -511,7 +511,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
               </Link>
             </div>
           ) : (
-            <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 border-l-4 border-l-primary flex items-center gap-3">
+            <div className="glass-panel rounded-2xl p-3 border-l-4 border-l-primary flex items-center gap-3">
               <FileBarChart size={16} className="text-primary shrink-0" />
               <span className="text-sm text-foreground">
                 Viewing a shared report. This is a read-only snapshot — your own assessment is
@@ -531,7 +531,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
           animate={{ opacity: 1, y: 0 }}
           className="mb-4"
         >
-          <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 border-l-4 border-l-warning flex items-center gap-3">
+          <div className="glass-panel rounded-2xl p-3 border-l-4 border-l-warning flex items-center gap-3">
             <AlertCircle size={16} className="text-warning shrink-0" />
             <span className="text-sm text-foreground">
               This is an older share link — an approximate view recomputed from what it carries,
@@ -550,7 +550,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
           animate={{ opacity: 1, y: 0 }}
           className="mb-4"
         >
-          <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 border-l-4 border-l-warning flex items-center justify-between gap-3">
+          <div className="glass-panel rounded-2xl p-3 border-l-4 border-l-warning flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-sm">
               <AlertCircle size={16} className="text-warning shrink-0" />
               <span className="text-foreground">

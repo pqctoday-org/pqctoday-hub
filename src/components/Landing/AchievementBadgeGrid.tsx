@@ -65,7 +65,7 @@ function CategoryInfoButton({ category }: { category: AchievementCategory }) {
         <Info size={10} />
       </Button>
       {open && (
-        <div className="absolute left-0 top-full mt-1 z-50 w-52 bg-card p-2 text-[10px] text-muted-foreground leading-relaxed border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))]">
+        <div className="absolute left-0 top-full mt-1 z-50 w-52 bg-card p-2 text-[10px] text-muted-foreground leading-relaxed glass-panel rounded-2xl">
           <p className="font-semibold text-foreground mb-0.5">{CATEGORY_LABELS[category]} badges</p>
           {/* eslint-disable-next-line security/detect-object-injection */}
           <p>{CATEGORY_INFO[category]}</p>

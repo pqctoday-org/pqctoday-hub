@@ -193,7 +193,7 @@ export const PageActionStrip = ({
                   left: infoPosition.left,
                   zIndex: 9999,
                 }}
-                className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] w-72 p-3 text-xs text-foreground"
+                className="glass-panel rounded-2xl w-72 p-3 text-xs text-foreground"
               >
                 {dataSource}
               </div>,

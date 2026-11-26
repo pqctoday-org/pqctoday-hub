@@ -145,7 +145,7 @@ export const BusinessToolRoute = () => {
           the way it is"; a generated document the user cannot defend is worse
           than no document. Both lines come from the registry, so a new tool
           cannot ship without them. */}
-      <section className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-3">
+      <section className="glass-panel p-3">
         <p className="text-sm leading-relaxed text-muted-foreground">
           <span className="font-semibold text-foreground">What this is for:</span>{' '}
           {tool.description}.
@@ -204,7 +204,7 @@ export const BusinessToolRoute = () => {
           search, or the tools grid was an island — only 2 of 37 tools carry
           in-app links of their own. Keyed off the tool's zone via the existing
           ZONE_STEP_CONTRIBUTORS map. (Audit 2026-08-10, W3-2.) */}
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
+      <div className="glass-panel p-4">
         <RecommendedResourcesPanel stepId={primaryStepForZone(tool.cswp39Zone)} />
       </div>
       {/* Round 9, wave 1.2 (2026-09-19) — the declared exit (src/data/nextSteps.ts):

@@ -35,7 +35,7 @@ const EFFORT_CONFIG: Record<string, { label: string; color: string; bg: string; 
   {
     low: {
       label: 'Low',
-      color: 'text-success',
+      color: 'text-success-legible',
       bg: 'bg-success/15',
       border: 'border-l-success',
     },
@@ -191,7 +191,7 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
   const currentYear = new Date().getFullYear()
 
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 print:border print:border-border print:break-inside-auto">
+    <div className="glass-panel p-6 print:border print:border-border print:break-inside-auto">
       <div className="flex items-center justify-between w-full print:hidden gap-2">
         <Button
           variant="ghost"

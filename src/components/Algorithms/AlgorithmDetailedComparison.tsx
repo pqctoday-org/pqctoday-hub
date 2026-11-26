@@ -227,7 +227,7 @@ function CompareView({
   const hidden = comparisonAlgos.slice(phoneLimit)
   if (comparisonAlgos.length < 2) {
     return (
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] border-dashed border-2 p-10 flex flex-col items-center justify-center text-center">
+      <div className="glass-panel border-dashed border-2 p-10 flex flex-col items-center justify-center text-center">
         <GitCompare size={40} className="text-muted-foreground/50 mb-3" />
         <h4 className="text-base font-semibold mb-1 font-display text-heading">
           Pick algorithms to compare
@@ -327,7 +327,7 @@ function SelectionBar({
   onCompare: () => void
 }) {
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 flex items-center justify-between gap-3 flex-wrap">
+    <div className="glass-panel rounded-2xl p-3 flex items-center justify-between gap-3 flex-wrap">
       <span className="text-sm text-muted-foreground">
         {count > selectionLimit ? (
           <>
@@ -361,7 +361,7 @@ function SelectionBar({
 }
 
 const EmptyState = () => (
-  <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-12 flex flex-col items-center justify-center text-center">
+  <div className="glass-panel p-12 flex flex-col items-center justify-center text-center">
     <SearchX size={48} className="text-muted-foreground/50 mb-4" />
     <h4 className="text-lg font-semibold mb-2 font-display text-heading">No algorithms match</h4>
     <p className="text-sm text-muted-foreground max-w-md">
@@ -635,7 +635,7 @@ function BrowseTable({
   ]
 
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] overflow-hidden">
+    <div className="glass-panel overflow-hidden">
       {/* Desktop table */}
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left border-collapse">

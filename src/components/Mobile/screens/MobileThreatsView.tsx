@@ -147,7 +147,11 @@ const URGENCY_CONFIG: Record<Urgency, { label: string; color: string; bg: string
     bg: 'bg-destructive/10 border-destructive/20',
   },
   urgent: { label: 'URGENT', color: 'text-warning', bg: 'bg-warning/10 border-warning/20' },
-  planning: { label: 'PLANNING', color: 'text-success', bg: 'bg-success/10 border-success/20' },
+  planning: {
+    label: 'PLANNING',
+    color: 'text-success-legible',
+    bg: 'bg-success/10 border-success/20',
+  },
 }
 
 // Only the levels some row has — same rule as the desktop filter.
@@ -592,7 +596,7 @@ export function MobileThreatsView() {
           </p>
         </section>
       ) : (
-        <section className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mb-4 p-4">
+        <section className="glass-panel mb-4 p-4">
           <p className="text-[10px] font-extrabold uppercase tracking-wide text-muted-foreground">
             Mosca planning model
           </p>
@@ -607,7 +611,7 @@ export function MobileThreatsView() {
 
       <UnresolvedEstimatesNotice detail="oneFigure" className="mb-4" />
 
-      <section className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mb-4 p-4">
+      <section className="glass-panel mb-4 p-4">
         <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
           CRQC year (Z)
         </p>
@@ -1067,7 +1071,7 @@ function ThreatCardMobile({
   return (
     <article
       data-deeplink-id={threat.threatId}
-      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] flex flex-col gap-2 p-3.5"
+      className="glass-panel rounded-2xl flex flex-col gap-2 p-3.5"
     >
       <div className="flex flex-wrap items-center gap-1.5">
         <span className="font-mono text-[10.5px] text-muted-foreground">{threat.threatId}</span>

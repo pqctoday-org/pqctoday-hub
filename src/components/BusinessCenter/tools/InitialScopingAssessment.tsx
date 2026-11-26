@@ -231,7 +231,7 @@ export function buildMarkdown(s: ScopingState, industry: string): string {
 function DataSourcesPanel() {
   const [open, setOpen] = useState(false)
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))]">
+    <div className="glass-panel">
       <Button
         variant="ghost"
         onClick={() => setOpen((o) => !o)}
@@ -475,10 +475,7 @@ export const InitialScopingAssessment: React.FC = () => {
 
       <DataSourcesPanel />
 
-      <section
-        aria-labelledby="scoping-systems"
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3"
-      >
+      <section aria-labelledby="scoping-systems" className="glass-panel p-4 space-y-3">
         <div className="flex items-center justify-between">
           <h3 id="scoping-systems" className="text-sm font-semibold font-display text-heading">
             Systems under review
@@ -624,7 +621,7 @@ export const InitialScopingAssessment: React.FC = () => {
         </section>
       </section>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-2">
+      <section className="glass-panel p-4 space-y-2">
         <label
           htmlFor="scoping-estate-instances"
           className="text-sm font-semibold text-foreground block"
@@ -696,7 +693,7 @@ export const InitialScopingAssessment: React.FC = () => {
         )}
       </section>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-2">
+      <section className="glass-panel p-4 space-y-2">
         <RowList
           label={`Top vendor dependencies`}
           rows={state.vendors}

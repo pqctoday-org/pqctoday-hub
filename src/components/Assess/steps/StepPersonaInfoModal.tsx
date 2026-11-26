@@ -137,7 +137,7 @@ export function StepPersonaInfoModal({ stepKey, open, onClose }: StepPersonaInfo
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 embed-backdrop bg-scrim/60 backdrop-blur-sm z-50"
           />
 
           <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4">
@@ -146,7 +146,7 @@ export function StepPersonaInfoModal({ stepKey, open, onClose }: StepPersonaInfo
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 max-w-lg w-full max-h-[85dvh] overflow-y-auto"
+                className="glass-panel p-6 max-w-lg w-full max-h-[85dvh] overflow-y-auto"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="persona-info-modal-title"
@@ -200,7 +200,7 @@ export function StepPersonaInfoModal({ stepKey, open, onClose }: StepPersonaInfo
                           key={p.id}
                           className={
                             isActive
-                              ? 'glass-panel bg-card backdrop-blur-none border border-border rounded-2xl shadow-none p-3 border-l-4 border-l-primary'
+                              ? 'glass-panel glass-panel-row p-3 border-l-4 border-l-primary'
                               : 'rounded-2xl border border-border p-3'
                           }
                         >

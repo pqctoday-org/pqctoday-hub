@@ -131,10 +131,7 @@ function FAQCategorySection({
   }, [category.items, activePersona])
 
   return (
-    <section
-      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6"
-      id={category.id}
-    >
+    <section className="glass-panel p-6" id={category.id}>
       <h2 className="mb-4 text-lg font-semibold font-display text-heading">{category.title}</h2>
       <div>
         {orderedItems.map((item) => (
@@ -226,7 +223,7 @@ export function FAQPage({ inDrawer = false }: { inDrawer?: boolean } = {}) {
         <Link to="/faq" className="text-sm text-primary underline">
           All questions
         </Link>
-        <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 sm:p-6">
+        <section className="glass-panel p-4 sm:p-6">
           <FAQAccordionItem
             key={directAnswer.id}
             item={directAnswer}
@@ -290,10 +287,7 @@ export function FAQPage({ inDrawer = false }: { inDrawer?: boolean } = {}) {
           every question here is resolved out of FAQ_DATA by exact match, and a
           test fails the build if one stops resolving. */}
       {leadItems.length > 0 && selectedPersona && (
-        <section
-          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6"
-          aria-labelledby="faq-lead-heading"
-        >
+        <section className="glass-panel p-6" aria-labelledby="faq-lead-heading">
           <h2
             id="faq-lead-heading"
             className="mb-1 text-lg font-semibold font-display text-heading"
@@ -331,7 +325,7 @@ export function FAQPage({ inDrawer = false }: { inDrawer?: boolean } = {}) {
           <FAQCategorySection key={cat.id} category={cat} activePersona={selectedPersona} />
         ))
       ) : (
-        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-8 text-center">
+        <div className="glass-panel p-8 text-center">
           <p role="status" className="text-muted-foreground">
             No questions match &ldquo;{search}&rdquo;.
           </p>
@@ -349,7 +343,7 @@ export function FAQPage({ inDrawer = false }: { inDrawer?: boolean } = {}) {
       )}
 
       {/* CTA */}
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 text-center">
+      <div className="glass-panel p-6 text-center">
         <p className="mb-3 text-muted-foreground">
           Have a question not listed here? Ask the PQC Assistant for real-time answers.
         </p>

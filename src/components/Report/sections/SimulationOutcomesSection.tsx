@@ -22,7 +22,7 @@ import type { RunScoreBreakdown } from '@/simulation/runScore'
 import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
 
 const GRADE_TONE: Record<RunScoreBreakdown['grade'], string> = {
-  A: 'bg-success/15 text-success border-success/30',
+  A: 'bg-success/15 text-success-legible border-success/30',
   B: 'bg-primary/15 text-primary border-primary/30',
   C: 'bg-warning/15 text-warning border-warning/30',
   D: 'bg-destructive/15 text-destructive border-destructive/30',
@@ -45,7 +45,7 @@ function PhaseList({ phases }: { phases: SimRoadmapInput['phases'] }) {
           key={p.id}
           className={`flex items-center justify-between rounded-lg border px-2.5 py-1.5 text-xs ${
             p.cleared
-              ? 'border-success/30 bg-success/5 text-success'
+              ? 'border-success/30 bg-success/5 text-success-legible'
               : 'border-border bg-muted/20 text-muted-foreground'
           }`}
         >
@@ -69,7 +69,7 @@ function ObjectivesList({
           key={o.id}
           className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold ${
             o.done && (o.achievedYear == null || o.achievedYear <= o.byYear)
-              ? 'bg-success/10 text-success'
+              ? 'bg-success/10 text-success-legible'
               : 'bg-warning/10 text-warning'
           }`}
         >
@@ -208,7 +208,7 @@ export function SimulationOutcomesSection({ defaultOpen = false }: { defaultOpen
             >
               <h4
                 id="sim-outcomes-closure"
-                className="mb-1 flex items-center gap-1.5 text-sm font-semibold text-success"
+                className="mb-1 flex items-center gap-1.5 text-sm font-semibold text-success-legible"
               >
                 <Lock size={14} aria-hidden="true" />
                 Closure record

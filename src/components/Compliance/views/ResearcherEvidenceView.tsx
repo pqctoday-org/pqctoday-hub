@@ -68,7 +68,7 @@ export function ResearcherEvidenceView({
       {/* ── Prominent ContentUpdatesFeed (top of body) ─────────── */}
       <section
         data-section-id="researcher-updates"
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-2 scroll-mt-20"
+        className="glass-panel p-4 space-y-2 scroll-mt-20"
       >
         <header className="flex items-center gap-2">
           <Calendar size={16} className="text-status-info" />
@@ -98,7 +98,7 @@ export function ResearcherEvidenceView({
             {sorted.map((r) => (
               <li
                 key={r.item.id}
-                className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 flex items-start justify-between gap-3"
+                className="glass-panel rounded-2xl p-3 flex items-start justify-between gap-3"
               >
                 <div className="min-w-0 flex-1">
                   <Button
@@ -177,7 +177,7 @@ export function ResearcherEvidenceView({
             {derivedFrameworks.map((d: DerivedResult) => (
               <li
                 key={d.standardId}
-                className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-2.5 flex items-center justify-between gap-2"
+                className="glass-panel rounded-2xl p-2.5 flex items-center justify-between gap-2"
               >
                 <span className="text-sm text-foreground truncate min-w-0">{d.standardLabel}</span>
                 <TrustPathPopover path={d.bestPath} standardLabel={d.standardLabel} />

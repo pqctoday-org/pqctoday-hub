@@ -31,10 +31,7 @@ export function UnderstandingCheckCard({
     <section
       aria-label="Check your understanding"
       data-testid="understanding-check"
-      className={cn(
-        'bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 sm:p-5',
-        className
-      )}
+      className={cn('glass-panel p-4 sm:p-5', className)}
     >
       <div className="flex items-center gap-2">
         <GraduationCap size={18} className="shrink-0 text-primary" aria-hidden="true" />

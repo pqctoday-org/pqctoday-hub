@@ -123,10 +123,7 @@ export const CertEngineerSchemesView: FC<CertEngineerSchemesViewProps> = ({
       <ProfileSummary profile={profile} editable />
       <CertRecordsSummary />
 
-      <section
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3"
-        aria-labelledby="cert-readiness-heading"
-      >
+      <section className="glass-panel p-4 space-y-3" aria-labelledby="cert-readiness-heading">
         <header className="flex flex-wrap items-center gap-2">
           <BadgeCheck size={16} className="text-primary" />
           <h3
@@ -172,7 +169,7 @@ export const CertEngineerSchemesView: FC<CertEngineerSchemesViewProps> = ({
 
       <section
         data-section-id="cert-engineer-schemes"
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3 scroll-mt-20"
+        className="glass-panel p-4 space-y-3 scroll-mt-20"
       >
         <header className="flex items-center gap-2 flex-wrap">
           <Landmark size={16} className="text-primary" />
@@ -225,7 +222,7 @@ export const CertEngineerSchemesView: FC<CertEngineerSchemesViewProps> = ({
 
       <section
         data-section-id="cert-engineer-test-links"
-        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3 scroll-mt-20"
+        className="glass-panel p-4 space-y-3 scroll-mt-20"
       >
         <header className="flex items-center gap-2 flex-wrap">
           <FlaskConical size={16} className="text-primary" />

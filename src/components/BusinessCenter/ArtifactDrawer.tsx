@@ -194,7 +194,7 @@ export function ArtifactDrawer({
     <>
       {/* Backdrop */}
       <div
-        className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 bg-black/60 z-50`}
+        className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 bg-scrim/60 z-50`}
         onClick={onClose}
         onKeyDown={(e) => {
           if (e.key === 'Escape') onClose()

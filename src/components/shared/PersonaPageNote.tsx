@@ -32,10 +32,7 @@ export function PersonaPageNote({ route, className }: PersonaPageNoteProps) {
       <section
         aria-label="What this means for you"
         data-testid="persona-page-note"
-        className={cn(
-          'rounded-3xl border-2 border-ink bg-card p-4 shadow-[0_6px_0_hsl(var(--edge))]',
-          className
-        )}
+        className={cn('glass-panel p-4', className)}
       >
         <p className="text-sm leading-relaxed text-muted-foreground">
           <span className="font-bold text-heading">What this means for you:</span>{' '}
@@ -50,10 +47,7 @@ export function PersonaPageNote({ route, className }: PersonaPageNoteProps) {
     <section
       aria-label="What this means for you"
       data-testid="persona-page-note"
-      className={cn(
-        'rounded-3xl border-2 border-ink bg-card p-4 shadow-[0_6px_0_hsl(var(--edge))]',
-        className
-      )}
+      className={cn('glass-panel p-4', className)}
     >
       <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-heading">
         What this means for you

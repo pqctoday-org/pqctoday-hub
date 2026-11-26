@@ -1029,10 +1029,7 @@ export const ThreatsDashboard: React.FC<{
 
       {!simEmbed && selectedPersona && <PersonaPageNote route="/threats" className="mb-4" />}
       {!simEmbed && !selectedPersona && (
-        <section
-          className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mb-4 p-3"
-          aria-label="Role guidance"
-        >
+        <section className="glass-panel mb-4 p-3" aria-label="Role guidance">
           <p className="text-sm font-semibold text-foreground">
             Choose a role for focused guidance
           </p>
@@ -1079,10 +1076,7 @@ export const ThreatsDashboard: React.FC<{
       )}
 
       {!simEmbed && (
-        <section
-          className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mb-4 p-4"
-          aria-labelledby="threat-primer-title"
-        >
+        <section className="glass-panel mb-4 p-4" aria-labelledby="threat-primer-title">
           <h2 id="threat-primer-title" className="text-sm font-semibold font-display text-heading">
             Two exposure clocks, several kinds of record
           </h2>
@@ -1160,7 +1154,7 @@ export const ThreatsDashboard: React.FC<{
 
         {/* Persona summary card */}
         {personaSummary && (
-          <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="glass-panel rounded-2xl p-3 mb-4 flex items-center gap-2 text-sm text-muted-foreground">
             <Info size={14} className="text-primary flex-shrink-0" />
             <span>{personaSummary}</span>
           </div>

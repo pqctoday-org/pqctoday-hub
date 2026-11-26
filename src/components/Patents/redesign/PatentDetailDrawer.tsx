@@ -86,7 +86,7 @@ function DrawerPanel({
           variant="ghost"
           aria-label="Close detail"
           onClick={onClose}
-          className="absolute inset-0 h-full w-full cursor-default rounded-none bg-black/60 hover:bg-black/60"
+          className="absolute inset-0 h-full w-full cursor-default rounded-none bg-scrim/60 hover:bg-scrim/60"
         />
         <div
           className="absolute right-0 top-0 flex h-full w-[680px] max-w-[94vw] flex-col border-l border-border bg-card transition-transform duration-200 ease-out"

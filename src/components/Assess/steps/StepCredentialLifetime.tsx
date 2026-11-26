@@ -86,7 +86,7 @@ const StepCredentialLifetime = ({
         </>
       )}
 
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 border-l-4 border-l-destructive mb-4">
+      <div className="glass-panel p-4 border-l-4 border-l-destructive mb-4">
         <div className="flex items-start gap-2">
           <Info size={16} className="text-destructive shrink-0 mt-0.5" />
           <p className="text-xs text-muted-foreground">

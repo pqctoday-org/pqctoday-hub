@@ -283,7 +283,7 @@ export function CbomSection({ defaultOpen = false }: { defaultOpen?: boolean }) 
         </div>
       ) : !summary ? (
         <div className="space-y-4">
-          <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 border-l-4 border-l-warning">
+          <div className="glass-panel rounded-2xl p-3 border-l-4 border-l-warning">
             <p className="text-sm text-foreground font-medium">
               You have a saved CBOM (&quot;{latest.title}&quot;, saved{' '}
               {formatDate(latest.createdAt)}) — but it predates structured reporting on this page.

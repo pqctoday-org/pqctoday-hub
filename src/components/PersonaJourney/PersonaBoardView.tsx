@@ -78,7 +78,7 @@ const TONE_BORDER_BG: Record<SideCardTone, string> = {
 }
 
 const TONE_TEXT: Record<SideCardTone, string> = {
-  bad: 'text-critical',
+  bad: 'text-destructive-legible',
   warn: 'text-warning',
   info: 'text-primary',
   accent: 'text-accent',
@@ -285,7 +285,7 @@ export function PersonaBoardView({
       ) : (
         <div
           className={cn(
-            'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] flex h-full flex-col gap-3 p-5',
+            'glass-panel flex h-full flex-col gap-3 p-5',
             TONE_BORDER_BG[board.sideCard.tone]
           )}
           data-testid="default-side-card"
@@ -354,7 +354,7 @@ export function PersonaBoardView({
               </>
             )
             const className = cn(
-              'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] flex flex-col gap-2 p-4',
+              'glass-panel flex flex-col gap-2 p-4',
               highlighted && 'bg-highlight! border-highlight-border!',
               // Only linked cards get affordances — an unlinked card must stay
               // visually identical to how every card rendered before hrefs existed.
@@ -449,7 +449,7 @@ export function PersonaBoardView({
 
         {/* Your next step — the one thing this board asks of a sponsor. */}
         <section
-          className="glass-panel backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-6 flex flex-col gap-3 bg-primary/5 p-5"
+          className="glass-panel mt-6 flex flex-col gap-3 bg-primary/5 p-5"
           aria-labelledby={nextHeadingId}
           data-testid="exec-next-step"
         >

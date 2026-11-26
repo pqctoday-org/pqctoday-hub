@@ -279,8 +279,7 @@ describe('GanttDetailPopover', () => {
 
       // eslint-disable-next-line testing-library/no-node-access
       const popover = screen.getByText('Quantum-Safe Discovery').closest('[role="dialog"]')
-      expect(popover?.className).toContain('shadow-[0_4px_0_hsl(var(--edge))]')
-      expect(popover?.className).toContain('border-ink')
+      expect(popover?.className).toContain('glass-panel')
       expect(popover?.className).toContain('rounded-2xl')
     })
   })

@@ -62,7 +62,7 @@ export const MobilePlaygroundView = () => {
   return (
     <div className="px-4 py-6 space-y-6">
       {/* Hero */}
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 text-center space-y-3">
+      <div className="glass-panel p-6 text-center space-y-3">
         <div className="inline-flex items-center justify-center p-3 rounded-xl bg-secondary/10 border border-secondary/20">
           <FlaskConical size={28} className="text-secondary" />
         </div>
@@ -91,7 +91,7 @@ export const MobilePlaygroundView = () => {
             return (
               <div
                 key={feature.title}
-                className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 flex items-start gap-3 active:scale-[0.98] transition-transform"
+                className="glass-panel p-4 flex items-start gap-3 active:scale-[0.98] transition-transform"
               >
                 <div className="p-2 rounded-lg bg-muted/50 border border-border/30 shrink-0">
                   <Icon size={18} className="text-primary" />
@@ -111,7 +111,7 @@ export const MobilePlaygroundView = () => {
       </div>
 
       {/* Tech Stack Note */}
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-2">
+      <div className="glass-panel p-4 space-y-2">
         <h2 className="text-sm font-semibold font-display text-heading">
           Implementation references
         </h2>

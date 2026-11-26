@@ -148,7 +148,7 @@ const BackupRestoreSection = () => (
           whileInView="visible"
           viewport={{ once: true }}
           aria-label="Export backup — download all progress and settings"
-          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 flex items-center gap-3 hover:border-primary/50 transition-colors text-left w-full"
+          className="glass-panel rounded-2xl p-3 flex items-center gap-3 hover:border-primary/50 transition-colors text-left w-full"
           onClick={() => {
             try {
               UnifiedStorageService.downloadSnapshot()
@@ -177,7 +177,7 @@ const BackupRestoreSection = () => (
           whileInView="visible"
           viewport={{ once: true }}
           aria-label="Import backup — restore from a previously exported backup file"
-          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 flex items-center gap-3 hover:border-secondary/50 transition-colors text-left w-full"
+          className="glass-panel rounded-2xl p-3 flex items-center gap-3 hover:border-secondary/50 transition-colors text-left w-full"
           onClick={() => {
             const input = document.createElement('input')
             input.type = 'file'
@@ -662,10 +662,7 @@ export const LandingView = () => {
             },
             { value: String(LEARN_MODULE_COUNT), label: 'Learning Modules' },
           ].map((stat) => (
-            <div
-              key={stat.label}
-              className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 text-center"
-            >
+            <div key={stat.label} className="glass-panel p-4 text-center">
               <div className="text-2xl md:text-3xl font-bold text-heading">{stat.value}</div>
               <div className="text-xs sm:text-sm text-muted-foreground mt-1 leading-tight">
                 {stat.label}

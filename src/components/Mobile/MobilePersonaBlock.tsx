@@ -19,10 +19,7 @@ export function MobilePersonaBlock({ route, className }: { route: string; classN
     <section
       aria-label="For your role"
       data-testid="persona-block"
-      className={cn(
-        'rounded-2xl border-2 border-ink bg-card p-3 shadow-[0_6px_0_hsl(var(--edge))]',
-        className
-      )}
+      className={cn('glass-panel rounded-2xl p-3', className)}
     >
       <p className="text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-heading">
         For your role

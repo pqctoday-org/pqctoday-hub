@@ -78,7 +78,7 @@ export function RevisionsView() {
 
       <PersonaPageNote route="/revisions" />
 
-      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
+      <div className="glass-panel p-4">
         <GlobalRevisionsFeed
           pageSize={25}
           entityFilter={entityFilter}

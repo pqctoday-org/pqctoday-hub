@@ -28,7 +28,7 @@ function ExternalSourceLink({ url, label }: { url: string; label: string }) {
 
 export function CryptoAgilityDefinitions() {
   return (
-    <details className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] group [&[open]>summary>svg.chev]:rotate-180">
+    <details className="glass-panel group [&[open]>summary>svg.chev]:rotate-180">
       <summary className="flex items-start gap-3 p-4 cursor-pointer list-none select-none">
         <BookOpen size={18} className="text-primary shrink-0 mt-0.5" aria-hidden />
         <div className="flex-1 min-w-0">

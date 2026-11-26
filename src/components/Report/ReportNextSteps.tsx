@@ -122,7 +122,7 @@ export const ReportNextSteps = ({ result }: { result?: AssessmentResult }) => {
               to={step.to}
               onClick={() => logReportCta(step.key)}
               className={clsx(
-                'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] flex flex-col gap-2 p-4 transition-all duration-200 hover:-translate-y-0.5',
+                'glass-panel flex flex-col gap-2 p-4 transition-all duration-200 hover:-translate-y-0.5',
                 primary ? 'border-l-4 border-l-primary' : 'border border-border'
               )}
             >

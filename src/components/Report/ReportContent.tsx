@@ -103,10 +103,7 @@ const EMPTY_SUBCATEGORIES: Record<string, string[]> = {}
 
 function SharedNotIncluded({ title, id }: { title: string; id?: string }) {
   return (
-    <section
-      id={id}
-      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 print:break-inside-avoid"
-    >
+    <section id={id} className="glass-panel p-4 print:break-inside-avoid">
       <h3 className="font-semibold text-foreground">{title}</h3>
       <p className="mt-2 text-sm text-muted-foreground">
         Not included in this shared assessment. This link contains no saved {title.toLowerCase()}{' '}
@@ -424,7 +421,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       they're looking at someone else's report. */}
                     <ReportControlDeck fullTrack={isComprehensive} shared={shared} />
                     {shared && (
-                      <p className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 text-sm text-muted-foreground">
+                      <p className="glass-panel p-4 text-sm text-muted-foreground">
                         This shared assessment includes the sender's result and provided profile.
                         Saved CBOMs, Simulation runs, assessment history, programme ownership,
                         product selections and interactive ROI scenarios are not included. Current
@@ -474,7 +471,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       clear affordance back to the full report. Hidden in print. */}
                     {activePhaseDef && (
                       <div
-                        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 print:hidden border-l-4 border-l-primary"
+                        className="glass-panel rounded-2xl p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 print:hidden border-l-4 border-l-primary"
                         data-testid="report-phase-header"
                       >
                         <div className="flex items-start gap-2 text-sm">
@@ -505,7 +502,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
 
                     {/* Summary / full report toggle (shown when persona hides sections) */}
                     {hasSummaryMode && !showFullReport && (
-                      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 flex items-center justify-between print:hidden">
+                      <div className="glass-panel rounded-2xl p-3 flex items-center justify-between print:hidden">
                         <span className="text-xs text-muted-foreground flex items-center gap-1.5">
                           <Briefcase size={14} className="text-primary" />
                           Showing summary view
@@ -520,7 +517,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       </div>
                     )}
                     {hasSummaryMode && showFullReport && (
-                      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 flex items-center justify-between print:hidden">
+                      <div className="glass-panel rounded-2xl p-3 flex items-center justify-between print:hidden">
                         <span className="text-xs text-muted-foreground flex items-center gap-1.5">
                           <Briefcase size={14} className="text-primary" />
                           Showing full technical report
@@ -873,7 +870,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
 
                     {/* Cross-view CTAs: Persona-specific next steps */}
                     {selectedPersona && PERSONAS[selectedPersona] && (
-                      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 print:hidden">
+                      <div className="glass-panel p-4 print:hidden">
                         <p className="text-sm font-medium text-foreground mb-3">
                           Continue your PQC journey
                         </p>
@@ -914,7 +911,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         )
                         if (hidden.length === 0) return null
                         return (
-                          <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 print:hidden border-l-4 border-l-muted-foreground/30">
+                          <div className="glass-panel rounded-2xl p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 print:hidden border-l-4 border-l-muted-foreground/30">
                             <div className="text-xs text-muted-foreground leading-relaxed">
                               <span className="font-medium text-foreground">
                                 {hidden.length} section{hidden.length !== 1 ? 's' : ''} hidden
@@ -940,7 +937,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       workflow, so it must not appear while they're looking at someone
                       else's shared/example report. */}
                     {!shared && !workflowActive && assessmentStatus === 'complete' && (
-                      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 print:hidden">
+                      <div className="glass-panel p-4 print:hidden">
                         <div className="mt-0 pt-0 border-t border-border">
                           <Button
                             variant="gradient"

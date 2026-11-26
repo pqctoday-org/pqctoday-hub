@@ -247,7 +247,7 @@ export function PieCard({
   })
 
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 flex flex-col gap-3">
+    <div className="glass-panel p-4 flex flex-col gap-3">
       <div className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
         {title}
       </div>
@@ -304,7 +304,7 @@ export function Section({
   action?: React.ReactNode
 }) {
   return (
-    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+    <div className="glass-panel p-4 space-y-3">
       <div className="flex items-start justify-between gap-2">
         <div>
           <h3 className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">

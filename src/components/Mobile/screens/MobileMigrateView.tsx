@@ -800,7 +800,7 @@ export function MobileMigrateView() {
               </div>
 
               {asset && decision ? (
-                <div className="rounded-2xl border-2 border-ink bg-card shadow-[0_6px_0_hsl(var(--edge))] p-3.5">
+                <div className="glass-panel rounded-2xl p-3.5">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex flex-wrap items-center gap-1.5">
                       <h2 className="text-[13.5px] font-bold text-foreground">{asset.label}</h2>
@@ -842,7 +842,7 @@ export function MobileMigrateView() {
                   </p>
                 </div>
               ) : selectedDomain ? (
-                <div className="rounded-2xl border-2 border-ink bg-card shadow-[0_6px_0_hsl(var(--edge))] p-3.5">
+                <div className="glass-panel rounded-2xl p-3.5">
                   <h2 className="text-[13.5px] font-bold text-foreground">
                     {DOMAINS[selectedDomain].label}
                   </h2>
@@ -2190,7 +2190,7 @@ function MobileVendorRoadmapPanel({
         <section
           aria-labelledby={otherHeadingId}
           data-testid="analysis-other-source"
-          className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] flex flex-col gap-2.5 p-3"
+          className="glass-panel flex flex-col gap-2.5 p-3"
         >
           <h3 id={otherHeadingId} className="text-[12.5px] font-bold text-foreground">
             Analysis from another source
@@ -2311,10 +2311,7 @@ function MobileVendorRiskTab() {
         </p>
       </div>
       {risks.map((c) => (
-        <div
-          key={c.key}
-          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3.5"
-        >
+        <div key={c.key} className="glass-panel rounded-2xl p-3.5">
           <div className="flex items-center justify-between gap-2">
             <p className="text-[12px] font-bold text-foreground">{c.title}</p>
             <span

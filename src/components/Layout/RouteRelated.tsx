@@ -31,7 +31,7 @@ export function RouteRelated({ mobile }: { mobile: boolean }) {
     <section
       aria-label="Related content"
       data-testid="related-content"
-      className="mx-4 mb-4 rounded-3xl border-2 border-ink bg-card p-3.5 shadow-[0_6px_0_hsl(var(--edge))]"
+      className="mx-4 mb-4 glass-panel p-3.5"
     >
       <div className="mb-2.5 flex items-center gap-2">
         <Network size={15} className="shrink-0 text-primary" aria-hidden="true" />

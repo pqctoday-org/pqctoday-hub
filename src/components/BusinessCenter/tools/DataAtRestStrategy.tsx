@@ -262,7 +262,7 @@ export const DataAtRestStrategy: React.FC = () => {
         </div>
       </header>
 
-      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+      <section className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold font-display text-heading">
           Data stores · {storeCount} store{storeCount === 1 ? '' : 's'}
         </h3>
@@ -285,7 +285,7 @@ export const DataAtRestStrategy: React.FC = () => {
               key={row.id}
               role="group"
               aria-label={row.name || 'New data store'}
-              className="glass-panel bg-card backdrop-blur-none border border-border rounded-2xl shadow-none p-3 space-y-3"
+              className="glass-panel glass-panel-row p-3 space-y-3"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="block">
