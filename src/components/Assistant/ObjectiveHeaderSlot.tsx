@@ -13,7 +13,20 @@ import {
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { nowStep } from '@/services/journey/stepRules'
 import { describeStep, journeyHref, objectiveTitle } from '@/services/journey/stepView'
+import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { COPY } from './copy'
+import { useAssistantLayout } from './useAssistantLayout'
+
+/**
+ * Following a link from the header: the phone's full-screen sheet closes so the page it leads to
+ * is in view; the desktop drawer stays beside the page.
+ */
+function useCloseSheetOnFollow(): () => void {
+  const sheet = useAssistantLayout() === 'sheet'
+  return () => {
+    if (sheet) useRightPanelStore.getState().close()
+  }
+}
 
 /**
  * The drawer header's objective area: "Objective", the focused objective's title, its state chip,
@@ -23,11 +36,21 @@ import { COPY } from './copy'
  */
 export function ObjectiveHeaderSlot() {
   const objective = useFocusedObjective()
+  const followed = useCloseSheetOnFollow()
   if (!objective) {
     return (
       <div data-testid="objective-header-slot">
         <Eyebrow as="p">Objective</Eyebrow>
-        <p className="text-xs text-muted-foreground">{COPY.noObjective}</p>
+        <div className="flex flex-wrap items-center gap-x-3">
+          <p className="text-xs text-muted-foreground">{COPY.noObjective}</p>
+          <Link
+            to={journeyHref({ new: true })}
+            onClick={followed}
+            className="text-xs font-semibold text-primary-legible underline underline-offset-4"
+          >
+            {COPY.startObjective}
+          </Link>
+        </div>
       </div>
     )
   }
@@ -44,6 +67,7 @@ function FocusedObjective() {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const listId = useId()
+  const followed = useCloseSheetOnFollow()
   if (!objective) return null
 
   const now = nowStep(objective, isDone)
@@ -89,10 +113,25 @@ function FocusedObjective() {
           <li>
             <Link
               to={journeyHref()}
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                setOpen(false)
+                followed()
+              }}
               className="font-semibold text-primary-legible underline underline-offset-4"
             >
               Manage objectives
+            </Link>
+          </li>
+          <li>
+            <Link
+              to={journeyHref({ new: true })}
+              onClick={() => {
+                setOpen(false)
+                followed()
+              }}
+              className="font-semibold text-primary-legible underline underline-offset-4"
+            >
+              {COPY.newObjective}
             </Link>
           </li>
         </ul>

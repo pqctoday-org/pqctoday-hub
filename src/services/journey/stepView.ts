@@ -21,6 +21,8 @@ export interface JourneyAddress {
   view?: 'objectives' | 'role-map' | 'my-work' | 'updates'
   objective?: string
   step?: string
+  /** Open the new-objective form (`new=1`). */
+  new?: boolean
 }
 
 /** The address of a place in Your journey. `mode=journey` is how the Learn page names the view. */
@@ -29,6 +31,7 @@ export function journeyHref(a: JourneyAddress = {}): string {
   if (a.view && a.view !== 'objectives') p.set('jview', a.view)
   if (a.objective) p.set('objective', a.objective)
   if (a.step) p.set('step', a.step)
+  if (a.new) p.set('new', '1')
   return `/learn?${p.toString()}`
 }
 

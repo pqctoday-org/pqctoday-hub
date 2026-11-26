@@ -36,6 +36,8 @@ export const COPY = {
   linkCopied: 'Link copied',
   paidReference: 'The Hub links to this standard and does not quote it.',
   noObjective: 'No objective yet',
+  startObjective: 'Start an objective',
+  newObjective: 'New objective',
   toolFailed: 'This tool could not open here.',
   toolFailedKept: 'The link still works.',
   suggested: 'Suggested for you',

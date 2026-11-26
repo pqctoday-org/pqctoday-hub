@@ -64,6 +64,12 @@ export function NewObjectiveFlow({ onCreated, onCancel, initialGoal = '' }: NewO
   const retryRef = useRef<HTMLButtonElement>(null)
   const fieldId = useId()
   const resultRef = useRef<HTMLDivElement>(null)
+  const goalRef = useRef<HTMLTextAreaElement>(null)
+
+  // The form opens ready to type: the text box has focus.
+  useEffect(() => {
+    goalRef.current?.focus()
+  }, [])
 
   useEffect(() => {
     if (preview) resultRef.current?.focus()
@@ -105,6 +111,7 @@ export function NewObjectiveFlow({ onCreated, onCancel, initialGoal = '' }: NewO
       </p>
       <StoryTextarea
         id={fieldId}
+        ref={goalRef}
         className="mt-3"
         value={goal}
         onChange={(e) => {

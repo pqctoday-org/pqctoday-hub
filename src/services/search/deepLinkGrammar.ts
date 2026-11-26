@@ -297,7 +297,8 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
     path: exact('/learn'),
     // `view` = journey (Your journey) or nice (the workforce view); `role` = a persona id or a NICE work-role
     // id, which opens Role map on that role's computed path without changing the learner's own role.
-    queryKeys: ['track', 'persona', 'mode', 'stage', 'area', 'view', 'role'],
+    // `new=1` (with mode=journey) opens Your journey on the new-objective form.
+    queryKeys: ['track', 'persona', 'mode', 'stage', 'area', 'view', 'role', 'new'],
     description: 'Learn catalog',
   },
   {

@@ -2,6 +2,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { Link } from 'react-router'
 import { JourneyStepBar } from './JourneyStepBar'
 import { CompletePanel } from './CompletePanel'
 import { NewObjectiveFlow } from './NewObjectiveFlow'
@@ -549,6 +550,29 @@ describe('Your journey views', () => {
     expect(screen.getByRole('link', { name: /^Start here:/ })).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Start an objective' }))
     expect(screen.getByTestId('new-objective')).toBeInTheDocument()
+  })
+
+  it('opens the form with the text box focused from the address, and the grammar accepts that address', () => {
+    expect(validateDeepLink('/learn?mode=journey&new=1')).toBeNull()
+    renderAt(<YourJourneyView />, '/learn?mode=journey&new=1')
+    expect(screen.getByTestId('new-objective')).toBeInTheDocument()
+    expect(screen.getByLabelText('What do you want to be able to do?')).toHaveFocus()
+  })
+
+  it('opens the form when the address gains new=1 while the view is open, and Cancel clears it', async () => {
+    const user = userEvent.setup()
+    renderAt(
+      <>
+        <YourJourneyView />
+        <Link to="/learn?mode=journey&new=1">open form</Link>
+      </>
+    )
+    expect(screen.queryByTestId('new-objective')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('link', { name: 'open form' }))
+    expect(screen.getByTestId('new-objective')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
+    expect(screen.queryByTestId('new-objective')).not.toBeInTheDocument()
+    expect(screen.getAllByTestId('where')[0]).not.toHaveTextContent('new=1')
   })
 
   it('shows a step page for a self-assessed step opened from the address', () => {

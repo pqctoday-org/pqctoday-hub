@@ -151,9 +151,49 @@ describe('mount points hold the real panels', () => {
 })
 
 describe('the drawer header objective area', () => {
-  it('says No objective yet without one', () => {
-    renderAt(<ObjectiveHeaderSlot />)
+  it('says No objective yet without one, and offers Start an objective', async () => {
+    const user = userEvent.setup()
+    renderAt(<ObjectiveHeaderSlot />, '/playground')
     expect(screen.getByText('No objective yet')).toBeInTheDocument()
+    const start = screen.getByRole('link', { name: 'Start an objective' })
+    expect(start).toHaveAttribute('href', '/learn?mode=journey&new=1')
+    await user.click(start)
+    expect(screen.getByTestId('where')).toHaveTextContent('/learn?mode=journey&new=1')
+  })
+
+  it('on a phone, Start an objective closes the sheet so the form is in view', async () => {
+    const user = userEvent.setup()
+    const original = window.matchMedia
+    window.matchMedia = ((query: string) => ({
+      matches: query === '(max-width: 639px)',
+      media: query,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      onchange: null,
+      dispatchEvent: () => false,
+    })) as unknown as typeof window.matchMedia
+    useRightPanelStore.setState({ isOpen: true, activeTab: 'chat' })
+    renderAt(<ObjectiveHeaderSlot />, '/playground')
+    try {
+      await user.click(screen.getByRole('link', { name: 'Start an objective' }))
+      expect(useRightPanelStore.getState().isOpen).toBe(false)
+    } finally {
+      window.matchMedia = original
+    }
+  })
+
+  it('offers New objective beside Manage objectives once objectives exist', async () => {
+    const user = userEvent.setup()
+    saveTlsObjective()
+    renderAt(<ObjectiveHeaderSlot />, '/playground')
+    const slot = screen.getByTestId('objective-header-slot')
+    expect(within(slot).queryByRole('link', { name: 'Start an objective' })).not.toBeInTheDocument()
+    await user.click(within(slot).getByRole('button', { name: 'Switch' }))
+    const fresh = within(slot).getByRole('link', { name: 'New objective' })
+    expect(fresh).toHaveAttribute('href', '/learn?mode=journey&new=1')
+    expect(within(slot).getByRole('link', { name: 'Manage objectives' })).toBeInTheDocument()
   })
 
   it('shows the objective in focus, offers Switch and Manage objectives, and Go to your current step', async () => {

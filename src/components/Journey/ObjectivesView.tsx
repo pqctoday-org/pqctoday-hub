@@ -304,7 +304,10 @@ export function ObjectivesView() {
   const level = usePersonaStore((s) => s.experienceLevel)
   const isDone = useIsDone()
   const [params, setParams] = useSearchParams()
-  const [creating, setCreating] = useState(() => params.get('new') === '1')
+  // The form is open after the button is pressed, or while the address says `new=1` (a link from
+  // the Assistant's header, or a first visit), including when that link is followed with this view open.
+  const [opened, setOpened] = useState(false)
+  const creating = opened || params.get('new') === '1'
   const focusObjective = useJourneyStore((s) => s.focusObjective)
 
   const stepParam = params.get('step')
@@ -324,10 +327,20 @@ export function ObjectivesView() {
     <div className="space-y-5" data-testid="objectives-view">
       {creating ? (
         <NewObjectiveFlow
-          onCancel={() => setCreating(false)}
+          onCancel={() => {
+            setOpened(false)
+            setParams(
+              (p) => {
+                const next = new URLSearchParams(p)
+                next.delete('new')
+                return next
+              },
+              { replace: true }
+            )
+          }}
           onCreated={(id) => {
             focusObjective(id)
-            setCreating(false)
+            setOpened(false)
             setParams(
               (p) => {
                 const next = new URLSearchParams(p)
@@ -347,7 +360,7 @@ export function ObjectivesView() {
               ? 'Want a path? Tell us what you want to be able to do and we build the steps.'
               : 'Each role keeps its own objectives.'}
           </p>
-          <StoryButton variant="primary" onClick={() => setCreating(true)}>
+          <StoryButton variant="primary" onClick={() => setOpened(true)}>
             {objectives.length === 0 ? 'Start an objective' : 'New objective'}
           </StoryButton>
         </div>
