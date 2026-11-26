@@ -1,20 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
-import { Link } from 'react-router'
 import {
   Users,
   UserCog,
   Layers,
   GraduationCap,
-  Shield,
   ArrowRight,
   Hammer,
   Handshake,
   ShoppingCart,
   Award,
-  ClipboardCheck,
-  Briefcase,
-  Landmark,
 } from 'lucide-react'
 import { NICE_WORK_ROLES, NICE_COMPONENTS_VERSION } from '@/data/niceFramework'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
@@ -411,72 +406,6 @@ const Step4ResourcesAndCta: React.FC<{ onNavigateToWorkshop: () => void }> = ({
   onNavigateToWorkshop,
 }) => (
   <div className="space-y-8 w-full">
-    <section className="glass-panel p-6 border-secondary/20">
-      <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <Link
-          to="/learn/pqc-governance"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Users size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">PQC Governance &amp; Policy</div>
-            <div className="text-xs text-muted-foreground">
-              RACI matrices, escalation paths, and KPI dashboards for the program
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/assess"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <ClipboardCheck size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Risk Assessment</div>
-            <div className="text-xs text-muted-foreground">
-              Size your estate and surface the cryptographic instances that drive headcount
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/learn/crypto-agility"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Shield size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Crypto Agility</div>
-            <div className="text-xs text-muted-foreground">
-              The design patterns crypto champions enforce in reviews
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/learn/pqc-business-case"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Briefcase size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">PQC Business Case</div>
-            <div className="text-xs text-muted-foreground">
-              Justify the FTE budget your sizing calculation produces
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/learn/standards-bodies"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Landmark size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Standards Bodies</div>
-            <div className="text-xs text-muted-foreground">
-              The bodies whose outputs the team must track and implement
-            </div>
-          </div>
-        </Link>
-      </div>
-    </section>
-
     <div className="text-center">
       <Button variant="gradient" onClick={onNavigateToWorkshop} className="gap-2">
         Start Workshop <ArrowRight size={18} />

@@ -365,12 +365,4 @@ describe('HsmPqc: Azure Cloud HSM, Azure Managed HSM, Securosys and Tessera card
       expect(tessera.slice(0, 1800), word).not.toContain(word)
     }
   })
-
-  it('links to the trust-hardware comparison step from the closing block', () => {
-    openIntroText()
-    const links = screen
-      .getAllByRole('link', { name: /Compare with the other trust hardware/ })
-      .map((a) => a.getAttribute('href'))
-    expect(links).toEqual(['/learn/arch-quantum-impact?tab=workshop&step=5'])
-  })
 })

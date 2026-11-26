@@ -5,17 +5,7 @@ import { Link } from 'react-router'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
-import {
-  Shield,
-  ArrowRight,
-  Ruler,
-  Globe,
-  ListChecks,
-  BookOpen,
-  FlaskConical,
-  Network,
-  AlertTriangle,
-} from 'lucide-react'
+import { Shield, ArrowRight, Ruler, Globe, ListChecks, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface DNSSECIntroductionProps {
@@ -280,61 +270,6 @@ export const DNSSECIntroduction: React.FC<DNSSECIntroductionProps> = ({ onNaviga
             shrink per-query signature cost. These remain individual drafts without IETF
             working-group adoption.
           </p>
-        </div>
-      </section>
-
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/algorithms?tab=support&protocol=dnssec"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Network size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Protocol Support Matrix</div>
-              <div className="text-xs text-muted-foreground">
-                Live-tracked DNSSEC deployment posture, refs, and stage
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/library?q=DNSSEC"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <FlaskConical size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Standards Library</div>
-              <div className="text-xs text-muted-foreground">
-                RFCs and IETF drafts behind PQ DNSSEC
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/network-security-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Shield size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Network Security</div>
-              <div className="text-xs text-muted-foreground">
-                Broader PQC migration across network security infrastructure
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/vpn-ssh-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <BookOpen size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">VPN/IPsec & SSH</div>
-              <div className="text-xs text-muted-foreground">
-                Another protocol facing the same PQC message-size pressure
-              </div>
-            </div>
-          </Link>
         </div>
       </section>
 

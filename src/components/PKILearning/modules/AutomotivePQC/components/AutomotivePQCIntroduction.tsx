@@ -16,7 +16,6 @@ import {
   AlertTriangle,
   CheckCircle,
   XCircle,
-  Cpu,
   Minus,
 } from 'lucide-react'
 import { Link } from 'react-router'
@@ -1310,62 +1309,6 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
         icon={<Clock size={20} className="text-primary" />}
       />
 
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/learn/iot-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Cpu size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">
-                IoT &amp; Embedded Device PQC
-              </div>
-              <div className="text-xs text-muted-foreground">
-                PQC for V2X, CAN bus, and automotive OT networks
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/hsm-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <HardDrive size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">HSM &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">
-                Automotive-grade HSMs for secure boot and ECU key storage
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/emv-payment-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <CreditCard size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">EMV Payment &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">
-                In-vehicle payment systems and connected mobility PQC migration
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/vendor-risk"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <AlertTriangle size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Vendor Risk</div>
-              <div className="text-xs text-muted-foreground">
-                Tier-1 and Tier-2 supplier PQC readiness assessment
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
       {/* -- Standards & Further Reading ---------------------------------------- */}
       <CollapsibleSection
         title="Standards & Further Reading"

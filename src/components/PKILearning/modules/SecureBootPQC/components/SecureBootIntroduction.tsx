@@ -11,10 +11,8 @@ import {
   Lock,
   ArrowRight,
   ChevronRight,
-  BookOpen,
   Cpu,
   Route,
-  Monitor,
   ExternalLink,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
@@ -1150,87 +1148,6 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
           </div>
         </div>
       </CollapsibleSection>
-
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/learn/hsm-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Key size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">HSM &amp; PQC Operations</div>
-              <div className="text-xs text-muted-foreground">
-                PKCS#11 v3.2 mechanisms and firmware migration
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/kms-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">
-                KMS &amp; PQC Key Management
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Envelope encryption and key hierarchy patterns
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/confidential-computing"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Cpu size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Confidential Computing</div>
-              <div className="text-xs text-muted-foreground">TEEs, remote attestation, and PQC</div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/crypto-agility"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <BookOpen size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Crypto Agility</div>
-              <div className="text-xs text-muted-foreground">
-                Algorithm-agnostic cryptographic infrastructure
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/arch-quantum-impact?tab=workshop&step=5"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Route size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">
-                Compare with the other trust hardware
-              </div>
-              <div className="text-xs text-muted-foreground">
-                TPMs, Caliptra, HSMs, confidential computing and DPUs side by side
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/os-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Monitor size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">OS Cryptographic Stacks</div>
-              <div className="text-xs text-muted-foreground">
-                OS-level crypto providers, SSH host keys, and system TLS policy
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
 
       <VendorCoverageNotice migrateLayer="Hardware" migrateDomain="codesign" />
 

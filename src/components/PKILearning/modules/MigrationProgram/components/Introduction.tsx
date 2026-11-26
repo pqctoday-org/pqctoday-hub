@@ -12,7 +12,6 @@ import {
   BarChart3,
   Shield,
   Calendar,
-  Briefcase,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { LearnStepper } from '@/components/PKILearning/LearnStepper'
@@ -303,73 +302,6 @@ const Step2SuccessAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> = 
             )
           })}
         </div>
-      </div>
-    </section>
-
-    {/* Related Resources */}
-    <section className="glass-panel p-6 border-secondary/20">
-      <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <Link
-          to="/assess"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <ClipboardCheck size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Risk Assessment</div>
-            <div className="text-xs text-muted-foreground">
-              Run a guided PQC readiness assessment
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/timeline"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Calendar size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Regulatory Timeline</div>
-            <div className="text-xs text-muted-foreground">
-              Country-by-country PQC deadlines and milestones
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/learn/crypto-agility"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Route size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Crypto Agility</div>
-            <div className="text-xs text-muted-foreground">
-              Architecture patterns for rapid algorithm migration
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/learn/pqc-governance"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Shield size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">PQC Governance &amp; Policy</div>
-            <div className="text-xs text-muted-foreground">
-              RACI matrices, policy drafts, and KPI dashboards
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/learn/pqc-business-case"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Briefcase size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">PQC Business Case</div>
-            <div className="text-xs text-muted-foreground">
-              Build executive-ready justification for PQC investment
-            </div>
-          </div>
-        </Link>
       </div>
     </section>
 

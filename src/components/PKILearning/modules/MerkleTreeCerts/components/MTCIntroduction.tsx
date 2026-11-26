@@ -1,16 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState } from 'react'
 import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
-import { Link } from 'react-router'
 import {
   TreePine,
   ArrowRight,
   AlertTriangle,
   Shield,
-  GitBranch,
   Globe,
   Scale,
-  Lock,
   ChevronDown,
   Layers,
   Eye,
@@ -513,58 +510,6 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
               <li>&bull; Radboud University (independent implementation analysis, 2025)</li>
             </ul>
           </div>
-        </div>
-      </section>
-
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <p className="text-foreground/80 leading-relaxed mb-4">
-          Merkle trees are fundamental to post-quantum cryptography beyond MTCs.{' '}
-          <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip> (SPHINCS+, FIPS 205) uses nested
-          Merkle trees internally for quantum-resistant signatures. Stateful hash-based schemes like{' '}
-          <InlineTooltip term="LMS">LMS</InlineTooltip> and{' '}
-          <InlineTooltip term="XMSS">XMSS</InlineTooltip> use Merkle trees to organize pools of
-          one-time signing keys. MTCs apply the same principle at the <em>infrastructure</em> level
-          to solve the certificate size problem PQ signatures create.
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/learn/stateful-signatures"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <GitBranch size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Stateful Hash Signatures</div>
-              <div className="text-xs text-muted-foreground">
-                LMS, XMSS, and SLH-DSA Merkle tree internals
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/pki-workshop"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">PKI Workshop</div>
-              <div className="text-xs text-muted-foreground">
-                Certificate issuance and PQC root of trust migration
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/tls-basics"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Lock size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">TLS Basics &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">
-                How MTCs reduce TLS handshake size with PQ certificates
-              </div>
-            </div>
-          </Link>
         </div>
       </section>
 

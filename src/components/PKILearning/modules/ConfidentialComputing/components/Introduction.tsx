@@ -16,7 +16,6 @@ import {
   Eye,
   Layers,
   Link2,
-  KeyRound,
   Sigma,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
@@ -807,75 +806,6 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           </Button>
         </div>
       </div>
-
-      {/* ── Related Resources ────────────────────────────────────────────── */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/learn/hsm-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <HardDrive size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">HSM &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">
-                Hardware roots of trust for TEE attestation keys
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/kms-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <KeyRound size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">
-                Sealing key management and PQC key wrapping for enclaves
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/pki-workshop"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">PKI Workshop</div>
-              <div className="text-xs text-muted-foreground">
-                Certificate infrastructure for remote attestation chains
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/secure-boot-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Lock size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Secure Boot &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">
-                UEFI and firmware signing that underpins TEE security
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/arch-quantum-impact?tab=workshop&step=5"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Layers size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">
-                Compare with the other trust hardware
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Side by side with TPMs, HSMs, DPUs and other roots of trust
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
 
       <VendorCoverageNotice migrateLayer="Hardware" migrateDomain="hardware" />
 

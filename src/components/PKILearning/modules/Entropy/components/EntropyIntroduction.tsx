@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
-import { Link } from 'react-router'
 import {
   Shuffle,
   FileText,
@@ -12,7 +11,6 @@ import {
   Atom,
   Shield,
   ArrowRight,
-  Radio,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
@@ -599,60 +597,6 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
         </Button>
       </section>
 
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-          <Link
-            to="/algorithms"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Shield size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Algorithm Explorer</div>
-              <div className="text-xs text-muted-foreground">
-                Compare PQC key sizes, security levels &amp; performance
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/playground"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Cpu size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Crypto Playground</div>
-              <div className="text-xs text-muted-foreground">
-                Hands-on hashing, KEM, and symmetric operations
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/kms-pqc"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <ShieldCheck size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">KMS & PQC Key Management</div>
-              <div className="text-xs text-muted-foreground">
-                Key lifecycle, envelope encryption, and PQC rotation
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/qkd"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Radio size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Quantum Key Distribution</div>
-              <div className="text-xs text-muted-foreground">
-                BB84 protocol, QRNG sources, and real-world QKD deployments
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
       <ReadingCompleteButton />
     </div>
   )

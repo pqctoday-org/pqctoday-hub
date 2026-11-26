@@ -191,7 +191,7 @@ describe('Which scheme for which use - the section', () => {
 })
 
 describe('Which scheme for which use - on the Learn tab', () => {
-  it('comes after "What the lab tests" and before the related resources', () => {
+  it('comes after "What the lab tests"', () => {
     render(
       <EmbedProvider>
         <MemoryRouter>
@@ -201,9 +201,7 @@ describe('Which scheme for which use - on the Learn tab', () => {
     )
     const lab = screen.getByRole('heading', { name: 'What the lab tests' })
     const scheme = screen.getByRole('heading', { name: 'Which scheme for which use' })
-    const resources = screen.getByRole('heading', { name: 'Related Resources' })
     const FOLLOWS = Node.DOCUMENT_POSITION_FOLLOWING
     expect(lab.compareDocumentPosition(scheme) & FOLLOWS).toBeTruthy()
-    expect(scheme.compareDocumentPosition(resources) & FOLLOWS).toBeTruthy()
   })
 })

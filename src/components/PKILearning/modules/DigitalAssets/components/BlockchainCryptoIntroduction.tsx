@@ -1,20 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
-import { Link } from 'react-router'
-import {
-  Shield,
-  Key,
-  Wallet,
-  PenTool,
-  GitBranch,
-  ArrowRight,
-  BarChart3,
-  FlaskConical,
-  ClipboardCheck,
-  Layers,
-  RefreshCw,
-} from 'lucide-react'
+import { Shield, Key, Wallet, PenTool, GitBranch, ArrowRight } from 'lucide-react'
 import { HDWalletFlowDiagram } from './CryptoFlowDiagram'
 import { InfoTooltip } from './InfoTooltip'
 import { PQCThreatSummary } from './PQCThreatSummary'
@@ -312,96 +299,6 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
 
       <SourcedSectionPanel section={AIR_GAPPED_VAULT_SECTION} />
 
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/threats?industry=Cryptocurrency%20%2F%20Blockchain"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Shield size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Threat Dashboard</div>
-              <div className="text-xs text-muted-foreground">
-                Industry-specific quantum risks &amp; PQC replacements
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/algorithms"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <BarChart3 size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Algorithm Explorer</div>
-              <div className="text-xs text-muted-foreground">
-                Compare key sizes, security levels &amp; performance
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/playground"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <FlaskConical size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Playground</div>
-              <div className="text-xs text-muted-foreground">
-                Experiment with PQC algorithms interactively
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/assess"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <ClipboardCheck size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Risk Assessment</div>
-              <div className="text-xs text-muted-foreground">
-                Assess your organisation&apos;s quantum readiness
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/crypto-agility"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <RefreshCw size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Crypto Agility</div>
-              <div className="text-xs text-muted-foreground">
-                Algorithm-agnostic wallet and smart contract design
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/kms-pqc"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Key size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">
-                PQC key management for custodial and self-custody wallets
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/hybrid-crypto"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Layers size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Hybrid Cryptography</div>
-              <div className="text-xs text-muted-foreground">
-                Transitional signature schemes for DeFi protocols and wallets
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
       <ReadingCompleteButton />
     </div>
   )

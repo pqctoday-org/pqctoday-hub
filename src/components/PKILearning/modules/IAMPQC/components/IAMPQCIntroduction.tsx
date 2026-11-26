@@ -2,17 +2,7 @@
 import React from 'react'
 import { Link } from 'react-router'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
-import {
-  Key,
-  Database,
-  BarChart3,
-  Shield,
-  ArrowRight,
-  Lock,
-  BookOpen,
-  Route,
-  Wifi,
-} from 'lucide-react'
+import { Key, Database, BarChart3, Shield, ArrowRight, Lock, Wifi } from 'lucide-react'
 import {
   IAM_PROTOCOLS,
   DIRECTORY_SERVICES,
@@ -467,65 +457,6 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
           </div>
         </div>
       </LearnSection>
-
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/learn/pki-workshop"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Key size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">
-                PKI &amp; Certificate Authority
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Certificate lifecycle, CA hierarchies, and PQC certificate formats
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/kms-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">
-                KMS &amp; PQC Key Management
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Envelope encryption, key hierarchy, and cross-provider KMS strategies
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/crypto-agility"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <BookOpen size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Crypto Agility</div>
-              <div className="text-xs text-muted-foreground">
-                Algorithm-agnostic design patterns for IAM infrastructure
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/migrate?domain=identity"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Route size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Migration Workbench</div>
-              <div className="text-xs text-muted-foreground">
-                IAM vendor migration status and PQC product catalog
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
 
       <VendorCoverageNotice migrateLayer="Security Stack" migrateDomain="identity" />
 

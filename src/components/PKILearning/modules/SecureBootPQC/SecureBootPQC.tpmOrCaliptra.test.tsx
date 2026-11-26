@@ -72,12 +72,4 @@ describe('Secure Boot: TPM or Caliptra', () => {
     expect(rag).toContain('runs ml-dsa key generation and signing to sign pcrs')
     expect(rag).toContain('the two can be present on one platform')
   })
-
-  it('links to the trust-hardware comparison from the closing block', () => {
-    renderIntro()
-    const links = screen
-      .getAllByRole('link', { name: /Compare with the other trust hardware/ })
-      .map((a) => a.getAttribute('href'))
-    expect(links).toEqual(['/learn/arch-quantum-impact?tab=workshop&step=5'])
-  })
 })

@@ -10,11 +10,6 @@ import {
   ArrowLeftRight,
   AlertTriangle,
   ArrowRight,
-  Terminal,
-  BookOpen,
-  Library,
-  KeyRound,
-  ExternalLink,
   ClipboardCheck,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -833,77 +828,6 @@ const Step3StateAndResources: React.FC<{ onNavigateToWorkshop: () => void }> = (
 
     {/* Which scheme for which use */}
     <SchemeForUseSection />
-
-    {/* Related Resources */}
-    <section className="glass-panel p-6 border-secondary/20">
-      <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <Link
-          to="/openssl"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Terminal size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">OpenSSL Studio</div>
-            <div className="text-xs text-muted-foreground">
-              Run LMS/XMSS operations with OpenSSL 3.x WASM
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/algorithms?tab=detailed&highlight=LMS,XMSS"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <BookOpen size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Algorithm Reference</div>
-            <div className="text-xs text-muted-foreground">
-              Detailed specs for all PQC algorithms including LMS and XMSS
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/library?q=stateful"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Library size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Software Library</div>
-            <div className="text-xs text-muted-foreground">
-              PQC-ready libraries and tools with stateful signature support
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/learn/pki-workshop"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <KeyRound size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">PKI Workshop</div>
-            <div className="text-xs text-muted-foreground">
-              Key management fundamentals and certificate chain building
-            </div>
-          </div>
-        </Link>
-        <a
-          href="https://www.rfc-editor.org/rfc/rfc10033"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <ExternalLink size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">
-              RFC 10033: Hash-Based Signatures: State and Backup Management
-            </div>
-            <div className="text-xs text-muted-foreground">
-              Practical guidance on state, backup, and recovery for LMS/XMSS deployments
-            </div>
-          </div>
-        </a>
-      </div>
-    </section>
 
     {/* CTA */}
     <div className="text-center">

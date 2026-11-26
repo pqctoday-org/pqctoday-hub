@@ -1,18 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
-import { Link } from 'react-router'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
-import {
-  Key,
-  Shield,
-  RefreshCw,
-  Cloud,
-  Terminal,
-  ArrowRight,
-  Lock,
-  Route,
-  Workflow,
-} from 'lucide-react'
+import { Key, Shield, RefreshCw, Cloud, Terminal, ArrowRight, Lock } from 'lucide-react'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
@@ -612,75 +601,6 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
           </div>
         </div>
       </LearnSection>
-
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/learn/kms-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Key size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">
-                KMS &amp; PQC Key Management
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Envelope encryption, ML-KEM key wrapping, multi-provider KMS
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/hsm-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Shield size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">HSM &amp; PQC Operations</div>
-              <div className="text-xs text-muted-foreground">
-                PKCS#11 v3.2, HSM vendor migration, FIPS 140-3
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/crypto-agility"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <RefreshCw size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Crypto Agility</div>
-              <div className="text-xs text-muted-foreground">
-                Algorithm-agnostic design patterns for infrastructure
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/migrate?domain=kms"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Route size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Migration Workbench</div>
-              <div className="text-xs text-muted-foreground">
-                Vault, AWS, Azure, GCP PQC readiness tracker
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/platform-eng-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Workflow size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Platform Engineering</div>
-              <div className="text-xs text-muted-foreground">
-                CI/CD pipeline crypto, container signing, and policy enforcement
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
 
       <VendorCoverageNotice migrateLayer="Security Stack" migrateDomain="kms" />
 

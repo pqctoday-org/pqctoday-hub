@@ -10,15 +10,11 @@ import { timelineMilestones } from './content'
 import {
   AlertTriangle,
   ArrowRight,
-  BarChart3,
-  Calendar,
-  ClipboardCheck,
   Shield,
   Users,
   GraduationCap,
   Lightbulb,
   ChevronRight,
-  Dice5,
   UserCircle,
   Pencil,
 } from 'lucide-react'
@@ -809,72 +805,6 @@ export const PQC101Module: React.FC = () => {
         )}
       </div>
 
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20 mt-6">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/threats"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Shield size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Threat Dashboard</div>
-              <div className="text-xs text-muted-foreground">
-                Industry-specific quantum risks &amp; PQC replacements
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/algorithms"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <BarChart3 size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Algorithm Explorer</div>
-              <div className="text-xs text-muted-foreground">
-                Compare key sizes, security levels &amp; performance
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/timeline"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Calendar size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Migration Timeline</div>
-              <div className="text-xs text-muted-foreground">
-                NIST milestones, country deadlines &amp; standardization
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/assess"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <ClipboardCheck size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Risk Assessment</div>
-              <div className="text-xs text-muted-foreground">
-                Assess your organisation&apos;s quantum readiness
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/entropy-randomness"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Dice5 size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Entropy &amp; Randomness</div>
-              <div className="text-xs text-muted-foreground">
-                NIST SP 800-90 DRBGs &amp; entropy sources for PQC key generation
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
       <ReadingCompleteButton />
     </div>
   )

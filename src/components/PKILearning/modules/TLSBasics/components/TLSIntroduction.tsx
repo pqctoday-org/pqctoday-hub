@@ -1,16 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
-import { Link } from 'react-router'
 import {
   Shield,
   Key,
   Lock,
   Zap,
   ArrowRight,
-  BarChart3,
-  Terminal,
-  KeyRound,
-  Radio,
   TreePine,
   ExternalLink,
   RefreshCw,
@@ -553,108 +548,6 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
         </div>
       </section>
 
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/learn/vpn-ssh-pqc"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Lock size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">VPN/IPsec &amp; SSH</div>
-              <div className="text-xs text-muted-foreground">
-                PQC in IKEv2, SSH, and WireGuard protocols
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/algorithms?tab=support&protocol=tls-1-3"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <BarChart3 size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Protocol Support Matrix</div>
-              <div className="text-xs text-muted-foreground">
-                TLS 1.3 PQC key exchange &amp; signature support, drafts and stage
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/openssl"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Terminal size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">OpenSSL Studio</div>
-              <div className="text-xs text-muted-foreground">
-                Run PQC commands live in your browser
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/threats"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Shield size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Threat Dashboard</div>
-              <div className="text-xs text-muted-foreground">
-                Industry-specific quantum risks &amp; PQC replacements
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/api-security-jwt"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <KeyRound size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">API Security &amp; JWT</div>
-              <div className="text-xs text-muted-foreground">
-                PQC tokens &amp; OAuth 2.0 migration over TLS
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/5g-security"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Radio size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">5G Security</div>
-              <div className="text-xs text-muted-foreground">
-                SUCI, 5G-AKA &amp; PQC transport in mobile networks
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/web-gateway-pqc"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Lock size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Web Gateway PQC</div>
-              <div className="text-xs text-muted-foreground">
-                PQC TLS termination at reverse proxies &amp; CDNs
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/network-security-pqc"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Shield size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Network Security</div>
-              <div className="text-xs text-muted-foreground">
-                NGFWs, TLS inspection &amp; ZTNA with PQC cipher suites
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
       <VendorCoverageNotice migrateLayer="Network" migrateDomain="tls" />
       <ReadingCompleteButton />
     </div>

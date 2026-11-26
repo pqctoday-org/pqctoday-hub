@@ -39,9 +39,9 @@
  *   authored        — the manifest declares prerequisiteIds/followOnIds.
  *                     Computed output is discarded, not appended.
  *   authored-inline — the module renders its own hand-written Related Modules
- *                     block inside its tab content (2 modules today). Computed
- *                     output is suppressed entirely so the visitor never sees
- *                     two competing panels. See AUTHORED_INLINE_RELATED.
+ *                     block inside its tab content (no module does today).
+ *                     Computed output is suppressed entirely so the visitor
+ *                     never sees two competing panels. See AUTHORED_INLINE_RELATED.
  *   computed        — this engine's tag-derived output (every other module). A learner who
  *                     follows a persona path gets that path's neighbours first
  *                     (pathRelations), then the tag-derived ones.
@@ -88,17 +88,16 @@ const SCORE_PER_SHARED_COMMON_TAXONOMY = 1
 const COMMON_TAXONOMY_SHARE = 1 / 3
 
 /**
- * Modules that already render their OWN hand-written "Related Modules" block
- * inside their tab content. The computed panel is suppressed for these so the
- * authored curation wins and no module shows two competing panels.
+ * Modules that render their OWN hand-written "Related Modules" block inside their tab content. The
+ * computed panel is suppressed for these so the authored curation wins and no module shows two
+ * competing panels.
  *
- * This is the pre-WS2 form of the same override the `authored` branch handles:
- * a human picked these edges, so a tag heuristic does not get to argue.
- * `moduleRelations.driftguard.test.ts` re-derives this set from the module
- * sources on every run, so adding or removing an inline block without updating
- * this list fails the build rather than shipping a duplicate panel.
+ * Empty today: every lesson shows the computed panel, followed by the generated "Related resources"
+ * box. The seam stays so a future hand-written block can be listed here instead of doubling up, and
+ * `moduleRelations.driftguard.test.ts` fails when a lesson carries a hand-written related block, so
+ * none can come back unnoticed.
  */
-export const AUTHORED_INLINE_RELATED: readonly string[] = ['automotive-pqc', 'pqc-business-case']
+export const AUTHORED_INLINE_RELATED: readonly string[] = []
 
 /** Modules that are never a related-module candidate (synthetic entries). */
 function isCandidate(m: ResolvedModuleManifest): boolean {

@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
-import { Play, BookOpen, ArrowRight } from 'lucide-react'
-import { useNavigate } from 'react-router'
+import { Play } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   SAMPLE_CHALLENGE_BYTES,
@@ -47,8 +46,6 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
   onNavigateToWorkshop,
   onSetWorkshopConfig,
 }) => {
-  const navigate = useNavigate()
-
   const scenarios: Scenario[] = [
     {
       id: 'zonal-architecture-crypto-audit',
@@ -178,42 +175,6 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
             </div>
           </div>
         ))}
-      </div>
-
-      {/* Related Modules */}
-      <div className="glass-panel p-6 border-primary/20">
-        <div className="flex items-center gap-3 mb-4">
-          <BookOpen size={24} className="text-primary" />
-          <div>
-            <h3 className="font-bold text-foreground">Related Modules</h3>
-            <p className="text-sm text-muted-foreground">
-              Deepen your automotive PQC knowledge with these complementary modules.
-            </p>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/learn/iot-pqc')}
-            className="btn btn-secondary flex items-center justify-center gap-2 px-4 py-2 text-sm"
-          >
-            IoT &amp; Embedded Device PQC <ArrowRight size={14} />
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/learn/hsm-pqc')}
-            className="btn btn-secondary flex items-center justify-center gap-2 px-4 py-2 text-sm"
-          >
-            HSM &amp; PQC Operations <ArrowRight size={14} />
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/learn/emv-payment-pqc')}
-            className="btn btn-secondary flex items-center justify-center gap-2 px-4 py-2 text-sm"
-          >
-            EMV Payment PQC <ArrowRight size={14} />
-          </Button>
-        </div>
       </div>
     </div>
   )
