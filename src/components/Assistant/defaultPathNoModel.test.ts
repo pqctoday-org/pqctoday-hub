@@ -1,22 +1,24 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-non-literal-fs-filename -- static-analysis test over the repo's own src/ tree */
 /**
- * Proof that the default path never loads a model service.
+ * Proof that the app has no language model of its own.
  *
- * Starting at the app's entry and following every import (static and lazy), the three model
- * services (retrieval, Gemini, WebLLM) are reachable only through the one lazy edge that the
- * hidden rollback switch uses: RightPanel -> ChatPanelContent. Take that edge away and nothing
- * reaches them; keep it and they are all reachable (so the test is not vacuous).
+ * The old model chat (a model downloaded into the browser, and a cloud model reached with the
+ * visitor's own key) is gone: its files do not exist, nothing in the app's import graph names
+ * them, no source file points at a model provider, and the package that ran the in-browser model
+ * is not a dependency.
  */
 import { describe, expect, it } from 'vitest'
-import { existsSync, readFileSync } from 'fs'
+import { existsSync, readdirSync, readFileSync, statSync } from 'fs'
 import { dirname, join, resolve } from 'path'
 
 const SRC = join(process.cwd(), 'src')
-const MODEL_SERVICES = [
-  'services/chat/RetrievalService.ts',
-  'services/chat/GeminiService.ts',
-  'services/chat/WebLLMService.ts',
+const REMOVED_FILES = [
+  'components/RightPanel/ChatPanelContent.tsx',
+  'components/Chat/ProviderSetup.tsx',
+  'components/Chat/ApiKeySetup.tsx',
+  'components/Chat/ModelDownloadBanner.tsx',
+  'hooks/useChatSend.ts',
 ].map((p) => join(SRC, p))
 
 const IMPORT_RE =
@@ -57,11 +59,18 @@ function closure(roots: string[], skipEdge?: (from: string, to: string) => boole
   return seen
 }
 
-const entry = join(SRC, 'App.tsx')
-const legacyEdge = (from: string, to: string) =>
-  from.endsWith(join('RightPanel', 'RightPanel.tsx')) && to.endsWith('ChatPanelContent.tsx')
+function sourceFiles(dir: string, out: string[] = []): string[] {
+  for (const name of readdirSync(dir)) {
+    const full = join(dir, name)
+    if (statSync(full).isDirectory()) sourceFiles(full, out)
+    else if (/\.(ts|tsx)$/.test(name) && !/\.(test|spec)\./.test(name)) out.push(full)
+  }
+  return out
+}
 
-describe('default path loads no model service', () => {
+const entry = join(SRC, 'App.tsx')
+
+describe('the app has no language model of its own', () => {
   it('the scan finds the entry and follows lazy edges (it is not vacuous)', () => {
     const all = closure([entry])
     expect(all.size).toBeGreaterThan(500)
@@ -69,29 +78,23 @@ describe('default path loads no model service', () => {
     expect(all.has(join(SRC, 'components/Assistant/AssistantConversation.tsx'))).toBe(true)
   })
 
-  it('with the rollback edge, the old chat reaches all three model services', () => {
-    const all = closure([entry])
-    for (const svc of MODEL_SERVICES) expect(all.has(svc), svc).toBe(true)
+  it('the files of the old model chat no longer exist', () => {
+    for (const file of REMOVED_FILES) expect(existsSync(file), file).toBe(false)
   })
 
-  it('without the rollback edge, nothing in the app reaches any of them', () => {
-    const all = closure([entry], legacyEdge)
-    for (const svc of MODEL_SERVICES) expect(all.has(svc), svc).toBe(false)
-    expect(all.has(join(SRC, 'components/RightPanel/ChatPanelContent.tsx'))).toBe(false)
-    expect(all.has(join(SRC, 'hooks/useChatSend.ts'))).toBe(false)
-  })
-
-  it('the only file that names the old chat panel is the drawer, and only as a lazy import', () => {
-    const users: string[] = []
+  it('nothing in the app imports a model service, a model set-up screen or the old chat panel', () => {
+    const banned =
+      /(ChatPanelContent|ProviderSetup|ApiKeySetup|ModelDownloadBanner|useChatSend)['"]/
     for (const file of closure([entry])) {
-      const src = readFileSync(file, 'utf8')
-      if (/ChatPanelContent['"]/.test(src) && !file.includes('.test.')) users.push(file)
+      expect(banned.test(readFileSync(file, 'utf8')), file.replace(SRC, 'src')).toBe(false)
     }
-    expect(users.map((f) => f.replace(SRC, 'src'))).toEqual([
-      'src/components/RightPanel/RightPanel.tsx',
-    ])
-    const drawer = readFileSync(join(SRC, 'components/RightPanel/RightPanel.tsx'), 'utf8')
-    expect(drawer).toMatch(/import\('\.\/ChatPanelContent'\)/)
-    expect(drawer).not.toMatch(/^import .*ChatPanelContent/m)
+  })
+
+  it('nothing outside the chat services folder imports a model service or its settings', () => {
+    const banned = /services\/chat\/(WebLLMService|GeminiService|modelConfig)['"]/
+    const offenders = sourceFiles(SRC)
+      .filter((f) => !f.includes(join('services', 'chat') + '/'))
+      .filter((f) => banned.test(readFileSync(f, 'utf8')))
+    expect(offenders.map((f) => f.replace(SRC, 'src'))).toEqual([])
   })
 })

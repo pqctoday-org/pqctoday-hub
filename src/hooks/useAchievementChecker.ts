@@ -3,7 +3,6 @@ import { useMemo, useEffect, useRef } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { WORKSHOP_STEPS } from '@/components/PKILearning/moduleData'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
-import { useChatStore } from '@/store/useChatStore'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { useAchievementStore } from '@/store/useAchievementStore'
@@ -28,7 +27,6 @@ export function useAchievementChecker() {
   const quizMastery = useModuleStore((s) => s.quizMastery)
 
   const assessmentStatus = useAssessmentStore((s) => s.assessmentStatus)
-  const conversations = useChatStore((s) => s.conversations)
   const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
   const myProducts = useSelectedProductIds()
 
@@ -111,11 +109,9 @@ export function useAchievementChecker() {
     const totalArtifactCsrs = artifacts?.csrs?.length ?? 0
     const totalArtifactExecDocs = artifacts?.executiveDocuments?.length ?? 0
 
-    // Chat
-    let chatMessageCount = 0
-    for (const conv of conversations ?? []) {
-      chatMessageCount += conv.messages?.filter((m) => m.role === 'user').length ?? 0
-    }
+    // Chat. The old model chat that counted these questions, and its saved conversations, are
+    // gone; the Assistant keeps no saved history, so the count stays at zero.
+    const chatMessageCount = 0
 
     // Endorsements
     const endorsementCount = Object.values(endorsementRecords).filter((r) => r?.endorsed).length
@@ -159,7 +155,6 @@ export function useAchievementChecker() {
     sessionTracking,
     quizMastery,
     assessmentStatus,
-    conversations,
     myFrameworks,
     myProducts,
     playgroundOpCount,

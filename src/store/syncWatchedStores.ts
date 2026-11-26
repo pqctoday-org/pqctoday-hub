@@ -35,7 +35,6 @@ import { useDisclaimerStore } from './useDisclaimerStore'
 import { useAirplaneModeStore } from './useAirplaneModeStore'
 import { useHSMMode } from './useHSMMode'
 import { useBookmarkStore } from './useBookmarkStore'
-import { useChatStore } from './useChatStore'
 
 /** Minimal structural type — a Zustand store exposes a change subscription. */
 export interface WatchableStore {
@@ -95,7 +94,6 @@ export const WATCHED_STORES: WatchEntry[] = [
   { key: 'useAirplaneModeStore', store: w(useAirplaneModeStore), cloudSync: true, embed: false },
   { key: 'useHSMMode', store: w(useHSMMode), cloudSync: true, embed: true },
   { key: 'useBookmarkStore', store: w(useBookmarkStore), cloudSync: true, embed: true },
-  { key: 'useChatStore', store: w(useChatStore), cloudSync: true, embed: true },
 ]
 
 /** Stores watched by `useSyncEffect` for Google Drive auto-sync. */

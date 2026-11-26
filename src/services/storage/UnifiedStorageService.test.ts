@@ -11,6 +11,7 @@ import { UnifiedStorageService } from './UnifiedStorageService'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { softwareData } from '@/data/migrateData'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
+import { useChatStore } from '@/store/useChatStore'
 
 const SAMPLE = softwareData[0]
 
@@ -168,5 +169,57 @@ describe('AppSnapshot ↔ assessment toolchain and estate fields', () => {
     expect(form().cryptoLibraries).toEqual(['OpenSSL'])
     expect(form().infraAutomation).toEqual([])
     expect(form().scenarioEstateId).toBeNull()
+  })
+})
+
+describe('AppSnapshot ↔ the removed model chat', () => {
+  const oldChatPart = {
+    conversations: [
+      {
+        id: 'conv-1',
+        title: 'What is FIPS 203?',
+        messages: [{ id: 'u1', role: 'user', content: 'What is FIPS 203?', timestamp: 1 }],
+        createdAt: 1,
+        updatedAt: 2,
+      },
+    ],
+    activeConversationId: 'conv-1',
+    model: 'gemini-3.8-flash',
+    provider: 'gemini',
+    localModel: 'Qwen3-8B-q4f16_1-MLC',
+    localContextWindow: 4096,
+    apiKey: 'AIza-synthetic-test-key',
+  }
+
+  it('a new backup holds no chat part at all', () => {
+    const snap = UnifiedStorageService.exportSnapshot()
+    expect(snap.stores).not.toHaveProperty('chat')
+    const json = UnifiedStorageService.serializeSnapshot(snap)
+    expect(json).not.toMatch(/conversations|activeConversationId|apiKey|localModel/)
+    expect(UnifiedStorageService.validateSnapshot(snap).warnings.join(' ')).not.toMatch(/chat/)
+  })
+
+  it('an older backup that still carries conversations, a provider, a model and a key imports cleanly and restores none of them', async () => {
+    const snap = UnifiedStorageService.exportSnapshot()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(snap.stores as any).chat = oldChatPart
+    const file = new File([UnifiedStorageService.serializeSnapshot(snap)], 'backup.json', {
+      type: 'application/json',
+    })
+    const parsed = await UnifiedStorageService.importSnapshot(file)
+    expect(UnifiedStorageService.validateSnapshot(parsed).valid).toBe(true)
+    expect(() => UnifiedStorageService.restoreSnapshot(parsed)).not.toThrow()
+
+    const state = useChatStore.getState() as unknown as Record<string, unknown>
+    expect(Object.keys(state).sort()).toEqual(['pendingQuestion', 'setPendingQuestion'])
+    const stored = localStorage.getItem('pqc-chat-storage') ?? ''
+    expect(stored).not.toMatch(/AIza-synthetic-test-key|conv-1|gemini|Qwen/)
+  })
+
+  it('an older backup whose chat part is damaged also imports cleanly', () => {
+    const snap = UnifiedStorageService.exportSnapshot()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(snap.stores as any).chat = { conversations: 'broken', activeConversationId: 4 }
+    expect(() => UnifiedStorageService.restoreSnapshot(snap)).not.toThrow()
   })
 })

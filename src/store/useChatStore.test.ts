@@ -1,215 +1,103 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, beforeEach } from 'vitest'
 import { useChatStore } from './useChatStore'
-import type { ChatMessage } from '@/types/ChatTypes'
 
-function createMessage(overrides: Partial<ChatMessage> = {}): ChatMessage {
-  return {
-    id: `msg-${Date.now()}-${Math.random()}`,
-    role: 'user',
-    content: 'Test message',
-    timestamp: Date.now(),
-    ...overrides,
-  }
+const STORAGE_KEY = 'pqc-chat-storage'
+
+/** What a visitor who had the old model chat switched on had in the browser (store version 14). */
+const OLD_SNAPSHOT = {
+  state: {
+    apiKey: 'AIza-synthetic-test-key',
+    provider: 'gemini',
+    model: 'gemini-3.8-flash',
+    localModel: 'Qwen3-8B-q4f16_1-MLC',
+    localContextWindow: 4096,
+    conversations: [
+      {
+        id: 'conv-1',
+        title: 'What is FIPS 203?',
+        messages: [
+          { id: 'u1', role: 'user', content: 'What is FIPS 203?', timestamp: 1 },
+          { id: 'a1', role: 'assistant', content: 'ML-KEM.', timestamp: 2 },
+        ],
+        createdAt: 1,
+        updatedAt: 2,
+      },
+    ],
+    activeConversationId: 'conv-1',
+  },
+  version: 14,
 }
 
 describe('useChatStore', () => {
   beforeEach(() => {
-    // Reset store to initial state
-    useChatStore.setState({
-      apiKey: null,
-      conversations: [],
-      activeConversationId: null,
-      messages: [],
-      model: 'gemini-3.8-flash',
-      isLoading: false,
-      isStreaming: false,
-      error: null,
-      streamingContent: '',
-      pendingQuestion: null,
-    })
+    localStorage.removeItem(STORAGE_KEY)
+    useChatStore.setState({ pendingQuestion: null })
   })
 
-  describe('initial state', () => {
-    it('has null apiKey, empty messages, and gemini-3.8-flash model', () => {
-      const state = useChatStore.getState()
-      expect(state.apiKey).toBeNull()
-      expect(state.messages).toEqual([])
-      expect(state.model).toBe('gemini-3.8-flash')
-    })
+  it('holds only the question hand-off: no conversations, provider, model or key', () => {
+    const state = useChatStore.getState() as unknown as Record<string, unknown>
+    expect(Object.keys(state).sort()).toEqual(['pendingQuestion', 'setPendingQuestion'])
   })
 
-  describe('setApiKey', () => {
-    it('stores key and clears error', () => {
-      useChatStore.setState({ error: 'previous error' })
-      useChatStore.getState().setApiKey('test-key-123')
-      const state = useChatStore.getState()
-      expect(state.apiKey).toBe('test-key-123')
-      expect(state.error).toBeNull()
-    })
-
-    it('clears key when set to null', () => {
-      useChatStore.getState().setApiKey('some-key')
-      useChatStore.getState().setApiKey(null)
-      expect(useChatStore.getState().apiKey).toBeNull()
-    })
+  it('hands a question over and clears it', () => {
+    useChatStore.getState().setPendingQuestion('What is ML-KEM?')
+    expect(useChatStore.getState().pendingQuestion).toBe('What is ML-KEM?')
+    useChatStore.getState().setPendingQuestion(null)
+    expect(useChatStore.getState().pendingQuestion).toBeNull()
   })
 
-  describe('addMessage', () => {
-    it('appends message to messages array', () => {
-      const msg = createMessage({ content: 'Hello' })
-      useChatStore.getState().addMessage(msg)
-      expect(useChatStore.getState().messages).toHaveLength(1)
-      expect(useChatStore.getState().messages[0].content).toBe('Hello')
-    })
-
-    it('caps at 50 messages (MAX_PERSISTED_MESSAGES)', () => {
-      const store = useChatStore.getState()
-      // Add 55 messages
-      for (let i = 0; i < 55; i++) {
-        store.addMessage(createMessage({ id: `msg-${i}`, content: `Message ${i}` }))
-      }
-      const messages = useChatStore.getState().messages
-      expect(messages.length).toBe(50)
-      // Should keep the latest 50 (messages 5-54)
-      expect(messages[0].content).toBe('Message 5')
-      expect(messages[49].content).toBe('Message 54')
-    })
-  })
-
-  describe('clearMessages', () => {
-    it('empties messages and streamingContent of active conversation', () => {
-      useChatStore.getState().addMessage(createMessage())
-      useChatStore.setState({ streamingContent: 'partial response' })
-      useChatStore.getState().clearMessages()
-      const state = useChatStore.getState()
-      expect(state.messages).toEqual([])
-      expect(state.streamingContent).toBe('')
-      // Conversation still exists but is empty
-      expect(state.conversations.length).toBe(1)
-      expect(state.conversations[0].messages).toEqual([])
-    })
-  })
-
-  describe('setModel', () => {
-    it('updates model', () => {
-      useChatStore.getState().setModel('gemini-2.0-flash')
-      expect(useChatStore.getState().model).toBe('gemini-2.0-flash')
-    })
-  })
-
-  describe('appendStreamingContent', () => {
-    it('concatenates to existing streamingContent', () => {
-      useChatStore.getState().setStreamingContent('Hello')
-      useChatStore.getState().appendStreamingContent(' World')
-      expect(useChatStore.getState().streamingContent).toBe('Hello World')
-    })
-  })
-
-  describe('setLoading / setStreaming / setError', () => {
-    it('updates respective fields', () => {
-      const store = useChatStore.getState()
-      store.setLoading(true)
-      expect(useChatStore.getState().isLoading).toBe(true)
-
-      store.setStreaming(true)
-      expect(useChatStore.getState().isStreaming).toBe(true)
-
-      store.setError('Something went wrong')
-      expect(useChatStore.getState().error).toBe('Something went wrong')
-    })
+  it('never writes the question or anything else into browser storage', () => {
+    useChatStore.getState().setPendingQuestion('What is ML-KEM?')
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}')
+    expect(stored.state).toEqual({})
+    expect(JSON.stringify(stored)).not.toContain('ML-KEM')
   })
 
   describe('migration', () => {
-    it('migrates gemini-2.0-flash to gemini-2.5-flash for version < 2', () => {
-      // Simulate v1 persisted state — migration runs through v1→v2→v3→v4
-      const migratedState = useChatStore.persist.getOptions().migrate?.(
-        {
-          apiKey: 'key',
-          messages: [],
-          model: 'gemini-2.0-flash',
-        },
-        1
+    const migrate = (state: unknown, version: number) =>
+      useChatStore.persist.getOptions().migrate?.(state, version)
+
+    it('is at version 15', () => {
+      expect(useChatStore.persist.getOptions().version).toBe(15)
+    })
+
+    it('discards everything an earlier version stored, whatever its version or shape', () => {
+      for (const version of [0, 1, 3, 4, 9, 11, 13, 14]) {
+        expect(migrate(OLD_SNAPSHOT.state, version), `v${version}`).toEqual({})
+      }
+      expect(migrate(null, 0)).toEqual({})
+      expect(migrate({ conversations: 'broken', activeConversationId: 7 }, 14)).toEqual({})
+    })
+  })
+
+  describe('a visitor who had the old model chat switched on', () => {
+    it('loads without an error and nothing of the old chat is left in browser storage', async () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(OLD_SNAPSHOT))
+      await useChatStore.persist.rehydrate()
+
+      const state = useChatStore.getState() as unknown as Record<string, unknown>
+      expect(Object.keys(state).sort()).toEqual(['pendingQuestion', 'setPendingQuestion'])
+      expect(state.pendingQuestion).toBeNull()
+
+      const stored = localStorage.getItem(STORAGE_KEY) ?? ''
+      expect(stored).not.toContain('AIza-synthetic-test-key')
+      expect(stored).not.toMatch(/apiKey|provider|localModel|gemini|Qwen|conv-1|FIPS 203/)
+      expect(JSON.parse(stored)).toEqual({ state: {}, version: 15 })
+    })
+
+    it('also loads a store from long before conversations existed, with a stored key', async () => {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          state: { apiKey: 'AIza-synthetic-test-key', messages: [{ id: 'u', role: 'user' }] },
+          version: 3,
+        })
       )
-      expect(migratedState).toHaveProperty('model', 'gemini-3.8-flash')
-      expect(migratedState).toHaveProperty('conversations', [])
-      expect(migratedState).toHaveProperty('activeConversationId', null)
-    })
-
-    it('migrates gemini-2.5-flash to gemini-3.8-flash', () => {
-      const migratedState = useChatStore.persist.getOptions().migrate?.(
-        {
-          apiKey: 'key',
-          messages: [],
-          model: 'gemini-2.5-flash',
-        },
-        2
-      )
-      expect(migratedState).toHaveProperty('model', 'gemini-3.8-flash')
-    })
-
-    it('pins any v11 cloud selection to gemini-3.8-flash', () => {
-      const migratedState = useChatStore.persist.getOptions().migrate?.(
-        {
-          apiKey: 'key',
-          conversations: [],
-          model: 'gemini-flash-latest',
-          localModel: 'Qwen3-8B-q4f16_1-MLC',
-        },
-        11
-      )
-      expect(migratedState).toHaveProperty('model', 'gemini-3.8-flash')
-      expect(migratedState).toHaveProperty('localModel', 'Qwen3-8B-q4f16_1-MLC')
-    })
-
-    it('preserves an existing Qwen 3 8B selection for user-controlled A/B', () => {
-      const migratedState = useChatStore.persist.getOptions().migrate?.(
-        {
-          conversations: [],
-          model: 'gemini-3.8-flash',
-          localModel: 'Qwen3-8B-q4f16_1-MLC',
-        },
-        12
-      )
-      expect(migratedState).toHaveProperty('localModel', 'Qwen3-8B-q4f16_1-MLC')
-    })
-
-    it('rolls the v13 Qwen 3.5 default back to Qwen 3 8B', () => {
-      const migratedState = useChatStore.persist.getOptions().migrate?.(
-        {
-          conversations: [],
-          model: 'gemini-3.8-flash',
-          localModel: 'Qwen3.5-9B-q4f16_1-MLC',
-        },
-        13
-      )
-      expect(migratedState).toHaveProperty('localModel', 'Qwen3-8B-q4f16_1-MLC')
-    })
-
-    it('handles null/undefined persisted state safely', () => {
-      const migratedState = useChatStore.persist.getOptions().migrate?.(null, 0)
-      expect(migratedState).toHaveProperty('apiKey', null)
-      expect(migratedState).toHaveProperty('conversations', [])
-      expect(migratedState).toHaveProperty('activeConversationId', null)
-      expect(migratedState).toHaveProperty('model', 'gemini-3.8-flash')
-    })
-
-    it('wraps existing messages into a conversation for version < 4', () => {
-      const msgs = [
-        { id: 'u1', role: 'user', content: 'Hello', timestamp: 1000 },
-        { id: 'a1', role: 'assistant', content: 'Hi there', timestamp: 2000 },
-      ]
-      const migratedState = useChatStore.persist.getOptions().migrate?.(
-        { apiKey: 'key', messages: msgs, model: 'gemini-2.5-flash' },
-        3
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ) as any
-      expect(migratedState.conversations).toHaveLength(1)
-      expect(migratedState.conversations[0].id).toBe('conv-migrated')
-      expect(migratedState.conversations[0].title).toBe('Hello')
-      expect(migratedState.conversations[0].messages).toHaveLength(2)
-      expect(migratedState.activeConversationId).toBe('conv-migrated')
-      expect(migratedState.messages).toBeUndefined()
+      await useChatStore.persist.rehydrate()
+      const stored = localStorage.getItem(STORAGE_KEY) ?? ''
+      expect(stored).not.toContain('AIza-synthetic-test-key')
+      expect(JSON.parse(stored)).toEqual({ state: {}, version: 15 })
     })
   })
 })

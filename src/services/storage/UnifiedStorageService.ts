@@ -10,13 +10,7 @@ import { useVersionStore } from '@/store/useVersionStore'
 import { useTLSStore } from '@/store/tls-learning.store'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
-import { useChatStore } from '@/store/useChatStore'
 import { useSimulationStore } from '@/store/useSimulationStore'
-import {
-  DEFAULT_GEMINI_MODEL,
-  DEFAULT_LOCAL_MODEL,
-  SUPPORTED_LOCAL_MODELS,
-} from '@/services/chat/modelConfig'
 import {
   SNAPSHOT_FORMAT,
   SNAPSHOT_VERSION,
@@ -29,7 +23,6 @@ import {
   type TLSData,
   type OpenSSLData,
   type MigrateData,
-  type ChatData,
   type SimulationData,
 } from './snapshotTypes'
 
@@ -186,18 +179,6 @@ function getMigrateData(): MigrateData {
   }
 }
 
-function getChatData(): ChatData {
-  const state = useChatStore.getState()
-  return {
-    conversations: state.conversations,
-    activeConversationId: state.activeConversationId,
-    model: state.model,
-    provider: state.provider,
-    localModel: state.localModel,
-    localContextWindow: state.localContextWindow,
-  }
-}
-
 function getSimulationData(): SimulationData {
   return useSimulationStore.getState().getSaveData()
 }
@@ -269,7 +250,6 @@ export class UnifiedStorageService {
         tlsLearning: getTLSData(),
         opensslStudio: getOpenSSLData(),
         migrate: getMigrateData(),
-        chat: getChatData(),
         simulation: getSimulationData(),
       },
     }
@@ -527,27 +507,9 @@ export class UnifiedStorageService {
       })
     }
 
-    // 9. Chat conversations (no apiKey — credentials stay local)
-    if (stores.chat) {
-      const c = stores.chat
-      const conversations = Array.isArray(c.conversations) ? c.conversations : []
-      const activeConversationId =
-        typeof c.activeConversationId === 'string' ? c.activeConversationId : null
-      const activeConv = conversations.find((conv) => conv.id === activeConversationId)
-      useChatStore.setState({
-        conversations,
-        activeConversationId,
-        model: typeof c.model === 'string' ? c.model : DEFAULT_GEMINI_MODEL,
-        provider: c.provider ?? null,
-        localModel:
-          typeof c.localModel === 'string' &&
-          (SUPPORTED_LOCAL_MODELS as readonly string[]).includes(c.localModel)
-            ? c.localModel
-            : DEFAULT_LOCAL_MODEL,
-        localContextWindow: typeof c.localContextWindow === 'number' ? c.localContextWindow : 4096,
-        messages: activeConv?.messages ?? [],
-      })
-    }
+    // The old model chat's saved conversations, provider and model settings are no longer part of a
+    // snapshot. A snapshot written before they were removed may still carry a `chat` part: it is
+    // never read, so nothing of it is restored and nothing is left behind.
 
     // 10. Migration Simulation run (defensive restore fills any missing field)
     if (stores.simulation) {
@@ -577,7 +539,6 @@ export class UnifiedStorageService {
       'tlsLearning',
       'opensslStudio',
       'migrate',
-      'chat',
       'simulation',
     ]
     for (const key of storeKeys) {

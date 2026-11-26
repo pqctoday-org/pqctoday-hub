@@ -116,8 +116,6 @@
     "gen:tool-route-meta:check": "TSX_TSCONFIG_PATH=tsconfig.app.json tsx scripts/ci/gen-tool-route-meta.ts --check",
     "check:seo-production": "tsx scripts/ci/check-live-seo.ts",
     "evaluate:mlx-harness": "vitest run --config vitest.local.config.ts src/services/chat/evaluation/mlxHarness.local.test.ts --reporter=verbose",
-    "evaluate:local-models": "E2E_SERVER=dev RUN_LOCAL_MODEL_COMPARISON=1 playwright test --project=local e2e/local-model-comparison.local.spec.ts",
-    "evaluate:cloud-models": "E2E_SERVER=dev playwright test --project=local e2e/cloud-model-comparison.local.spec.ts",
     "sync:wasm:check": "tsx scripts/ci/check-wasm-provenance.ts --check",
     "sync:wasm:check:cacp-kmip": "tsx scripts/ci/check-wasm-provenance.ts --check --only=cacp-kmip",
     "sync:wasm:report": "tsx scripts/ci/check-wasm-provenance.ts",

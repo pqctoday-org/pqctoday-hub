@@ -7,16 +7,10 @@ import '@testing-library/jest-dom'
 import { RightPanel } from './RightPanel'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { useWorkshopStore } from '@/store/useWorkshopStore'
-import { MODEL_ASSISTANT_STORAGE_KEY } from '@/services/featureFlags'
 import { usePageModal } from '../Assistant/usePageModal'
 
-const legacy = vi.hoisted(() => ({ loaded: 0 }))
 const layout = vi.hoisted(() => ({ value: 'docked' as 'docked' | 'sheet' }))
 
-vi.mock('./ChatPanelContent', () => {
-  legacy.loaded += 1
-  return { ChatPanelContent: () => <p>Old model chat</p> }
-})
 vi.mock('../Assistant/usePageModal', async (orig) => {
   const actual = await orig<typeof import('../Assistant/usePageModal')>()
   return { ...actual, usePageModal: vi.fn(actual.usePageModal) }
@@ -29,12 +23,10 @@ vi.mock('../Assistant/useAssistantLayout', async (orig) => ({
 
 beforeEach(() => {
   layout.value = 'docked'
-  legacy.loaded = 0
-  localStorage.removeItem(MODEL_ASSISTANT_STORAGE_KEY)
   useWorkshopStore.getState().reset()
   useRightPanelStore.setState({ isOpen: true, activeTab: 'chat' })
 })
-afterEach(() => localStorage.removeItem(MODEL_ASSISTANT_STORAGE_KEY))
+afterEach(() => localStorage.removeItem('pqc-feature-model-assistant'))
 
 const mount = () =>
   render(
@@ -55,12 +47,6 @@ describe('drawer on the default path', () => {
       await screen.findByText('Ask anything. No sign-up or objective needed.')
     ).toBeInTheDocument()
     expect(screen.getByText('No objective yet')).toBeInTheDocument()
-  })
-
-  it('never loads the old model chat', () => {
-    mount()
-    expect(screen.queryByText('Old model chat')).toBeNull()
-    expect(legacy.loaded).toBe(0)
   })
 
   it('is not modal on the desktop, and a full-screen modal sheet with Close first on the phone', async () => {
@@ -102,16 +88,17 @@ describe('drawer on the default path', () => {
   })
 })
 
-describe('hidden rollback switch', () => {
-  it('with the browser key on, the old model chat answers in the same drawer', async () => {
-    localStorage.setItem(MODEL_ASSISTANT_STORAGE_KEY, '1')
+describe('a browser that still holds the old rollback switch', () => {
+  it('shows the Assistant: the switch no longer does anything', async () => {
+    localStorage.setItem('pqc-feature-model-assistant', '1')
     mount()
-    expect(await screen.findByText('Old model chat')).toBeInTheDocument()
-    expect(screen.queryByText('Ask anything. No sign-up or objective needed.')).toBeNull()
-    expect(legacy.loaded).toBe(1)
+    expect(
+      await screen.findByText('Ask anything. No sign-up or objective needed.')
+    ).toBeInTheDocument()
+    expect(screen.queryByText(/model|provider|api key|download/i)).toBeNull()
   })
 
-  it('offers no screen to turn it on', () => {
+  it('offers no screen to set up a model or a key', () => {
     mount()
     expect(screen.queryByText(/model|provider|api key|download/i)).toBeNull()
   })
