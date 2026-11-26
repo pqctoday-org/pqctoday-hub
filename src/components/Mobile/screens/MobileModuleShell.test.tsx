@@ -62,7 +62,7 @@ describe('MobileModuleShell', () => {
     expect(screen.getByText('REAL CONTENT')).toBeInTheDocument()
   })
 
-  it('omits the whyThisMatters callout and section checklist when the manifest has none', () => {
+  it('omits the whyThisMatters callout when the manifest has none, and never shows a progress box', () => {
     render(<MobileModuleShell manifest={minimal} learnContent={<div />} />)
     expect(screen.queryByText('Why this matters')).not.toBeInTheDocument()
     expect(screen.queryByText(/sections read/)).not.toBeInTheDocument()

@@ -5,7 +5,7 @@ import { CheckCircle } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { LEARN_SECTIONS } from './moduleData'
 import { Button } from '@/components/ui/button'
-import { ScrollFadeContainer } from '@/components/ui/ScrollFadeContainer'
+import { SectionReadControl } from './common/SectionReadControl'
 
 export interface LearnStep {
   /** Section id matching `LEARN_SECTIONS[moduleId][i].id`. Used as the
@@ -21,7 +21,7 @@ interface LearnStepperProps {
 }
 
 /**
- * All-DOM section renderer with a sticky table-of-contents.
+ * All-DOM section renderer.
  *
  * Replaces the prior step-at-a-time stepper. Every section now mounts
  * simultaneously inside a `<section data-section-id="...">` block so:
@@ -39,7 +39,9 @@ interface LearnStepperProps {
  *
  * Section completion is tracked via IntersectionObserver — when 50% of a
  * section is visible, it gets marked read (idempotent set; never unsets).
- * Users can still toggle sections from the LearnSectionChecklist sidebar.
+ * Each required section ends with a "Mark section as read" tick (SectionReadControl).
+ * There is deliberately no floating step bar over the text; the sections are
+ * read by scrolling, and deep links still land on the right section.
  */
 export const LearnStepper = ({ steps }: LearnStepperProps) => {
   const location = useLocation()
@@ -71,11 +73,6 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
     return () => observer.disconnect()
   }, [moduleId, markLearnSectionRead, steps.length])
 
-  const scrollToSection = (id: string): void => {
-    const el = document.querySelector(`[data-section-id="${id}"]`)
-    el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
-
   // Deep link: `#section-id` or `?section=section-id`. Runs once per target,
   // after the sections have mounted. `?section=` exists alongside the hash
   // because the Industry Landscape builds its links with react-router `<Link
@@ -102,51 +99,13 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
 
   return (
     <div className="w-full">
-      {/* Sticky table-of-contents — numbered circles with connecting line.
-          ScrollFadeContainer (same technique as tabs.tsx's TabsList) adds a
-          right-edge fade cue on mobile so users know more sections are
-          reachable by swiping when the row overflows. */}
-      <ScrollFadeContainer className="sticky top-16 z-10 mb-8 -mx-4 px-4 pt-3 pb-5 bg-background/80 backdrop-blur-sm border-b border-border">
-        <div className="relative flex w-max min-w-full items-start justify-center gap-x-6 sm:gap-x-12">
-          <div className="absolute top-4 left-10 right-10 h-0.5 bg-border -z-10" />
-          {steps.map((step) => {
-            const done = checks[step.id]
-            return (
-              <Button
-                variant="ghost"
-                key={step.id}
-                type="button"
-                onClick={() => scrollToSection(step.id)}
-                className="flex w-20 shrink-0 flex-col items-center gap-2 group text-muted-foreground hover:text-primary"
-                aria-label={`Jump to section: ${step.label}`}
-              >
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors bg-background text-sm ${
-                    done
-                      ? 'border-status-success text-status-success'
-                      : 'border-border text-muted-foreground group-hover:border-primary group-hover:text-primary'
-                  }`}
-                >
-                  {done ? '✓' : steps.findIndex((s) => s.id === step.id) + 1}
-                </div>
-                <span
-                  className="w-20 whitespace-normal break-words text-center text-[10px] font-medium leading-tight sm:text-xs"
-                  title={step.label}
-                >
-                  {step.label}
-                </span>
-              </Button>
-            )
-          })}
-        </div>
-      </ScrollFadeContainer>
-
       {/* All sections rendered vertically; each is a workshop scroll-to target */}
       <div className="space-y-6">
         {steps.map((step) => (
           <section
             key={step.id}
             data-section-id={step.id}
+            data-section-read="own"
             ref={(el) => {
               if (el) sectionRefs.current.set(step.id, el)
               else sectionRefs.current.delete(step.id)
@@ -154,6 +113,7 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
             className="glass-panel p-6 md:p-8 scroll-mt-20"
           >
             {step.content}
+            {moduleId ? <SectionReadControl moduleId={moduleId} sectionId={step.id} /> : null}
           </section>
         ))}
       </div>

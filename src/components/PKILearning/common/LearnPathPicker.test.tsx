@@ -15,6 +15,8 @@ import { EmbedProvider } from '@/embed/EmbedProvider'
 import { useModuleStore } from '@/store/useModuleStore'
 import { ModuleShell, type WorkshopPart } from './ModuleShell'
 import { LearnSection } from './LearnSection'
+import { SectionReadControl } from './SectionReadControl'
+import { requiredLearnSectionIdsFor } from '../manifest/learnPathScope'
 import { PathScopedContent } from './LearnPathPicker'
 import { useLearnPathFilter } from './useLearnPath'
 import { PATH_FIXTURE } from '../manifest/__fixtures__/learnPathFixture'
@@ -304,11 +306,23 @@ describe('exercise / content scoping inside ModuleShell', () => {
 })
 
 describe('phone shell', () => {
-  it('renders the picker and scopes the section checklist to the active path', () => {
+  it('renders the picker, shows no progress box, and scopes the section tick to the active path', () => {
     mockUseIsMobileShell.mockReturnValue(true)
     renderAt('/learn/emv-payment-pqc', <ModuleShell manifest={emv} learn={<div>L</div>} />)
-    expect(screen.getByText('0/12 sections read')).toBeInTheDocument()
+    expect(screen.queryByText(/sections read/)).not.toBeInTheDocument()
     fireEvent.click(picker().getByRole('button', { name: /Retail & E-Commerce/ }))
-    expect(screen.getByText('0/4 sections read')).toBeInTheDocument()
+    const onPath = requiredLearnSectionIdsFor('emv-payment-pqc', 'retail')
+    expect(onPath.length).toBe(4)
+    const offPath = requiredLearnSectionIdsFor('emv-payment-pqc', undefined).find(
+      (id) => !onPath.includes(id)
+    )!
+    render(
+      <>
+        <SectionReadControl moduleId="emv-payment-pqc" sectionId={onPath[0]} />
+        <SectionReadControl moduleId="emv-payment-pqc" sectionId={offPath} />
+      </>
+    )
+    // Only the section on the active path has a tick.
+    expect(screen.getAllByRole('checkbox', { name: /^Mark section as read/ })).toHaveLength(1)
   })
 })

@@ -2,7 +2,7 @@
 /**
  * Round 9, wave 1.2 (2026-09-19) — the declared exit from an item, from
  * `src/data/nextSteps.ts`. One card, rendered unconditionally at the foot of
- * every routed module, tool and page, so a visitor is never left mid-air and
+ * every routed tool and page (not lesson pages), so a visitor is never left mid-air and
  * the graders' "next step out" signal is on the page whether or not the item
  * was completed. Renders nothing for a route with no entry.
  */

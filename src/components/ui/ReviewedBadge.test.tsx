@@ -10,7 +10,7 @@
 // migrate, timeline, algorithms, applicability), so its copy is shared UI: these
 // assertions are deliberately about text a person actually reads, not markup.
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import type { RevisionEntry } from '@/hooks/useRevisions'
 
 // Mutable state the hoisted mock reads. `vi.mock` is hoisted above the imports,
@@ -111,5 +111,36 @@ describe('ReviewedBadge — visible wording', () => {
     state.isLoading = true
     const { container } = render(<ReviewedBadge domain="tool" entityId="PT-001" />)
     expect(container).toBeEmptyDOMElement()
+  })
+})
+
+describe('ReviewedBadge — compact (top bar) form', () => {
+  it('shows only "Reviewed · Mon YYYY" and keeps the full statement in the name and tooltip', () => {
+    state.revisions = [entry({ authored_by_llm: true })]
+    const { container } = render(
+      <ReviewedBadge domain="tool" entityId="PT-001" compact onOpenDrilldown={() => {}} />
+    )
+    expect(container.textContent).toBe('Reviewed · May 2026')
+    const button = screen.getByRole('button')
+    expect(button.getAttribute('aria-label')).toContain('Reviewed · May 2026')
+    expect(button.getAttribute('aria-label')).toContain('LLM-drafted · human-reviewed')
+    expect(button.getAttribute('aria-label')).toContain('eramusa')
+    expect(button.getAttribute('aria-label')).toContain('via registry review')
+    expect(button.getAttribute('title')).toContain('LLM-drafted · human-reviewed')
+    expect(button.querySelector('svg')).not.toBeNull()
+  })
+
+  it('still opens the history on click, and leaves the Unreviewed state as it is', () => {
+    const open = vi.fn()
+    state.revisions = [entry()]
+    const { unmount } = render(
+      <ReviewedBadge domain="tool" entityId="PT-001" compact onOpenDrilldown={open} />
+    )
+    screen.getByRole('button').click()
+    expect(open).toHaveBeenCalledOnce()
+    unmount()
+    state.revisions = []
+    const { container } = render(<ReviewedBadge domain="tool" entityId="PT-999" compact />)
+    expect(container.textContent ?? '').toContain('Unreviewed')
   })
 })

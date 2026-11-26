@@ -5,9 +5,10 @@
  * were read, in the lesson, the organization data and the lesson summary.
  */
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
+import { sectionText } from '../../sectionTestUtils'
 import { Introduction } from './components/Introduction'
 import { CLASSIFY_CARDS, ORGANIZATIONS, SC27_MEMBERS } from './data'
 import ragSummary from './rag-summary.md?raw'
@@ -24,9 +25,8 @@ const lessonText = () => {
     </MemoryRouter>
   )
   let text = flat(document.body.textContent ?? '')
-  for (const step of ['Gov vs Non-Gov', 'Global & Regional']) {
-    fireEvent.click(screen.getByText(step))
-    text += ' ' + flat(document.body.textContent ?? '')
+  for (const step of ['gov-vs-nongov', 'global-regional']) {
+    text += ' ' + sectionText(step)
   }
   return text
 }

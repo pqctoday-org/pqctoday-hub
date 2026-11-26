@@ -32,7 +32,9 @@ it('keeps the six scenario methods and workshop navigation while rejecting indep
     expect(screen.getByText(method)).toBeInTheDocument()
   }
   expect(screen.queryByText(/No published methodology yet/)).not.toBeInTheDocument()
-  await user.click(screen.getByRole('button', { name: 'Jump to section: Workshop & Resources' }))
+  // The sections stay as scroll targets; there is no floating step bar over the text.
+  expect(document.querySelector('[data-section-id="board"]')).toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: /^Jump to section/ })).not.toBeInTheDocument()
   await user.click(screen.getByRole('button', { name: 'Start Workshop' }))
   expect(openWorkshop).toHaveBeenCalledOnce()
   view.unmount()

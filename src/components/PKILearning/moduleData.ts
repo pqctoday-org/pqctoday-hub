@@ -110,9 +110,9 @@ export const LM_ID_MAP: Record<string, string> = Object.fromEntries(
 )
 
 /**
- * Learn sections per module — user manually checks each after reading.
- * These drive the LearnSectionChecklist in the module sidebar and the
- * pie chart on ModuleCard. Completing all → status: 'completed'.
+ * Learn sections per module — read by scrolling to them, or ticked by hand with the
+ * "Mark section as read" control at the end of each required section.
+ * Completing all required sections → status: 'completed'.
  */
 export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> =
   buildLearnSections(MANIFESTS)

@@ -35,6 +35,9 @@ import {
 } from '../manifest/learnPathScope'
 import { useActiveLearnPathId, useLearnModuleId } from './useLearnPath'
 import { OffPathBadge, OptionalReferenceBadge } from './LearnPathPicker'
+import { SectionReadControl, SECTION_READ_ATTR } from './SectionReadControl'
+import { createRoot, type Root } from 'react-dom/client'
+import { requiredLearnSectionIdsFor } from '../manifest/learnPathScope'
 
 export interface LearnSectionProps {
   /** must match the manifest's `learnSections[].id` */
@@ -101,6 +104,7 @@ export const useDeepLinkTarget = (): string => {
  * Call once from a module's learn tab. Safe on modules with no anchors at all.
  */
 export const useSectionAnchors = (): void => {
+  useSectionReadControls()
   const moduleId = useLearnModuleId()
   const markLearnSectionRead = useModuleStore((s) => s.markLearnSectionRead)
   const target = useDeepLinkTarget()
@@ -179,6 +183,42 @@ export const useSectionAnchors = (): void => {
       timers.clear()
     }
   }, [moduleId, markLearnSectionRead])
+}
+
+/**
+ * Gives each required, plain anchored section its "Mark section as read" control at the end.
+ * Sections drawn by LearnStepper or LearnSection carry their own control (`data-section-read="own"`)
+ * and are skipped. The control is a small separate React root mounted into a host appended to the
+ * section: it reads and writes the module store only, so it needs no context from the page.
+ */
+const useSectionReadControls = (): void => {
+  const moduleId = useLearnModuleId()
+  const activePath = useModuleStore((s) => s.modules[moduleId]?.activeLearnPath) // eslint-disable-line security/detect-object-injection
+  useEffect(() => {
+    if (!moduleId) return
+    const required = new Set(requiredLearnSectionIdsFor(moduleId, activePath))
+    const mounted: { host: HTMLElement; root: Root }[] = []
+    const els = document.querySelectorAll<HTMLElement>('[data-section-id], section[id]')
+    els.forEach((el) => {
+      const id = el.dataset.sectionId ?? el.id
+      if (!id || !required.has(id) || el.hasAttribute(SECTION_READ_ATTR)) return
+      const host = document.createElement('div')
+      host.setAttribute(SECTION_READ_ATTR, 'injected')
+      el.appendChild(host)
+      const root = createRoot(host)
+      root.render(<SectionReadControl moduleId={moduleId} sectionId={id} />)
+      mounted.push({ host, root })
+    })
+    return () => {
+      // Unmounted after the current render pass: a root cannot be unmounted while React is rendering.
+      queueMicrotask(() => {
+        for (const { host, root } of mounted) {
+          root.unmount()
+          host.remove()
+        }
+      })
+    }
+  }, [moduleId, activePath])
 }
 
 /**
@@ -281,6 +321,7 @@ export const LearnSection: React.FC<LearnSectionProps> = ({
     <section
       ref={ref}
       data-section-id={sectionId}
+      data-section-read="own"
       data-optional={optional || undefined}
       aria-labelledby={headingId}
       className="glass-panel overflow-hidden scroll-mt-24"
@@ -321,7 +362,12 @@ export const LearnSection: React.FC<LearnSectionProps> = ({
           <ChevronDown size={20} className="text-muted-foreground shrink-0" />
         )}
       </Button>
-      {isOpen && <div className="px-6 pb-6 space-y-4">{children}</div>}
+      {isOpen && (
+        <div className="px-6 pb-6 space-y-4">
+          {children}
+          {moduleId ? <SectionReadControl moduleId={moduleId} sectionId={sectionId} /> : null}
+        </div>
+      )}
     </section>
   )
 }

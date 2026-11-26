@@ -6,7 +6,6 @@ import { ArrowLeft } from 'lucide-react'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
-import { ModuleProgressSidebar } from './ModuleProgressSidebar'
 import { ModuleCompletionWatcher } from './ModuleCompletionWatcher'
 import { CuriousModuleView } from './common/CuriousModuleView'
 import { ProductionCapabilityChecklist } from './common/ProductionCapabilityChecklist'
@@ -173,6 +172,7 @@ export const PKILearningView: React.FC = () => {
             <ReviewedBadge
               domain="module"
               entityId={moduleId}
+              compact
               onOpenDrilldown={() => setRevisionDrilldownOpen(true)}
             />
           )}
@@ -207,8 +207,9 @@ export const PKILearningView: React.FC = () => {
         />
       )}
 
-      <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start">
-        {/* Main module content */}
+      <div className="flex flex-col items-start">
+        {/* Main module content: the lesson takes the full width. Reading progress is kept on
+            each section (SectionReadControl) and read by the module header, not shown in a side box. */}
         <div ref={contentRef} className="flex-1 min-w-0 w-full">
           {/* A4 — the completion-card moment (fires once when this module hits
               'completed'; not in the embedded sim). Keyed so each module watches
@@ -296,13 +297,6 @@ export const PKILearningView: React.FC = () => {
             </p>
           )}
         </div>
-
-        {/* Progress sidebar — desktop aside (order-last). Mobile moved to bottom organically by DOM order */}
-        {showSidebar && !isCuriousMode && (
-          <div className="w-full lg:w-auto shrink-0 pb-12 lg:pb-0">
-            <ModuleProgressSidebar moduleId={moduleId} />
-          </div>
-        )}
       </div>
     </div>
   )

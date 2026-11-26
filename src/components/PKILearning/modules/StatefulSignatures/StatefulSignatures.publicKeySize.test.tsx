@@ -6,10 +6,11 @@
  * rag-summary must not give 56 bytes for every parameter set.
  */
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
+import { sectionText } from '../../sectionTestUtils'
 import { StatefulSigsIntroduction } from './components/StatefulSigsIntroduction'
 import { StatefulSigsExercises } from './components/StatefulSigsExercises'
 import { lmsPublicKeyBytes } from './data/signatureSizes'
@@ -31,7 +32,7 @@ describe('StatefulSignatures: LMS public-key size', () => {
         </MemoryRouter>
       </EmbedProvider>
     )
-    fireEvent.click(screen.getByText('LMS/HSS & XMSS'))
+    expect(sectionText('xmss')).toContain('Small public key')
     const item = screen.getByText(/Small public key/)
     expect(flat(item.textContent ?? '')).toContain(
       `Small public key: 24 bytes plus the hash output length – ${sha256_192} bytes for the SHA-256/192 sets, ${sha256} bytes for the SHA-256 sets`

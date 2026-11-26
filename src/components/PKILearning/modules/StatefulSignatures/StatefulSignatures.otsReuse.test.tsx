@@ -4,10 +4,11 @@
  * signatures hand over the whole private key or let an attacker forge any message of their choice.
  */
 import { describe, it, expect, beforeAll } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
+import { sectionText } from '../../sectionTestUtils'
 import { StatefulSigsIntroduction } from './components/StatefulSigsIntroduction'
 import { content } from './content'
 import curiousSummary from './curious-summary.md?raw'
@@ -26,9 +27,7 @@ const introText = () => {
       </MemoryRouter>
     </EmbedProvider>
   )
-  const first = flat(document.body.textContent ?? '')
-  fireEvent.click(screen.getAllByText('LMS/HSS & XMSS')[0])
-  return `${first} ${flat(document.body.textContent ?? '')}`
+  return `${flat(document.body.textContent ?? '')} ${sectionText('xmss')}`
 }
 
 describe('OTS reuse wording', () => {

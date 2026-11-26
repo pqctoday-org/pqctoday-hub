@@ -1,15 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useId, useRef, type ReactNode } from 'react'
 import { Link } from 'react-router'
-import { CheckCircle2, Circle, Network, ArrowRight, Wrench } from 'lucide-react'
+import { Network, ArrowRight, Wrench } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { handleTabListKeyDown } from '@/components/ui/tabs'
 import type { ResolvedModuleManifest } from '@/components/PKILearning/manifest/types'
-import { MODULE_TO_TRACK, LEARN_SECTIONS } from '@/components/PKILearning/moduleData'
+import { MODULE_TO_TRACK } from '@/components/PKILearning/moduleData'
 import { ModuleFitStrip } from '@/components/Journey/ModuleFitStrip'
 import { ModuleJourneyHeader } from '@/components/Journey/ModuleJourneyHeader'
 import { ModuleCommentsMount } from '@/components/Journey/mountPoints'
-import { requiredLearnSectionIdsFor } from '@/components/PKILearning/manifest/learnPathScope'
 // moduleRelations() is pure data/logic (no JSX) — src/components/Mobile may
 // not import a desktop VIEW component (RelatedModulesPanel), so this renders
 // its own mobile-styled list off the same computed relations instead of
@@ -18,11 +17,8 @@ import { moduleRelations } from '@/data/moduleRelations'
 import { TOOL_TITLE_BY_ID } from '@/data/moduleToolLinks'
 import { PERSONAS } from '@/data/learningPersonas'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { MobileNextStepCard } from '../MobileNextStepCard'
 import { MobileUnderstandingCheckCard } from '../MobileUnderstandingCheckCard'
 import { MobilePersonaBlock } from '../MobilePersonaBlock'
-import { useModuleStore } from '@/store/useModuleStore'
-import { MobileProgress } from '../primitives/Progress'
 import { mobileChip } from '../mobileTokens'
 import { DESKTOP_ONLY_WORKSHOP_LABEL, useDesktopOnlyWorkshopEntries } from '../desktopOnlyWorkshop'
 import { cn } from '@/lib/utils'
@@ -104,13 +100,8 @@ export interface MobileModuleShellProps {
  * `?tab=workshop` links (see ../desktopOnlyWorkshop.ts) — reads "Workshop: on a computer"
  * instead of being a button that does nothing. The reading content is untouched.
  *
- * The section checklist reuses toggleLearnSection — the same manual-toggle
- * semantics the desktop sidebar's LearnSectionChecklist uses, not
- * markLearnSectionRead's scroll-dwell auto-marking. A per-section chevron
- * that "opens the reader" would imply reliable per-section scroll anchors,
- * which don't exist consistently across modules (confirmed: only 3 of 7
- * sections in HsmPqcIntroduction carry a data-section-id at all) — a tap
- * toggling real read state is honest; a chevron to nowhere reliable is not.
+ * There is no progress box on this screen. Reading progress lives on each section (the "Mark section as
+ * read" control, SectionReadControl), the same as on a wide screen.
  */
 export function MobileModuleShell({
   manifest,
@@ -135,20 +126,8 @@ export function MobileModuleShell({
   const workshopOnPhone = Boolean(workshopContent) || Boolean(practiceTool)
   const learnRef = useRef<HTMLDivElement>(null)
   useDesktopOnlyWorkshopEntries(learnRef, !workshopOnPhone, manifest.id)
-  const modules = useModuleStore((s) => s.modules)
-  const toggleLearnSection = useModuleStore((s) => s.toggleLearnSection)
 
   const track = MODULE_TO_TRACK[manifest.id]
-  // The checklist shows the sections that count toward completion: the active
-  // learn path's, minus optional references (manifest/learnPathScope.ts). For a
-  // module with no paths and no optional sections that is every section. Read
-  // off the registry by id, like LEARN_SECTIONS — not off the `manifest` prop.
-  const requiredIds = new Set(
-    requiredLearnSectionIdsFor(manifest.id, modules[manifest.id]?.activeLearnPath)
-  )
-  const sections = (LEARN_SECTIONS[manifest.id] ?? []).filter((s) => requiredIds.has(s.id))
-  const checks = modules[manifest.id]?.learnSectionChecks ?? {}
-  const checkedCount = sections.filter((s) => checks[s.id]).length
   const persona = usePersonaStore((state) => state.selectedPersona)
   const { entries: relatedModules } = moduleRelations(
     manifest.id,
@@ -313,54 +292,6 @@ export function MobileModuleShell({
         )
       )}
 
-      {!showWorkshop && sections.length > 0 && (
-        <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3.5">
-          <MobileProgress
-            tone="success"
-            value={(checkedCount / sections.length) * 100}
-            label={`${checkedCount}/${sections.length} sections read`}
-          />
-          <ul className="mt-1 flex flex-col gap-1.5">
-            {sections.map((section) => {
-              const done = checks[section.id] ?? false
-              return (
-                <li key={section.id}>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    aria-pressed={done}
-                    onClick={() => toggleLearnSection(manifest.id, section.id)}
-                    className="h-11 w-full items-center justify-start gap-2.5 rounded-lg border border-border/60 px-2.5 text-left font-normal"
-                  >
-                    {done ? (
-                      <CheckCircle2
-                        size={16}
-                        className="shrink-0 text-success"
-                        aria-hidden="true"
-                      />
-                    ) : (
-                      <Circle
-                        size={16}
-                        className="shrink-0 text-muted-foreground"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <span
-                      className={cn(
-                        'min-w-0 flex-1 truncate text-[12.5px] font-semibold text-foreground',
-                        done && 'text-muted-foreground line-through'
-                      )}
-                    >
-                      {section.label}
-                    </span>
-                  </Button>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-      )}
-
       {!showWorkshop && (
         <div
           ref={learnRef}
@@ -414,10 +345,7 @@ export function MobileModuleShell({
           </ul>
         </div>
       )}
-      {/* Round 9, wave 1.2 (2026-09-19) — the declared exit, phone twin of the
-          desktop NextStepCard (reads the same data module). */}
       <MobileUnderstandingCheckCard moduleId={manifest.id} moduleTitle={manifest.title} />
-      <MobileNextStepCard route={`/learn/${manifest.id}`} />
     </div>
   )
 }

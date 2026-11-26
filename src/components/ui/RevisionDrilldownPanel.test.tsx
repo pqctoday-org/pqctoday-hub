@@ -154,3 +154,34 @@ describe('RevisionDrilldownPanel — field_changes rendering', () => {
     expect(screen.getByText('2 field changes')).toBeInTheDocument()
   })
 })
+
+describe('RevisionDrilldownPanel — the review statement in words', () => {
+  it('says in text whether a model drafted the change, who reviewed it, how, and when', () => {
+    render(
+      <RevisionDrilldownPanel
+        domain="compliance"
+        entityId="cnsa-2-0"
+        entityLabel="CNSA 2.0"
+        revisions={[rev({ authored_by_llm: true })]}
+        onClose={() => {}}
+      />
+    )
+    expect(screen.getByText('Drafted with an AI model')).toBeInTheDocument()
+    expect(screen.getByText(/Recorded reviewer: Alice/)).toBeInTheDocument()
+    expect(screen.getByText(/recorded method: github/)).toBeInTheDocument()
+    expect(document.querySelector('time')).not.toBeNull()
+  })
+
+  it('says a change was not drafted with a model when the record says so', () => {
+    render(
+      <RevisionDrilldownPanel
+        domain="compliance"
+        entityId="cnsa-2-0"
+        entityLabel="CNSA 2.0"
+        revisions={[rev({ authored_by_llm: false })]}
+        onClose={() => {}}
+      />
+    )
+    expect(screen.getByText('Not drafted with an AI model')).toBeInTheDocument()
+  })
+})
