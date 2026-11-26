@@ -138,7 +138,7 @@ export const ThreatEconomicsHeader: React.FC<{ defaultExpanded?: boolean }> = ({
 
   return (
     <section
-      className="glass-panel p-4 mb-4 border border-border"
+      className="glass-panel bg-card backdrop-blur-none border border-border rounded-2xl shadow-none p-4 mb-4"
       aria-labelledby="threat-economics-heading"
       data-testid="threat-economics-header"
     >
@@ -148,10 +148,10 @@ export const ThreatEconomicsHeader: React.FC<{ defaultExpanded?: boolean }> = ({
           <div>
             <h2
               id="threat-economics-heading"
-              className="text-base font-bold text-foreground flex items-center gap-2"
+              className="text-base font-bold flex items-center gap-2 font-display text-heading"
             >
               Threat Economics
-              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded border border-primary/30 bg-primary/10 text-primary uppercase tracking-wide">
+              <span className="px-1.5 py-0.5 rounded border border-primary/30 bg-primary/10 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                 Phase {THREAT_ECONOMICS_PHASE_DEF.number} · {THREAT_ECONOMICS_PHASE_DEF.name}
               </span>
             </h2>
@@ -181,7 +181,7 @@ export const ThreatEconomicsHeader: React.FC<{ defaultExpanded?: boolean }> = ({
 
       {/* HNDL vs HNFL framing — always visible */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-        <div className="rounded-lg border border-border bg-muted/30 p-3">
+        <div className="rounded-2xl border border-border bg-muted/30 p-3">
           <div className="text-xs font-bold text-foreground">HNDL — Harvest Now, Decrypt Later</div>
           <p className="text-xs text-muted-foreground mt-1">
             Attacker records encrypted traffic today and decrypts it once a CRQC exists. Threatens{' '}
@@ -197,7 +197,7 @@ export const ThreatEconomicsHeader: React.FC<{ defaultExpanded?: boolean }> = ({
             Source: Federal Reserve FEDS 2025-093 (Mascelli &amp; Rodden)
           </a>
         </div>
-        <div className="rounded-lg border border-border bg-muted/30 p-3">
+        <div className="rounded-2xl border border-border bg-muted/30 p-3">
           <div className="text-xs font-bold text-foreground">HNFL — Harvest Now, Forge Later</div>
           <p className="text-xs text-muted-foreground mt-1">
             Attacker waits for a CRQC, recovers a signing key, then forges signatures retroactively.

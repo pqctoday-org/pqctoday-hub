@@ -8,9 +8,11 @@ export function HistoricalProductDetail({ record }: { record: HistoricalProductR
   return (
     <section
       aria-label="Historical product record"
-      className="rounded-xl border border-border bg-card p-3"
+      className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-3"
     >
-      <h2 className="text-base font-bold">{record.product.softwareName}</h2>
+      <h2 className="text-base font-bold font-display text-heading">
+        {record.product.softwareName}
+      </h2>
       <HistoricalProductNotice record={record} />
       <ProductDetail product={record.product} readOnly />
     </section>

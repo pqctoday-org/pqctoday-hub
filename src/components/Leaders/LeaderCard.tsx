@@ -45,7 +45,7 @@ export const LeaderCard = ({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.2 }}
       className={clsx(
-        'glass-panel p-6 flex flex-col h-full hover:border-secondary/50 transition-colors bg-card/50',
+        'glass-panel backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 flex flex-col h-full hover:border-secondary/50 transition-colors bg-card/50',
         isExpanded && 'border-primary/60 ring-1 ring-primary/30'
       )}
     >
@@ -55,7 +55,7 @@ export const LeaderCard = ({
             <img
               src={leader.imageUrl}
               alt=""
-              className="w-16 h-16 rounded-full object-cover border-2 border-primary/20 shadow-glow"
+              className="w-16 h-16 rounded-full object-cover border-2 border-primary/20"
               onError={() => setHasError(true)}
             />
           ) : (
@@ -64,7 +64,7 @@ export const LeaderCard = ({
             </div>
           )}
           {leader.country && (
-            <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-1 border border-border shadow-sm">
+            <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-1 border border-border">
               <CountryFlag code={FLAG_CODE_MAP[leader.country] ?? 'un'} width={16} height={11} />
             </div>
           )}
@@ -109,7 +109,7 @@ export const LeaderCard = ({
         </div>
       </div>
 
-      <h2 className="text-xl font-bold mb-1">{leader.name}</h2>
+      <h2 className="text-xl font-bold mb-1 font-display text-heading">{leader.name}</h2>
       {/* Collapsed cards keep one line per role / organization and three lines
           of bio; an expanded card shows them in full. */}
       {leader.title && (

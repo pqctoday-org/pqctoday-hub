@@ -105,10 +105,10 @@ export function PatentsRoleLens({
   if (summary.relevantCount === 0) return null
 
   return (
-    <section className="rounded-lg border border-border bg-muted/20 p-4">
+    <section className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
       <div className="mb-2 flex items-center gap-2">
         <Scale size={16} className="shrink-0 text-primary" aria-hidden="true" />
-        <h2 className="text-sm font-semibold text-foreground">
+        <h2 className="text-sm font-semibold font-display text-heading">
           What this means for your migration
         </h2>
       </div>
@@ -135,7 +135,7 @@ export function PatentsRoleLens({
 
       {summary.topHolders.length > 0 && (
         <div className="mt-3">
-          <p className="mb-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+          <p className="mb-1.5 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
             Who holds the most of these
           </p>
           <ul className="space-y-1">

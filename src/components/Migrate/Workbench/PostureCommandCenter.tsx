@@ -42,11 +42,11 @@ export function PostureCommandCenter({
   }
 
   return (
-    <div className="rounded-2xl border border-secondary/30 bg-gradient-to-br from-primary/[0.06] to-secondary/[0.04] p-4">
+    <div className="rounded-3xl border-2 border-ink bg-card shadow-[0_6px_0_hsl(var(--edge))] p-4">
       <div className="flex flex-col gap-4 lg:flex-row">
         {/* planning coverage — deliberately not a readiness score */}
         <div className="min-w-[188px]">
-          <p className="font-mono text-[9.5px] uppercase tracking-wide text-muted-foreground">
+          <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
             Planning coverage
           </p>
           <p className="text-[34px] font-extrabold leading-none text-foreground">{planningPct}%</p>
@@ -135,10 +135,8 @@ function StatTile({
   tone?: string
 }) {
   return (
-    <div className="rounded-xl border border-border bg-muted/40 p-3">
-      <p className="font-mono text-[9.5px] uppercase tracking-wide text-muted-foreground">
-        {label}
-      </p>
+    <div className="rounded-2xl border border-border bg-muted/40 p-3">
+      <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">{label}</p>
       <p className={`text-[21px] font-extrabold leading-tight ${tone}`}>{value}</p>
       <p className="text-[10px] text-muted-foreground">{caption}</p>
     </div>

@@ -31,7 +31,7 @@ interface Style {
 }
 
 const DESKTOP: Style = {
-  heading: 'mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground',
+  heading: 'mb-1 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading',
   list: 'flex flex-wrap gap-x-3 gap-y-1',
   item: 'text-foreground/80',
   link: 'inline-flex items-center gap-1 text-primary hover:underline',

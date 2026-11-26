@@ -170,7 +170,9 @@ function GridCard({
   full?: boolean
 }) {
   return (
-    <div className={`glass-panel rounded p-2.5 space-y-1.5 ${full ? 'sm:col-span-2' : ''}`}>
+    <div
+      className={`glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-2.5 space-y-1.5 ${full ? 'sm:col-span-2' : ''}`}
+    >
       <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
         {title}
       </div>
@@ -381,7 +383,9 @@ export function PatentDetail({
               Google Patents
             </a>
           </div>
-          <h2 className="text-sm font-semibold text-foreground leading-snug">{patent.title}</h2>
+          <h2 className="text-sm font-semibold leading-snug font-display text-heading">
+            {patent.title}
+          </h2>
           <p className="mt-1 text-xs text-muted-foreground">
             {publicationScope(patent)}{' '}
             <a
@@ -519,7 +523,7 @@ export function PatentDetail({
       {/* Scrollable body */}
       <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
         {/* Impact score */}
-        <div className="glass-panel rounded-lg p-3 space-y-2">
+        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-foreground">
               Hub catalogue analysis score
@@ -579,7 +583,7 @@ export function PatentDetail({
         {/* Summary */}
         {patent.summary && (
           <div className="space-y-1">
-            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            <div className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
               Summary
             </div>
             <p className="text-sm text-foreground leading-relaxed">{patent.summary}</p>
@@ -589,7 +593,7 @@ export function PatentDetail({
         {/* Primary inventive claim */}
         {patent.primaryInventiveClaim && (
           <div className="space-y-1">
-            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            <div className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
               <InlineTooltip term="Independent Claim">Primary Inventive Claim</InlineTooltip>
             </div>
             <p className="text-sm text-foreground leading-relaxed">
@@ -604,7 +608,7 @@ export function PatentDetail({
             `pqcAlgorithms` has no way to say so. */}
         {patent.quantumSafeBasis && patent.quantumSafeBasis !== 'pqc_algorithm' && (
           <div className="space-y-1">
-            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            <div className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
               Quantum-safe basis
             </div>
             <p className="text-sm text-foreground leading-relaxed">
@@ -616,7 +620,7 @@ export function PatentDetail({
         {/* Quantum notes */}
         {patent.quantumNotes && patent.quantumNotes !== 'none' && (
           <div className="space-y-1">
-            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            <div className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
               Quantum Notes
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">{patent.quantumNotes}</p>
@@ -625,7 +629,7 @@ export function PatentDetail({
 
         {/* Cryptographic profile — card grid */}
         <div className="border-t border-border pt-4 space-y-2">
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+          <div className="flex items-center gap-1.5 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
             <Shield className="h-3 w-3" /> Cryptographic Profile
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -717,7 +721,7 @@ export function PatentDetail({
         {/* NIST Round Status */}
         {patent.nistRoundStatus.length > 0 && (
           <div className="border-t border-border pt-4 space-y-2">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            <div className="flex items-center gap-1.5 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
               <Zap className="h-3 w-3" /> NIST PQC Status
             </div>
             <div className="flex flex-wrap gap-1.5">
@@ -731,7 +735,7 @@ export function PatentDetail({
         {/* Claim structure */}
         {patent.claimDependencies.length > 0 && (
           <div className="border-t border-border pt-4 space-y-2">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            <div className="flex items-center gap-1.5 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
               <GitBranch className="h-3 w-3" /> Claim Structure
             </div>
             <ClaimTree claims={patent.claimDependencies} />
@@ -741,7 +745,7 @@ export function PatentDetail({
         {/* Citation graph */}
         {patent.citationGraph.length > 0 && (
           <div className="border-t border-border pt-4 space-y-2">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            <div className="flex items-center gap-1.5 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
               <BookOpen className="h-3 w-3" /> Prior Art Citations ({patent.citationGraph.length})
             </div>
             <div className="flex flex-wrap gap-1.5">
@@ -781,7 +785,7 @@ export function PatentDetail({
             wrote a closed-drawer history entry, so Back lost the patent. */}
         {(patent.pqcAlgorithms.length > 0 || patent.standardsReferenced.length > 0) && (
           <div className="border-t border-border pt-4 space-y-2">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            <div className="flex items-center gap-1.5 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
               Explore Related
             </div>
             <div className="flex flex-wrap gap-2">

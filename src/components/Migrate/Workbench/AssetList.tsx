@@ -116,14 +116,14 @@ export function AssetList({ persona, selectedDomain, onSelect, onSelectProduct }
       )}
 
       {noMatchesAtAll && (
-        <p className="rounded-xl border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
+        <p className="rounded-2xl border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
           No matches for “{query}”.
         </p>
       )}
 
       {productMatches.length > 0 && (
         <div>
-          <p className="mb-2 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+          <p className="mb-2 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
             Products
           </p>
           <div className="flex flex-col gap-1.5">
@@ -152,7 +152,7 @@ export function AssetList({ persona, selectedDomain, onSelect, onSelectProduct }
 
       {!noMatchesAtAll && (filteredAssets.length > 0 || !q) && (
         <div>
-          <p className="mb-2 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+          <p className="mb-2 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
             What you run — pick to see replacements
           </p>
           <div className="flex flex-col gap-2">
@@ -261,7 +261,7 @@ export function AssetList({ persona, selectedDomain, onSelect, onSelectProduct }
 
       {!noMatchesAtAll && (filteredFoundationDomains.length > 0 || !q) && (
         <div>
-          <p className="mb-2 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+          <p className="mb-2 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
             Foundations &amp; infrastructure
           </p>
           <div className="flex flex-col gap-1.5">

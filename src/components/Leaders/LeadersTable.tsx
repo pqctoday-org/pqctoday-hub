@@ -90,10 +90,10 @@ export const LeadersTable = ({
   }
 
   const thClass =
-    'px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-foreground transition-colors select-none'
+    'px-3 py-2.5 text-left uppercase cursor-pointer hover:text-foreground transition-colors select-none text-[11px] font-extrabold tracking-[0.14em] text-heading'
 
   return (
-    <div className="glass-panel overflow-hidden">
+    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm" role="table">
           <thead>

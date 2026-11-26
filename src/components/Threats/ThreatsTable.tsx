@@ -91,7 +91,7 @@ export const ThreatsTable = ({
   const columnCount = 5 + (showIndustry ? 1 : 0) + (showEvidence ? 1 : 0)
 
   return (
-    <div className="glass-panel overflow-hidden">
+    <div className="glass-panel bg-card backdrop-blur-none border border-border rounded-2xl shadow-none overflow-hidden">
       <div className="overflow-x-auto">
         <table
           className={clsx(
@@ -225,7 +225,7 @@ export const ThreatsTable = ({
                   <React.Fragment key={industry}>
                     <tr id={`industry-${slug}`} className="bg-muted/10 border-b border-border/40">
                       <td colSpan={columnCount + 1} className="px-3 py-2">
-                        <span className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        <span className="flex items-center gap-2 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                           {getIndustryIcon(industry, 13)}
                           {industry}
                         </span>

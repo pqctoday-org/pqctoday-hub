@@ -54,7 +54,7 @@ export const ThreatsCardGrid = ({
         <section key={industry} id={`industry-${industrySlug(industry)}`}>
           <div className="flex items-center gap-2 mb-4">
             <span className="text-muted-foreground">{getIndustryIcon(industry, 16)}</span>
-            <h3 className="text-sm font-semibold text-foreground">{industry}</h3>
+            <h3 className="text-sm font-semibold font-display text-heading">{industry}</h3>
             <span className="text-xs text-muted-foreground">({groupItems.length})</span>
           </div>
           {/* UX-14: at 1440px the content column is ~876px, so four (or three)

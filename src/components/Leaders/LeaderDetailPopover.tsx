@@ -78,7 +78,7 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
     <FocusLock returnFocus>
       <div
         ref={popoverRef}
-        className="w-[95vw] sm:w-[75vw] md:w-[50vw] max-w-[700px] max-h-[85vh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
+        className="w-[95vw] sm:w-[75vw] md:w-[50vw] max-w-[700px] max-h-[85vh] overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))]"
         style={{ zIndex: 9999, ...positionStyle }}
         role="dialog"
         aria-modal="true"
@@ -91,7 +91,7 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
               <img
                 src={leader.imageUrl}
                 alt=""
-                className="w-16 h-16 rounded-full object-cover border-2 border-primary/20 shadow-glow shrink-0"
+                className="w-16 h-16 rounded-full object-cover border-2 border-primary/20 shrink-0"
                 onError={() => setImgError(true)}
               />
             ) : (
@@ -123,7 +123,7 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
               </div>
               <h3
                 id="leader-popover-title"
-                className="text-lg font-bold text-foreground leading-tight"
+                className="text-lg font-bold leading-tight font-display text-heading"
               >
                 {leader.name}
               </h3>
@@ -214,7 +214,7 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
           )}
 
           {/* Bio */}
-          <div className="glass-panel p-4">
+          <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
             <p className="text-sm text-muted-foreground leading-relaxed italic">
               &ldquo;{leader.bio}&rdquo;
             </p>
@@ -267,8 +267,8 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
 
           {/* Open Source Projects — links to migrate-catalog products this leader maintains */}
           {leader.migrateCatalogRefs && leader.migrateCatalogRefs.length > 0 && (
-            <div className="p-3 rounded-lg bg-muted/20 border border-border">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-2">
+            <div className="p-3 rounded-2xl bg-muted/20 border border-border">
+              <p className="uppercase mb-2 text-[11px] font-extrabold tracking-[0.14em] text-heading">
                 {catalogProductsHeading(leader.migrateCatalogRefs)}
               </p>
               <div className="flex flex-col gap-1">

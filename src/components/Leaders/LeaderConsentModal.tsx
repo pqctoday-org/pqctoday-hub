@@ -100,7 +100,7 @@ export function LeaderConsentModal({ isOpen, onClose }: LeaderConsentModalProps)
       <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4 print:hidden pointer-events-none">
         <FocusLock returnFocus>
           <div
-            className="glass-panel bg-card max-w-lg w-full max-h-[85dvh] flex flex-col overflow-hidden pointer-events-auto"
+            className="glass-panel backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] bg-card max-w-lg w-full max-h-[85dvh] flex flex-col overflow-hidden pointer-events-auto"
             role="dialog"
             aria-modal="true"
             aria-labelledby="leader-consent-title"
@@ -111,7 +111,10 @@ export function LeaderConsentModal({ isOpen, onClose }: LeaderConsentModalProps)
                 <div className="p-2 rounded-lg bg-primary/20">
                   <Award size={20} className="text-primary" />
                 </div>
-                <h2 id="leader-consent-title" className="text-lg font-bold text-foreground">
+                <h2
+                  id="leader-consent-title"
+                  className="text-lg font-bold font-display text-heading"
+                >
                   I Consent to Be Listed in the PQC Community
                 </h2>
               </div>
@@ -181,7 +184,7 @@ export function LeaderConsentModal({ isOpen, onClose }: LeaderConsentModalProps)
                     )}
                   </Button>
                 </div>
-                <pre className="text-xs text-muted-foreground bg-muted/30 border border-border rounded-lg p-3 whitespace-pre-wrap leading-relaxed select-all">
+                <pre className="text-xs text-muted-foreground bg-muted/30 border border-border rounded-2xl p-3 whitespace-pre-wrap leading-relaxed select-all">
                   {LEADER_TEMPLATE}
                 </pre>
               </div>

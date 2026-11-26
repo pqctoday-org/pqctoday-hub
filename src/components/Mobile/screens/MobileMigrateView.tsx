@@ -626,7 +626,7 @@ export function MobileMigrateView() {
         <div
           role="status"
           data-testid="deeplink-elsewhere"
-          className="mb-4 rounded-lg border border-border bg-muted/30 p-3 text-[12px]"
+          className="mb-4 rounded-2xl border border-border bg-muted/30 p-3 text-[12px]"
         >
           <p>Some linked products are in other categories:</p>
           <ul className="mt-1 list-disc pl-5">
@@ -682,7 +682,7 @@ export function MobileMigrateView() {
                 <p
                   aria-live="polite"
                   aria-atomic="true"
-                  className="rounded-xl border border-dashed border-border p-3 text-center text-[11.5px] text-muted-foreground"
+                  className="rounded-2xl border border-dashed border-border p-3 text-center text-[11.5px] text-muted-foreground"
                 >
                   No matches for "{catalogQuery}".
                 </p>
@@ -695,7 +695,7 @@ export function MobileMigrateView() {
                     return (
                       <div
                         key={p.productId || p.softwareName}
-                        className="rounded-xl border border-border bg-card p-3"
+                        className="rounded-2xl border border-border bg-card p-3"
                       >
                         <p className="text-[12.5px] font-bold text-foreground">{p.softwareName}</p>
                         <p className="mt-1 text-[10.5px] text-muted-foreground">
@@ -729,7 +729,7 @@ export function MobileMigrateView() {
                 ))}
             </div>
           ) : trimmedCatalogQuery.length > 0 ? (
-            <p className="rounded-xl border border-dashed border-border p-3 text-center text-[11.5px] text-muted-foreground">
+            <p className="rounded-2xl border border-dashed border-border p-3 text-center text-[11.5px] text-muted-foreground">
               Type at least {MIN_CATALOG_QUERY_LENGTH} characters to search all{' '}
               {softwareData.length} products.
             </p>
@@ -800,7 +800,7 @@ export function MobileMigrateView() {
               </div>
 
               {asset && decision ? (
-                <div className="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/5 to-transparent p-3.5">
+                <div className="rounded-2xl border-2 border-ink bg-card shadow-[0_6px_0_hsl(var(--edge))] p-3.5">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex flex-wrap items-center gap-1.5">
                       <h2 className="text-[13.5px] font-bold text-foreground">{asset.label}</h2>
@@ -842,7 +842,7 @@ export function MobileMigrateView() {
                   </p>
                 </div>
               ) : selectedDomain ? (
-                <div className="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/5 to-transparent p-3.5">
+                <div className="rounded-2xl border-2 border-ink bg-card shadow-[0_6px_0_hsl(var(--edge))] p-3.5">
                   <h2 className="text-[13.5px] font-bold text-foreground">
                     {DOMAINS[selectedDomain].label}
                   </h2>
@@ -914,11 +914,11 @@ export function MobileMigrateView() {
               )}
               <div className="flex flex-col gap-2">
                 {products.length === 0 ? (
-                  <p className="rounded-xl border border-dashed border-border p-3 text-center text-[11.5px] text-muted-foreground">
+                  <p className="rounded-2xl border border-dashed border-border p-3 text-center text-[11.5px] text-muted-foreground">
                     No catalog products mapped here yet.
                   </p>
                 ) : filteredProducts.length === 0 ? (
-                  <p className="rounded-xl border border-dashed border-border p-3 text-center text-[11.5px] text-muted-foreground">
+                  <p className="rounded-2xl border border-dashed border-border p-3 text-center text-[11.5px] text-muted-foreground">
                     {filter.trim()
                       ? `No matches for "${filter}".`
                       : 'No products match these filters.'}
@@ -1847,7 +1847,7 @@ function MobileRoadmapsTab({
         </div>
       </div>
       {filtered.length === 0 && (
-        <p className="rounded-xl border border-dashed border-border p-4 text-center text-[11.5px] text-muted-foreground">
+        <p className="rounded-2xl border border-dashed border-border p-4 text-center text-[11.5px] text-muted-foreground">
           No vendors match "{query}".
         </p>
       )}
@@ -1983,11 +1983,11 @@ function MobileVendorProductsSheet({
           )}
           <div className="flex flex-col gap-2">
             {products.length === 0 ? (
-              <p className="rounded-xl border border-dashed border-border p-3 text-center text-[11.5px] text-muted-foreground">
+              <p className="rounded-2xl border border-dashed border-border p-3 text-center text-[11.5px] text-muted-foreground">
                 No catalog products for this vendor yet.
               </p>
             ) : filteredProducts.length === 0 ? (
-              <p className="rounded-xl border border-dashed border-border p-3 text-center text-[11.5px] text-muted-foreground">
+              <p className="rounded-2xl border border-dashed border-border p-3 text-center text-[11.5px] text-muted-foreground">
                 No matches for "{filter}".
               </p>
             ) : (
@@ -2001,7 +2001,7 @@ function MobileVendorProductsSheet({
                   return (
                     <div
                       key={p.productId || p.softwareName}
-                      className="rounded-xl border border-border bg-card p-3"
+                      className="rounded-2xl border border-border bg-card p-3"
                     >
                       <p className="text-[12.5px] font-bold text-foreground">{p.softwareName}</p>
                       <p className="mt-1 text-[10.5px] text-muted-foreground">
@@ -2057,7 +2057,7 @@ function RoadmapVendorCard({
     // violation this file's own AssetList.tsx already fixed once,
     // 2026-08-02). Now an inert container with two sibling buttons, same
     // shape MobileProductRow already establishes (row-select + Choose).
-    <div className="rounded-xl border border-border bg-card p-3">
+    <div className="rounded-2xl border border-border bg-card p-3">
       <Button
         type="button"
         variant="ghost"
@@ -2190,7 +2190,7 @@ function MobileVendorRoadmapPanel({
         <section
           aria-labelledby={otherHeadingId}
           data-testid="analysis-other-source"
-          className="flex flex-col gap-2.5 rounded-xl border border-border bg-muted/20 p-3"
+          className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] flex flex-col gap-2.5 p-3"
         >
           <h3 id={otherHeadingId} className="text-[12.5px] font-bold text-foreground">
             Analysis from another source
@@ -2311,7 +2311,10 @@ function MobileVendorRiskTab() {
         </p>
       </div>
       {risks.map((c) => (
-        <div key={c.key} className="glass-panel p-3.5">
+        <div
+          key={c.key}
+          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3.5"
+        >
           <div className="flex items-center justify-between gap-2">
             <p className="text-[12px] font-bold text-foreground">{c.title}</p>
             <span

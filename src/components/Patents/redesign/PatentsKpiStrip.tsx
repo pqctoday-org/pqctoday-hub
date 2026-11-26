@@ -90,7 +90,7 @@ export function PatentsKpiStrip({ kpis, onDrill }: PatentsKpiStripProps) {
           >
             <span className={`flex items-center gap-1.5 ${c.tint}`}>
               <Icon size={14} aria-hidden="true" />
-              <span className="font-mono text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
+              <span className="font-mono uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                 {c.label}
               </span>
             </span>

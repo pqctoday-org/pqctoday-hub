@@ -82,7 +82,7 @@ export function WhoHasMovedPanel() {
     <section className="mt-4 rounded-xl border border-primary/25 bg-primary/5 p-4">
       <div className="mb-2 flex items-center gap-2">
         <CheckCircle2 size={17} className="shrink-0 text-primary" aria-hidden="true" />
-        <h2 className="text-base font-bold text-foreground">Who has already moved</h2>
+        <h2 className="text-base font-bold font-display text-heading">Who has already moved</h2>
       </div>
 
       <p className="text-sm leading-relaxed text-muted-foreground">

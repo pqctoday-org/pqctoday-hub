@@ -58,7 +58,7 @@ export function VendorCommitmentPanel() {
     <section className="mt-4 rounded-xl border border-primary/25 bg-primary/5 p-4">
       <div className="mb-2 flex items-center gap-2">
         <Handshake size={17} className="shrink-0 text-primary" aria-hidden="true" />
-        <h2 className="text-base font-bold text-foreground">
+        <h2 className="text-base font-bold font-display text-heading">
           Which of your suppliers have committed
         </h2>
       </div>
@@ -130,10 +130,12 @@ export function ClaimsAndEvidencePanel() {
   }, [])
 
   return (
-    <section className="mt-4 rounded-xl border border-border bg-muted/20 p-4">
+    <section className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-4 p-4">
       <div className="mb-2 flex items-center gap-2">
         <FileSearch size={17} className="shrink-0 text-primary" aria-hidden="true" />
-        <h2 className="text-base font-bold text-foreground">This catalog as a corpus of claims</h2>
+        <h2 className="text-base font-bold font-display text-heading">
+          This catalog as a corpus of claims
+        </h2>
       </div>
 
       <p className="text-sm leading-relaxed text-muted-foreground">

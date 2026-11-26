@@ -247,7 +247,7 @@ export function RoadmapsTab({
           migration planner needs. */}
       {filteredWithoutRoadmap.length > 0 && (
         <div>
-          <p className="mb-2 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+          <p className="mb-2 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
             Your vendors with no published roadmap yet ·{' '}
             <span className="text-foreground">{filteredWithoutRoadmap.length}</span>
           </p>
@@ -255,7 +255,7 @@ export function RoadmapsTab({
             {filteredWithoutRoadmap.map((e) => (
               <div
                 key={e.vendorId}
-                className="rounded-lg border border-dashed border-border bg-card/50 p-3 text-sm"
+                className="rounded-2xl border border-dashed border-border bg-card/50 p-3 text-sm"
               >
                 <p className="font-semibold text-foreground">{e.vendorName}</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">
@@ -268,14 +268,14 @@ export function RoadmapsTab({
       )}
 
       {filtered.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+        <p className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
           No vendors match “{query}”.
         </p>
       ) : (
         <>
           {myVendors.length > 0 && (
             <div>
-              <p className="mb-2 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+              <p className="mb-2 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                 Your vendors · <span className="text-foreground">{myVendors.length}</span>
               </p>
               <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-2">
@@ -294,7 +294,7 @@ export function RoadmapsTab({
           )}
           <div>
             {myVendors.length > 0 && (
-              <p className="mb-2 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+              <p className="mb-2 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                 All vendors
               </p>
             )}
@@ -336,7 +336,7 @@ function RoadmapCard({
   const vendorEnrichments = enrichmentByVendorId.get(vendorId) ?? []
 
   return (
-    <div data-deeplink-id={vendorId} className="rounded-xl border border-border bg-card p-3">
+    <div data-deeplink-id={vendorId} className="rounded-2xl border border-border bg-card p-3">
       <div className="mb-2 flex items-center justify-between gap-2">
         <p className="text-sm font-semibold text-foreground">{vendorName}</p>
         <ItemShareButton

@@ -28,7 +28,7 @@ export function LeaderRemovalModal({ isOpen, onClose }: LeaderRemovalModalProps)
       <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4 print:hidden pointer-events-none">
         <FocusLock returnFocus>
           <div
-            className="glass-panel bg-card max-w-lg w-full max-h-[85dvh] flex flex-col overflow-hidden pointer-events-auto"
+            className="glass-panel backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] bg-card max-w-lg w-full max-h-[85dvh] flex flex-col overflow-hidden pointer-events-auto"
             role="dialog"
             aria-modal="true"
             aria-labelledby="leader-removal-title"
@@ -39,7 +39,10 @@ export function LeaderRemovalModal({ isOpen, onClose }: LeaderRemovalModalProps)
                 <div className="p-2 rounded-lg bg-status-error/20">
                   <ShieldX size={20} className="text-status-error" />
                 </div>
-                <h2 id="leader-removal-title" className="text-lg font-bold text-foreground">
+                <h2
+                  id="leader-removal-title"
+                  className="text-lg font-bold font-display text-heading"
+                >
                   Request Removal
                 </h2>
               </div>

@@ -527,7 +527,7 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
         <div
           role="status"
           data-testid="deeplink-elsewhere"
-          className="mt-3 rounded-lg border border-border bg-muted/30 p-3 text-sm"
+          className="mt-3 rounded-2xl border border-border bg-muted/30 p-3 text-sm"
         >
           <p>Some linked products are in other categories:</p>
           <ul className="mt-1 list-disc pl-5">

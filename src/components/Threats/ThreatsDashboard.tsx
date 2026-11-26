@@ -1030,7 +1030,7 @@ export const ThreatsDashboard: React.FC<{
       {!simEmbed && selectedPersona && <PersonaPageNote route="/threats" className="mb-4" />}
       {!simEmbed && !selectedPersona && (
         <section
-          className="mb-4 rounded-lg border border-border bg-muted/20 p-3"
+          className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mb-4 p-3"
           aria-label="Role guidance"
         >
           <p className="text-sm font-semibold text-foreground">
@@ -1080,10 +1080,10 @@ export const ThreatsDashboard: React.FC<{
 
       {!simEmbed && (
         <section
-          className="mb-4 rounded-lg border border-border bg-card p-4"
+          className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mb-4 p-4"
           aria-labelledby="threat-primer-title"
         >
-          <h2 id="threat-primer-title" className="text-sm font-semibold text-foreground">
+          <h2 id="threat-primer-title" className="text-sm font-semibold font-display text-heading">
             Two exposure clocks, several kinds of record
           </h2>
           <div className="mt-2 grid gap-2 text-xs leading-relaxed text-muted-foreground md:grid-cols-2">
@@ -1160,7 +1160,7 @@ export const ThreatsDashboard: React.FC<{
 
         {/* Persona summary card */}
         {personaSummary && (
-          <div className="glass-panel p-3 mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 mb-4 flex items-center gap-2 text-sm text-muted-foreground">
             <Info size={14} className="text-primary flex-shrink-0" />
             <span>{personaSummary}</span>
           </div>
@@ -1179,7 +1179,7 @@ export const ThreatsDashboard: React.FC<{
         {/* Also shown whenever a lens is on (a shared ?protocol= link), so a
             non-developer is never filtered by a lens they cannot see or clear. */}
         {(selectedPersona === 'developer' || protocolLens) && (
-          <div className="mb-4 rounded-lg border border-border bg-muted/20 p-3">
+          <div className="mb-4 rounded-2xl border border-border bg-muted/20 p-3">
             <div className="mb-2 flex flex-wrap items-center gap-1.5">
               <Network size={14} className="shrink-0 text-primary" aria-hidden="true" />
               <span className="mr-1 text-xs font-semibold text-foreground">By protocol:</span>
@@ -1260,7 +1260,7 @@ export const ThreatsDashboard: React.FC<{
           icon={<List size={16} className="text-primary" aria-hidden="true" />}
           defaultOpen
         >
-          <div className="mb-4 rounded-lg border border-border bg-muted/20 p-3 text-xs leading-relaxed text-muted-foreground">
+          <div className="mb-4 rounded-2xl border border-border bg-muted/20 p-3 text-xs leading-relaxed text-muted-foreground">
             <span className="font-semibold text-foreground">What is in this catalog?</span>{' '}
             Educational records drawn from threat scenarios, policy milestones, implementation
             weaknesses and migration guidance. A record is not automatically an observed attack, a

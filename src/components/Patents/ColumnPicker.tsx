@@ -54,7 +54,7 @@ export function ColumnPicker({
       </Button>
 
       {open && (
-        <div className="absolute top-full right-0 mt-1 z-50 w-56 rounded-lg border border-border bg-card shadow-lg">
+        <div className="absolute top-full right-0 mt-1 z-50 w-56 bg-card border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))]">
           <div className="px-2 pt-2 pb-1.5">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5 px-1">
               Presets

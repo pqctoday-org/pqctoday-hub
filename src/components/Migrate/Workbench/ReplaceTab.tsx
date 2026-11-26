@@ -306,8 +306,10 @@ export function ReplaceTab({
             )}
           </>
         ) : selectedDomain ? (
-          <div className="rounded-xl border border-border bg-gradient-to-br from-primary/5 to-transparent p-4">
-            <h2 className="text-base font-bold text-foreground">{DOMAINS[selectedDomain].label}</h2>
+          <div className="rounded-2xl border border-border bg-card p-4">
+            <h2 className="text-base font-bold font-display text-heading">
+              {DOMAINS[selectedDomain].label}
+            </h2>
             <p className="mt-1 text-xs text-muted-foreground">
               Foundational building blocks &amp; tooling — browse the full set below.
             </p>
@@ -317,7 +319,7 @@ export function ReplaceTab({
         {selectedDomain && (
           <>
             <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
-              <p className="font-mono text-[11px] uppercase tracking-wide text-muted-foreground">
+              <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                 {asset ? 'Products that replace this' : 'Products'} ·{' '}
                 <span className="text-foreground">{products.length} in catalog</span>
               </p>
@@ -442,7 +444,7 @@ export function ReplaceTab({
 
             <div className="mt-3 flex flex-col gap-2">
               {products.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
+                <div className="rounded-2xl border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
                   <p>No catalog products mapped here yet.</p>
                   {onGoToRoadmaps && (
                     <Button
@@ -462,7 +464,7 @@ export function ReplaceTab({
                   )}
                 </div>
               ) : filtered.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
+                <div className="rounded-2xl border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
                   <p>
                     {filter.trim()
                       ? `No products match “${filter.trim()}” under the current filters.`
@@ -534,10 +536,10 @@ function AssetDetailCard({
 }) {
   const decision = DECISIONS[asset.decision]
   return (
-    <div className="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/5 to-transparent p-4">
+    <div className="rounded-3xl border-2 border-ink bg-card shadow-[0_6px_0_hsl(var(--edge))] p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2">
-          <h2 className="text-base font-bold text-foreground">{asset.label}</h2>
+          <h2 className="text-base font-bold font-display text-heading">{asset.label}</h2>
           <Pill tone={decision.tone} icon={DECISION_ICON[asset.decision]}>
             {decision.label}
           </Pill>

@@ -324,7 +324,7 @@ export function PatentSearchPanel({
                 variant="ghost"
                 size="sm"
                 onClick={() => setQuery(q)}
-                className="text-xs h-auto px-2.5 py-1 rounded-full border border-border bg-muted/40 hover:bg-muted text-foreground transition-colors"
+                className="text-xs h-auto px-2.5 py-1 rounded-full transition-colors bg-chip text-chip-foreground font-bold border-2 border-ink hover:bg-highlight hover:text-heading"
               >
                 {q}
               </Button>
@@ -451,7 +451,7 @@ function PatentResultCard({
 
   return (
     <div
-      className="glass-panel p-3.5 flex flex-col gap-2 hover:border-primary/40 transition-colors cursor-pointer group"
+      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3.5 flex flex-col gap-2 hover:border-primary/40 transition-colors cursor-pointer group"
       onClick={() => onSelect(patent.patentNumber)}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -483,7 +483,7 @@ function PatentResultCard({
 
           {/* Title */}
           <h3
-            className="text-sm font-medium text-foreground leading-snug line-clamp-2"
+            className="text-sm font-medium leading-snug line-clamp-2 font-display text-heading"
             dangerouslySetInnerHTML={{ __html: highlightedTitle }}
           />
         </div>

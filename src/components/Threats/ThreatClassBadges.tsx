@@ -107,7 +107,7 @@ const DefinitionBadge: React.FC<{
             ref={popoverRef}
             role="tooltip"
             style={{ position: 'fixed', zIndex: 9999, transform: 'translateX(-50%)', ...style }}
-            className="w-64 p-2.5 rounded-lg border border-border bg-popover text-popover-foreground shadow-lg text-xs leading-relaxed"
+            className="w-64 p-2.5 bg-popover text-popover-foreground text-xs leading-relaxed border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))]"
           >
             {definition}
           </div>,

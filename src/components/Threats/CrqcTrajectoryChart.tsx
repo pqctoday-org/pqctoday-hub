@@ -38,11 +38,11 @@ export const CrqcTrajectoryChart: React.FC = () => {
 
   return (
     <section
-      className="rounded-lg border border-border bg-muted/20 p-3"
+      className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-3"
       aria-labelledby="crqc-trajectory-heading"
       data-testid="crqc-trajectory-chart"
     >
-      <h3 id="crqc-trajectory-heading" className="text-sm font-bold text-foreground">
+      <h3 id="crqc-trajectory-heading" className="text-sm font-bold font-display text-heading">
         CRQC progress evidence
       </h3>
       <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
