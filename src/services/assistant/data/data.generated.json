@@ -961,6 +961,9 @@
    "data_not_loading": "The Hub could not load the data for this answer.",
    "held": "Your question is kept in the box below. Nothing was lost. Try again, or keep browsing the Hub."
   },
+  "links": {
+   "more": "and {n} more"
+  },
   "note": {
    "broad": "Broad match: the Hub has no direct answer to this. These are the closest resources.",
    "direct": "Grouped for {label}: best first.",
@@ -1212,6 +1215,15 @@
     "^(?:main|key) (?:sections|topics|areas)\\b",
     "\\bjust landed\\b",
     "\\bfirst time\\b.{0,40}(?:what can|where)"
+   ]
+  },
+  "direct_links": {
+   "cap": 5,
+   "relations": [
+    "made_by",
+    "certifies",
+    "issued_to",
+    "published_by"
    ]
   },
   "direct_shape": {

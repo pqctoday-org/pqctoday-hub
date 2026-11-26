@@ -44,6 +44,7 @@ export const FAMILY_FILE_PREFIX: Record<string, string> = {
   country: 'jurisdictions',
   usecase: 'industry_landscape',
   vendor: 'vendors',
+  cert: 'migrate_certification_xref',
   leader: 'leaders',
   threat: 'quantum_threats_hsm_industries',
   lesson: 'playground_content',
