@@ -252,7 +252,7 @@ export function lastAnswerOf(turns: readonly AssistantTurn[]): LastAnswerRef | n
   return {
     matched:
       record && !/^(?:LM-|PAGE:)/.test(record.tag)
-        ? { tag: record.tag, title: record.title }
+        ? { tag: record.tag, title: record.title, ...(record.recordLink ?? {}) }
         : null,
     lesson,
   }

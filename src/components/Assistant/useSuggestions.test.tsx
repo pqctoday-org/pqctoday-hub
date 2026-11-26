@@ -101,7 +101,7 @@ describe('the suggestions the drawer offers, from the learner state', () => {
 
   it('differs for a learner on a lesson page, with and without an objective, and after a finished step', () => {
     const none = suggestions('/learn/tls-basics')
-    expect(none[0]).toMatchObject({ rule: 1, question: 'What is TLS Basics about?' })
+    expect(none[0]).toMatchObject({ rule: 1, question: 'What is the lesson “TLS Basics” about?' })
 
     setLearner({
       persona: 'architect',
@@ -365,7 +365,7 @@ describe('a question asked earlier is not offered again while the objective and 
         ;(store as { setState: (p: object) => void }).setState({ [key]: spy })
       }
     }
-    setTurns(['What is TLS Basics about?'])
+    setTurns(['What is the lesson “TLS Basics” about?'])
     const before = dataOf()
     renderHook(() => useRememberAsked(), { wrapper: wrap('/') })
     expect(dataOf()).toBe(before)
@@ -454,7 +454,7 @@ describe('the last answer', () => {
     expect(got.slice(0, 3).map((s) => s.question)).toEqual([
       'Which lessons teach ML-KEM?',
       'Which tools go with PQC 101?',
-      'What is TLS Basics about?',
+      'What is the lesson “TLS Basics” about?',
     ])
   })
 })
@@ -576,5 +576,52 @@ describe('what counts as just finished', () => {
   it('is not a lesson recorded long ago', () => {
     setLearner({ persona: 'architect', completions: { 'LM-004': Date.now() - 3 * 60 * 60 * 1000 } })
     expect(suggestions('/').map((s) => s.label)).not.toContain('Recap')
+  })
+})
+
+describe('the last answer: the link of its record', () => {
+  const done = (source: object): AssistantTurn =>
+    ({
+      id: 'a',
+      question: 'Q?',
+      status: 'done',
+      answer: { state: 'resources', source, groups: [] },
+    }) as never
+  const src = (tag: string, title: string, recordLink?: object | null) => ({
+    label: 'Closest source',
+    kind: 'k',
+    title,
+    tag,
+    goLink: '',
+    recordLink,
+  })
+  it('carries the link the engine host found for the record the answer is drawn from', () => {
+    expect(lastAnswerOf([done(src('PRD:p', 'Thing', { relation: 'made_by' }))])?.matched).toEqual({
+      tag: 'PRD:p',
+      title: 'Thing',
+      relation: 'made_by',
+    })
+    expect(
+      lastAnswerOf([
+        done(src('CERT:a', 'ACVP #A1: Thing', { relation: 'certifies', name: 'ACVP #A1' })),
+      ])?.matched
+    ).toMatchObject({ relation: 'certifies', name: 'ACVP #A1' })
+  })
+  it('carries none for a record with no link, or an answer from before the field existed', () => {
+    expect(lastAnswerOf([done(src('GL:x', 'ML-KEM', null))])?.matched?.relation).toBeUndefined()
+    expect(lastAnswerOf([done(src('GL:x', 'ML-KEM'))])?.matched?.relation).toBeUndefined()
+  })
+  it('takes the link from a bare name card too', () => {
+    const turn = {
+      id: 'a',
+      question: 'Q',
+      status: 'done',
+      answer: {
+        state: 'name',
+        nameCard: { tag: 'VND-1', title: 'Thing Inc.', recordLink: { relation: 'makes' } },
+        groups: [],
+      },
+    } as never
+    expect(lastAnswerOf([turn])?.matched).toMatchObject({ relation: 'makes' })
   })
 })
