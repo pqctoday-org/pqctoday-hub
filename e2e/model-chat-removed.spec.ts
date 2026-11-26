@@ -68,8 +68,8 @@ for (const [name, viewport] of [
         timeout: 30_000,
       })
       await expect
-        .poll(() => page.evaluate(() => localStorage.getItem('pqc-chat-storage') ?? ''))
-        .not.toContain(KEY)
+        .poll(() => page.evaluate(() => localStorage.getItem('pqc-chat-storage')))
+        .toBeNull()
       const drawer = await openDrawer(page)
       const answer = await ask(page, drawer, 'FIPS 203')
 
@@ -102,10 +102,9 @@ for (const [name, viewport] of [
       )
       expect(JSON.stringify(stored)).not.toContain(KEY)
       expect(JSON.stringify(stored)).not.toContain('conv-old')
-      const chat = JSON.parse(
-        (stored['pqc-chat-storage'] as string | null) ?? '{"state":{},"version":15}'
-      )
-      expect(chat).toEqual({ state: {}, version: 15 })
+      // Both old entries are gone altogether, not rewritten empty.
+      expect(stored['pqc-chat-storage']).toBeUndefined()
+      expect(stored['pqc-feature-model-assistant']).toBeUndefined()
 
       // Not one request left the Hub's own origin during the whole visit.
       const outside = everyRequest.filter(
@@ -116,3 +115,98 @@ for (const [name, viewport] of [
     })
   })
 }
+
+/**
+ * The clean-up runs when any page loads, not only on pages that have an Ask button or a drawer:
+ * /about has neither. Stored entries go at once; the downloaded model files go once, and only the
+ * ones the old downloader wrote.
+ */
+test.describe('a returning visitor who opens a page with no Assistant button', () => {
+  test.setTimeout(90_000)
+
+  test('/about drops the old key, chats and switch, and the old model files, and keeps everything else', async ({
+    page,
+  }) => {
+    await page.addInitScript(
+      ([storage]) => {
+        if (sessionStorage.getItem('old-visitor-seeded')) return
+        sessionStorage.setItem('old-visitor-seeded', '1')
+        localStorage.setItem('pqc-feature-model-assistant', '1')
+        localStorage.setItem('pqc-chat-storage', storage)
+        localStorage.setItem('pqc-learn-storage', '{"state":{},"version":3}')
+      },
+      [JSON.stringify(OLD_CHAT_STORAGE)]
+    )
+
+    await page.goto('/about')
+    await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible({ timeout: 30_000 })
+    // There is nothing to open here: no Ask button, no drawer.
+    await expect(page.getByRole('button', { name: /Ask the Assistant/i })).toHaveCount(0)
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+
+    await expect
+      .poll(() =>
+        page.evaluate(() => [
+          localStorage.getItem('pqc-chat-storage'),
+          localStorage.getItem('pqc-feature-model-assistant'),
+        ])
+      )
+      .toEqual([null, null])
+    // Unrelated stored settings are untouched.
+    expect(await page.evaluate(() => localStorage.getItem('pqc-learn-storage'))).toBe(
+      '{"state":{},"version":3}'
+    )
+
+    // The old model's downloaded files: put some where the old downloader wrote them, next to files
+    // that are not its own, then load again.
+    await page.evaluate(async () => {
+      localStorage.removeItem('pqc-old-model-files-removed')
+      for (const name of ['webllm/model', 'webllm/config', 'webllm/wasm', 'data-cache']) {
+        const cache = await caches.open(name)
+        await cache.put('/old-file.txt', new Response('x'))
+      }
+      const root = await navigator.storage.getDirectory()
+      const store = await root.getDirectoryHandle('tvmjs-opfs-store', { create: true })
+      const folder = await store.getDirectoryHandle('webllm', { create: true })
+      await folder.getDirectoryHandle('model', { create: true })
+      await store.getDirectoryHandle('someone-else', { create: true })
+      await root.getDirectoryHandle('hub-own-folder', { create: true })
+    })
+    await page.reload()
+    await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible({ timeout: 30_000 })
+
+    await expect
+      .poll(
+        () =>
+          page.evaluate(async () => {
+            const names = await caches.keys()
+            const root = await navigator.storage.getDirectory()
+            const store = await root.getDirectoryHandle('tvmjs-opfs-store')
+            const inside: string[] = []
+            for await (const key of (
+              store as unknown as { keys(): AsyncIterable<string> }
+            ).keys()) {
+              inside.push(key)
+            }
+            return {
+              oldCaches: names.filter((n) => n.startsWith('webllm/')),
+              dataCache: names.includes('data-cache'),
+              inside,
+              ownFolder: await root
+                .getDirectoryHandle('hub-own-folder')
+                .then(() => true)
+                .catch(() => false),
+              marker: localStorage.getItem('pqc-old-model-files-removed'),
+            }
+          }),
+        { timeout: 30_000 }
+      )
+      .toEqual({
+        oldCaches: [],
+        dataCache: true,
+        inside: ['someone-else'],
+        ownFolder: true,
+        marker: '1',
+      })
+  })
+})

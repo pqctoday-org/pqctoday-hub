@@ -66,8 +66,9 @@ visitor configures themselves:
 - The PQC Assistant answers from the Hub's own records, on the device. It uses
   no language model, asks for no key and sends nothing anywhere. An earlier
   version had an optional cloud mode with a user-supplied API key and an
-  in-browser model; both were removed, and a page load after that update
-  discards any key an earlier visit had stored.
+  in-browser model; both were removed. On every page load the site now deletes
+  any key, saved conversation and chat setting an earlier visit had stored,
+  and, once, the model files that visit had downloaded to the device.
 - The optional Google Drive cloud-sync feature keeps its OAuth access token in
   browser memory only (never persisted, never sent to any PQC Today
   infrastructure) and explicitly excludes API keys from the synced payload —
