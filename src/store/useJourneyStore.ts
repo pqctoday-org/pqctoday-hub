@@ -279,7 +279,11 @@ export const useJourneyStore = create<JourneyState>()(
           const now = options.now ?? Date.now()
           const s = get()
           const base = objectiveIdFor(preview.role, preview.goal)
-          if (s.objectives[base] && !options.allowDuplicate) return { id: base, created: false } // eslint-disable-line security/detect-object-injection
+          // An open objective with the same id is a repeat. A completed one is not (the preview says "ready" for it
+          // and Create makes a new objective; reopening is its own action), so the new one takes the next free id.
+          const held = s.objectives[base] // eslint-disable-line security/detect-object-injection
+          if (held && held.state !== 'completed' && !options.allowDuplicate)
+            return { id: base, created: false }
           let id = base
           for (let n = 2; s.objectives[id]; n++) id = `${base}-${n}` // eslint-disable-line security/detect-object-injection
           const steps = stepsFromPreview(id, preview)

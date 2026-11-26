@@ -60,6 +60,25 @@ describe('objective lifecycle (handoff 5.1)', () => {
     expect(useJourneyStore.getState().order).toHaveLength(2)
   })
 
+  it('creates a new objective when the same goal was completed before, instead of opening the completed one', () => {
+    const s = useJourneyStore.getState()
+    const a = s.createObjective(preview(GOAL_A))
+    useJourneyStore.setState((st) => ({
+      objectives: {
+        ...st.objectives,
+        [a.id]: { ...st.objectives[a.id], state: 'completed', completedAt: 5 },
+      },
+    }))
+    const again = useJourneyStore.getState().createObjective(preview(GOAL_A))
+    expect(again.created).toBe(true)
+    expect(again.id).not.toBe(a.id)
+    const st = useJourneyStore.getState()
+    expect(st.objectives[a.id].state).toBe('completed')
+    expect(st.objectives[again.id].state).toBe('active')
+    expect(st.focus.architect).toBe(again.id)
+    expect(st.order).toHaveLength(2)
+  })
+
   it("keeps each role's own objectives and focus", () => {
     const s = useJourneyStore.getState()
     const a = s.createObjective(preview(GOAL_A, 'architect'))
