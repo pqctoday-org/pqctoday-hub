@@ -300,6 +300,17 @@
     "title": 1.0
    }
   },
+  "generic_names": [
+   "pqc",
+   "post-quantum cryptography",
+   "post quantum cryptography",
+   "post-quantum",
+   "post quantum",
+   "quantum",
+   "cryptography",
+   "quantum computing",
+   "quantum-safe cryptography"
+  ],
   "intents": {
    "broad": {},
    "business_tool": {
@@ -400,7 +411,8 @@
      }
     },
     "w": {
-     "reader": 4.0
+     "reader": 4.0,
+     "text": 3.0
     }
    },
    "fact": {
@@ -502,6 +514,17 @@
     }
    },
    "products": {
+    "follow_fields": [
+     {
+      "field": "products",
+      "prefix": "PRD:",
+      "w": 2.0
+     }
+    ],
+    "name_types": [
+     "product",
+     "vendor"
+    ],
     "prior": {
      "Data pages": {
       "type:product": 1.5,
@@ -516,7 +539,7 @@
     "journey": false,
     "prior": {
      "Data pages": {
-      "type:threat": 1.0
+      "type:threat": 4.0
      },
      "Learn": {
       "type:module": 0.4
@@ -543,6 +566,11 @@
     }
    },
    "site": {
+    "only": {
+     "Data pages": [
+      "type:page"
+     ]
+    },
     "prior": {
      "Data pages": {
       "type:page": 2.0
@@ -640,9 +668,9 @@
     "number": 4,
     "order": [
      "D",
+     "R",
      "L",
-     "T",
-     "R"
+     "T"
     ]
    },
    "concept": {
