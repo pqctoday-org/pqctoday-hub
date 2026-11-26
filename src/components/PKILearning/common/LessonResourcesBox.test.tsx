@@ -13,7 +13,7 @@ import { LESSON_RELATED_LINKS } from '@/data/lessonRelatedLinks'
 import { LessonResourcesBox } from './LessonResourcesBox'
 
 const load = vi.hoisted(() => vi.fn())
-const loaded = vi.hoisted(() => vi.fn(() => null))
+const loaded = vi.hoisted(() => vi.fn((): KnowledgeReader | null => null))
 vi.mock('@/services/knowledge/knowledgeReader', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/services/knowledge/knowledgeReader')>()),
   loadKnowledgeReader: load,
