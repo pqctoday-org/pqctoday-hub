@@ -63,7 +63,12 @@ import { useWorkshopUrlAutostart } from '../../hooks/useWorkshopUrlAutostart'
 import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
 import { useIsBelowLgViewport } from '../../hooks/useIsBelowLgViewport'
 import { useIsMobileShell } from '../../hooks/useIsMobileShell'
-import { useAssistantLayout, drawerPaddingClass } from '../Assistant/useAssistantLayout'
+import {
+  useAssistantLayout,
+  useAssistantDrawerWidth,
+  drawerPaddingClass,
+  drawerPaddingStyle,
+} from '../Assistant/useAssistantLayout'
 import { useAssistantReturnStore } from '../../store/useAssistantReturnStore'
 import { RouteNextStep } from './RouteNextStep'
 import { RoutePageExercise } from './RoutePageExercise'
@@ -352,6 +357,7 @@ export const MainLayout = () => {
     open: openRightPanel,
   } = useRightPanelStore()
   const assistantLayout = useAssistantLayout()
+  const assistantWidth = useAssistantDrawerWidth()
   const hasReturn = useAssistantReturnStore((s) => s.target !== null)
   const recordVisit = useHistoryStore((s) => s.recordVisit)
   // Auto-start Workshop Video Mode from `?workshop=video&autoplay=1` (Playwright recorder hook).
@@ -698,6 +704,7 @@ export const MainLayout = () => {
         assistantLayout,
         panelTab
       )}`}
+      style={drawerPaddingStyle(isPanelOpen, assistantLayout, panelTab, assistantWidth)}
     >
       {/* Skip-to-main link — visible only on keyboard focus */}
       <a

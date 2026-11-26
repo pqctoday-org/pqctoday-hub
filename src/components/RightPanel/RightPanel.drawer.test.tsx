@@ -40,7 +40,8 @@ describe('drawer on the default path', () => {
     mount()
     const region = screen.getByRole('region', { name: 'Assistant' })
     expect(region).toHaveAttribute('data-assistant-layout', 'docked')
-    expect(region).toHaveClass('w-[400px]')
+    // the window is 1024 px wide here, so the automatic width is the narrower one
+    expect(region).toHaveStyle({ width: '400px' })
     expect(screen.queryByRole('tab')).toBeNull()
     expect(screen.queryByRole('button', { name: /expand|shrink|minimi[sz]e|close/i })).toBeNull()
     expect(
