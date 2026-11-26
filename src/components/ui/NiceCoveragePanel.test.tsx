@@ -76,8 +76,9 @@ describe('NiceCoveragePanel', () => {
   })
 
   it('renders nothing for a lesson not read against NICE, or an unknown one', () => {
-    expect(LEARN_MODULE_BY_ID['pqc-algorithms'].niceRead).toBe(false)
-    const { container: unread } = render(<NiceCoveragePanel moduleId="pqc-algorithms" />)
+    const notRead = LEARN_MODULES.find((row) => !row.niceRead)
+    expect(notRead).toBeDefined()
+    const { container: unread } = render(<NiceCoveragePanel moduleId={notRead!.id} />)
     expect(unread).toBeEmptyDOMElement()
     const { container: unknown } = render(<NiceCoveragePanel moduleId="not-a-learn-module" />)
     expect(unknown).toBeEmptyDOMElement()
