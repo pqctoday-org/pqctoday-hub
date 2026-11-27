@@ -6,7 +6,14 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
-import { buildNotices, collectEngines, collectNpm, declaredLicense, spdxIds } from './notices'
+import {
+  buildNotices,
+  collectEngines,
+  collectNpm,
+  declaredLicense,
+  HUB_HEADER_LINKS,
+  spdxIds,
+} from './notices'
 
 const ROOT = join(__dirname, '..', '..')
 const roots: string[] = []
@@ -177,6 +184,16 @@ describe('licence notices — the committed data is complete', () => {
     expect(files['licenses/index.html']).toContain(
       'https://github.com/pqctoday-org/pqctoday-hub/tree/0123456789abcdef0123456789abcdef01234567'
     )
+  })
+
+  it('keeps the page static but gives it the Hub header, one heading and the way back', () => {
+    const html = files['licenses/index.html']
+    expect(html).not.toMatch(/<script/i)
+    expect(html).toMatch(/<header class="hub-header">/)
+    expect(html).toContain('<a class="brand" href="/"')
+    for (const link of HUB_HEADER_LINKS) expect(html).toContain(`<a href="${link.path}">`)
+    expect(html.match(/<h1[ >]/g)).toHaveLength(1)
+    expect(html).toContain('<a href="/">Back to the site</a>')
   })
 
   it('names no personal machine path', () => {
