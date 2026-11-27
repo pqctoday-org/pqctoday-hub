@@ -254,7 +254,7 @@ export async function answerOnThisThread(
         }
       : null
 
-  if (raw.direct && raw.source) {
+  if (raw.direct && raw.source && base.groups.length) {
     const d = raw.direct as Raw
     const ev = d.evidence as Raw
     return {

@@ -22,6 +22,22 @@ import type { Model, Rec } from './engine/strict'
  */
 
 const ACTIVE = (r: KnowledgeRecord) => (r.status ?? 'active') === 'active' && r.active !== false
+const OMITTED_TYPES = new Set(['release', 'question', 'quizcategory'])
+const OMITTED_IDS = new Set(['PAGE:changelog', 'PAGE:quiz', 'LM:quiz'])
+const OMITTED_PATH = /^\/(?:changelog|learn\/quiz)(?:$|[/?#])/
+
+/** Release notes, the changelog page and standalone quizzes are omitted from Assistant answers. */
+export function isOmittedFromAssistant(r: Pick<KnowledgeRecord, 'id' | 'type' | 'link'>): boolean {
+  return (
+    OMITTED_TYPES.has(r.type) ||
+    OMITTED_IDS.has(r.id) ||
+    r.id.startsWith('CHG:') ||
+    r.id.startsWith('QZ:') ||
+    r.id.startsWith('QC:') ||
+    OMITTED_PATH.test(r.link ?? '')
+  )
+}
+
 const TOOL_PATHS = ['/playground', '/business', '/assess', '/report', '/openssl', '/simulation']
 const HEADER =
   /^(?:Module|Component|Term|Reference|Title|Learning Module|Document|Section|Category):\s*/i
@@ -36,7 +52,6 @@ const TEXT_KINDS: [keyof KnowledgeTextEntry, string | null][] = [
   ['topic', 'module-topic-summaries'],
   ['curious', 'module-curious'],
   ['analysis', 'document-enrichment'],
-  ['release_notes', 'changelog'],
   ['manual', 'user-manual'],
 ]
 
@@ -93,12 +108,17 @@ export function groupOf(link: string, type = ''): string {
 /** The passages of a known-answer test are searched; they never stand for the words of the page the test runs on. */
 const TEST_SOURCE = 'known-answer test'
 
+const JS_EXPR = /\$\{[^}\r\n]+\}/g
+const BARE_WORD = /^[A-Za-z-]+$/
+
 /**
  * The Hub's own words of a record, one line, at most `limit` characters, cut at a word. Lines that only place the
  * record in the Hub's lists ("Index: 0", "List: workshop_steps") are left out.
  */
 export function extractOf(text: string, limit = 240): string {
-  const lines = decodeCodes(text)
+  const decoded = decodeCodes(text)
+  const cleaned = decoded.includes('${') ? decoded.replace(JS_EXPR, '') : decoded
+  const lines = cleaned
     .split(/\r?\n/)
     .map((l) => l.trim())
     .filter((l) => l && !STRUCTURE.test(l))
@@ -111,6 +131,34 @@ export function extractOf(text: string, limit = 240): string {
   const cut = out.slice(0, limit)
   const i = cut.lastIndexOf(' ')
   return (i >= 0 ? cut.slice(0, i) : cut) + '…'
+}
+
+function recordExtract(r: KnowledgeRecord, rawExtract: string): string {
+  if (
+    (r.type !== 'vendor' && r.type !== 'industrystandard') ||
+    (rawExtract && !BARE_WORD.test(rawExtract))
+  ) {
+    return rawExtract
+  }
+  const f = r.fields ?? {}
+  const strOf = (v: string | string[] | undefined) =>
+    Array.isArray(v) ? v.join('; ').trim() : String(v ?? '').trim()
+  if (r.type === 'vendor') {
+    const vtype = strOf(f.vendor_type)
+    const hq = strOf(f.hq_country)
+    if (!vtype && !hq) return rawExtract
+    return [vtype, hq ? `Headquarters: ${hq}` : '', rawExtract ? `PQC status: ${rawExtract}` : '']
+      .filter(Boolean)
+      .join(' · ')
+  }
+  const body = strOf(f.standards_body)
+  const ind = strOf(f.industry)
+  const rdy = strOf(f.pqc_readiness)
+  if (!body && !ind && !rdy) return rawExtract
+  const lead = body ? `${body} ${rawExtract || 'standard'}`.trim() : rawExtract
+  return [lead, ind ? `Industry: ${ind}` : '', rdy ? `PQC readiness: ${rdy}` : '']
+    .filter(Boolean)
+    .join(' · ')
 }
 
 const normKey = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '')
@@ -154,12 +202,13 @@ export interface BuiltEngineInput {
 /** Everything the engine reads, from the core file and the text file. */
 export function buildEngineInput(core: KnowledgeCore, text: KnowledgeTextFile): BuiltEngineInput {
   const entries = text.entries ?? {}
+  const keptRecords = core.records.filter((r) => !isOmittedFromAssistant(r))
   const byId = new Map<string, KnowledgeRecord>()
-  for (const r of core.records) byId.set(r.id, r)
+  for (const r of keptRecords) byId.set(r.id, r)
 
   // ---------------------------------------------------------------- the strict reader's model
   const fieldsByFamily = new Map<string, Set<string>>()
-  const records: Rec[] = core.records.map((r) => {
+  const records: Rec[] = keptRecords.map((r) => {
     const fields = r.fields ?? {}
     const known = fieldsByFamily.get(r.family) ?? new Set<string>()
     for (const k of Object.keys(fields)) known.add(k)
@@ -180,12 +229,13 @@ export function buildEngineInput(core: KnowledgeCore, text: KnowledgeTextFile): 
   })
   const aliases: Model['aliases'] = {}
   for (const [name, list] of Object.entries(core.aliases)) {
-    aliases[name] = list.map(([id, kind]) => ({ id, kind }))
+    const kept = list.filter(([id]) => byId.has(id)).map(([id, kind]) => ({ id, kind }))
+    if (kept.length) aliases[name] = kept
   }
   // A glossary term and an algorithm family can share one name ("ML-KEM"). The core file's name table maps that name to the
   // family only, so a question that names it would never meet the term, which is the best first answer to "What is ML-KEM?".
   // A term is always named by its own label.
-  for (const r of core.records) {
+  for (const r of keptRecords) {
     if (r.type !== 'term') continue
     const key = normName(r.label)
     if (!key) continue
@@ -195,7 +245,9 @@ export function buildEngineInput(core: KnowledgeCore, text: KnowledgeTextFile): 
   const model: Model = {
     records,
     aliases,
-    links: core.links.map(([from, rel, to, basis]) => ({ from, rel, to, basis })),
+    links: core.links
+      .filter(([from, , to]) => byId.has(from) && byId.has(to))
+      .map(([from, rel, to, basis]) => ({ from, rel, to, basis })),
     qa: [],
     meta: {
       fields_by_family: Object.fromEntries([...fieldsByFamily].map(([f, s]) => [f, [...s].sort()])),
@@ -210,13 +262,13 @@ export function buildEngineInput(core: KnowledgeCore, text: KnowledgeTextFile): 
   const resources = new Map<string, Resource>()
   const rankOf = (r: KnowledgeRecord) => ADDRESS_OWNER_RANK[r.type] ?? ADDRESS_OWNER_DEFAULT
   const owner = new Map<string, KnowledgeRecord>()
-  for (const r of core.records) {
+  for (const r of keptRecords) {
     if (!r.link || !ACTIVE(r)) continue
     const cur = owner.get(r.link)
     if (!cur || rankOf(r) < rankOf(cur)) owner.set(r.link, r)
   }
   const sharing = new Map<string, KnowledgeRecord[]>()
-  for (const r of core.records) {
+  for (const r of keptRecords) {
     if (!r.link || !ACTIVE(r)) continue
     const list = sharing.get(r.link)
     if (!list) sharing.set(r.link, r === owner.get(r.link) ? [r] : [owner.get(r.link)!, r])
@@ -224,7 +276,7 @@ export function buildEngineInput(core: KnowledgeCore, text: KnowledgeTextFile): 
   }
   for (const r of [...sharing.values()].flat()) {
     const cur = resources.get(r.link)
-    const extract = extractOf(definitionOf(r, entries[r.id]?.full))
+    const extract = recordExtract(r, extractOf(definitionOf(r, entries[r.id]?.full)))
     if (!cur) {
       resources.set(r.link, {
         link: r.link,
@@ -237,8 +289,8 @@ export function buildEngineInput(core: KnowledgeCore, text: KnowledgeTextFile): 
       })
     } else {
       cur.record_ids.push(r.id)
-      // a test that runs on the page never lends it its step name
-      if (!cur.extract && r.type !== 'kat') cur.extract = extract
+      // a test or single checklist line never stands for the page
+      if (!cur.extract && r.type !== 'kat' && r.type !== 'checklistitem') cur.extract = extract
     }
   }
 
@@ -285,21 +337,13 @@ export function buildEngineInput(core: KnowledgeCore, text: KnowledgeTextFile): 
       for (let i = 0; i < text.length; i += LESSON_PIECE)
         addPassage(r, r.label, text.slice(i, i + LESSON_PIECE), 'module-content')
     }
-    const q = entry.quiz
-    if (q)
-      addPassage(
-        r,
-        r.label,
-        [q.question, ...Object.values(q.options), q.explanation ?? ''].join('\n'),
-        'quiz'
-      )
     for (const qa of entry.qa ?? [])
       addPassage(r, qa.question, `${qa.question}\n${qa.answer}`, 'module-qa')
   }
 
   // ---------------------------------------------------------------- dimensions, curriculum, file revisions
   const dims: Catalogue['dims'] = {}
-  for (const r of core.records) {
+  for (const r of keptRecords) {
     const industry = asList(r.d?.ind).sort()
     const place = asList(r.d?.geo).sort()
     if (industry.length || place.length) dims[r.id] = { industry, place }
@@ -307,7 +351,7 @@ export function buildEngineInput(core: KnowledgeCore, text: KnowledgeTextFile): 
   // the learning journey: only the lessons the core's curriculum names, each with its stage (the stage record it belongs
   // to), its track, how general it is and the topics it explains
   const stages: Record<string, string> = {}
-  for (const r of core.records) {
+  for (const r of keptRecords) {
     if (r.id.startsWith('STG:')) stages[r.id.slice(4)] = r.label
   }
   const modules: Record<string, Record<string, unknown>> = {}
@@ -319,7 +363,7 @@ export function buildEngineInput(core: KnowledgeCore, text: KnowledgeTextFile): 
   }
   // each role path record: the lessons of the path, and those under "more for this role"
   const rolePaths: Record<string, { first: string[]; rest: string[] }> = {}
-  for (const r of core.records) {
+  for (const r of keptRecords) {
     if (r.kind === 'role path' && r.parts?.length)
       rolePaths[r.id.slice(r.id.indexOf(':') + 1)] = {
         first: [...r.parts],
@@ -336,7 +380,7 @@ export function buildEngineInput(core: KnowledgeCore, text: KnowledgeTextFile): 
     resources: [...resources.values()],
     passages,
     curriculum: { modules, stages },
-    paid: core.records.filter((r) => r.paid).map((r) => r.id),
+    paid: keptRecords.filter((r) => r.paid).map((r) => r.id),
     rolePaths,
     dims,
     inputs: core.meta.inputs.map((i) => i[0]),

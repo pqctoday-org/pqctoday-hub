@@ -21,6 +21,8 @@ interface Rules {
   second_ratio: number
   priority: string[]
   strip_prefix: string[]
+  scope_rx?: string
+  weak_single_names?: string[]
   broad: { exact: string[]; rx: string[] }
   intents: Record<string, Rule[]>
 }
@@ -65,6 +67,38 @@ function escapeRx(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
+const WORD6 = /^[a-z]{6,}$/
+const ALPHA = 'abcdefghijklmnopqrstuvwxyz'
+
+export function buildVocab(pairs: Iterable<[string, number]>): Map<string, number> {
+  const out = new Map<string, number>()
+  for (const [w, n] of pairs) if (WORD6.test(w) && !w.startsWith('zz')) out.set(w, (out.get(w) ?? 0) + n)
+  return out
+}
+
+export function fixTypo(w: string, vocab: Map<string, number>): string {
+  if (!WORD6.test(w) || w.startsWith('zz') || vocab.has(w)) return w
+  const cands = new Set<string>()
+  const L = w.length
+  if (L >= 7) for (let i = 1; i < L; i++) cands.add(w.slice(0, i) + w.slice(i + 1))
+  for (let i = 1; i < L - 1; i++) if (w[i] !== w[i + 1]) cands.add(w.slice(0, i) + w[i + 1] + w[i] + w.slice(i + 2))
+  for (let i = 1; i <= L; i++) {
+    const pre = w.slice(0, i), suf = w.slice(i)
+    for (let k = 0; k < 26; k++) cands.add(pre + ALPHA[k] + suf)
+  }
+  if (L >= 7) {
+    for (let i = 1; i < L; i++) {
+      const pre = w.slice(0, i), suf = w.slice(i + 1), cur = w[i]
+      for (let k = 0; k < 26; k++) if (ALPHA[k] !== cur) cands.add(pre + ALPHA[k] + suf)
+    }
+  }
+  const hits: [number, string][] = []
+  for (const c of cands) { const n = vocab.get(c); if (n !== undefined) hits.push([n, c]) }
+  hits.sort((a, b) => b[0] - a[0] || (a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0))
+  if (hits.length === 1 || (hits.length >= 2 && hits[0][0] >= 2 * hits[1][0])) return hits[0][1]
+  return w
+}
+
 export class Engine {
   private stop: Set<string>
   private filler: Set<string>
@@ -73,6 +107,8 @@ export class Engine {
   private rules: Record<string, (Rule & { re: RegExp })[]>
   private data: Data
   private names: Names
+  private aliasVocab: Map<string, number>
+  private shapeVocab: Map<string, number>
   constructor(data: Data, names: Names) {
     this.data = data
     this.names = names
@@ -82,6 +118,16 @@ export class Engine {
     this.broadRx = data.rules.broad.rx.map((p) => new RegExp(p, 'i'))
     this.rules = {}
     for (const [k, rows] of Object.entries(data.rules.intents)) this.rules[k] = rows.map((r) => ({ ...r, re: new RegExp(r.rx, 'i') }))
+    const pairs: [string, number][] = []
+    for (const [k, entries] of Object.entries(names.aliases)) {
+      if (entries.length && entries.every((e) => e.kind === 'former-id')) continue
+      for (const t of k.split(' ')) if (t) pairs.push([t, 1])
+    }
+    this.aliasVocab = buildVocab(pairs)
+    const rulePairs: [string, number][] = []
+    const pats = [...Object.values(data.rules.intents).flatMap((rows) => rows.map((r) => r.rx)), data.rules.scope_rx ?? '']
+    for (const p of pats) for (const w of p.toLowerCase().match(/[a-z]{6,}/g) ?? []) rulePairs.push([w, 10])
+    this.shapeVocab = buildVocab([...pairs, ...rulePairs])
   }
 
   // ------------------------------------------------------------------ layer 1 and 2
@@ -107,7 +153,12 @@ export class Engine {
 
   /** The longest known name in the question (no skipped or masked words). */
   spotNames(question: string, maxLen = 40): { ids: string[]; span: [number, number] | null; toks: string[] } {
-    const toks = normName(question).split(' ').filter(Boolean)
+    const rawToks = normName(question).split(' ').filter(Boolean)
+    const toks = rawToks.map((t) =>
+      this.aliasVocab.has(t) || t in this.names.aliases || this.stop.has(t) || this.filler.has(t) || t.startsWith('zz')
+        ? t
+        : fixTypo(t, this.aliasVocab)
+    )
     let best: [number, number] | null = null
     for (let i = 0; i < toks.length; i++) {
       for (let j = Math.min(toks.length, i + maxLen); j > i; j--) {
@@ -138,6 +189,20 @@ export class Engine {
       const t = [...toks]
       for (let i = span[0]; i < span[1]; i++) t[i] = MASK
       text = t.join(' ')
+    }
+    if (found.length === 1) {
+      const parts = found[0].text.split(' ')
+      if (parts.length >= 2 && /^\d+$/.test(parts[parts.length - 1])) {
+        const stem = parts.slice(0, -1).join(' ')
+        const m = /\b(?:or|vs|versus|and)\s+(\d{2,4})\b/.exec(text)
+        if (m) {
+          const cand = `${stem} ${m[1]}`
+          const entries = this.names.aliases[cand]
+          if (cand !== found[0].text && entries && entries.length) {
+            found.push({ text: cand, ids: [...new Set(entries.map((e) => e.id))].sort() })
+          }
+        }
+      }
     }
     return found
   }
@@ -183,6 +248,7 @@ export class Engine {
     for (const n of names) {
       if (n.ids.every((i) => TITLED.has(this.names.types[i]))) shape = shape.replace(new RegExp('(?<![a-z0-9])' + escapeRx(n.text.toLowerCase()) + '(?![a-z0-9])', 'g'), ' zzname ')
     }
+    shape = shape.replace(/[a-z]{6,}/g, (w) => fixTypo(w, this.shapeVocab))
     shape = shape.replace(/\s+/g, ' ').trim() // one space between words, so a rule that counts words reads a masked name as one word
     for (const [intent, rows] of Object.entries(this.rules)) {
       for (const r of rows) {
