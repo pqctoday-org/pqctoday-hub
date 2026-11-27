@@ -64,8 +64,23 @@ const pageOf = (l: string) => l.split('?')[0].split('#')[0].replace(/\/+$/, '') 
 const escRx = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 const cmpStr = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0)
 const cmpTuple = (a: (number | string)[], b: (number | string)[]) => { for (let i = 0; i < a.length; i++) { if (a[i] === b[i]) continue; return a[i] < b[i] ? -1 : 1 } return 0 }
-const extractOf = (text: string, limit = 240): string => {
+/** The character codes a page's source writes for punctuation, by name. A code this table does not hold is left as it is. */
+const CODES: Record<string, string> = { quot: '"', amp: '&', apos: "'", lt: '<', gt: '>', nbsp: ' ', thinsp: ' ', shy: '', mdash: '—', ndash: '–', minus: '−', lsquo: '‘', rsquo: '’', ldquo: '“', rdquo: '”', hellip: '…', bull: '•', middot: '·', sect: '§', times: '×', prime: '′', rarr: '→', larr: '←', uarr: '↑', darr: '↓', harr: '↔', ge: '≥', le: '≤', ne: '≠', sup1: '¹', sup2: '²', sup3: '³', alpha: 'α', beta: 'β', deg: '°', plusmn: '±', copy: '©', reg: '®', trade: '™' }
+/** Text with its character codes ("&quot;", "&mdash;", "&#8217;", "&#x2019;") written as the characters a reader sees. One pass: "&amp;quot;" becomes "&quot;". */
+export function decodeCodes(text: string): string {
+  const s = String(text ?? '')
+  if (!s.includes('&')) return s
+  return s.replace(/&(#[0-9]{1,7}|#[xX][0-9a-fA-F]{1,6}|[A-Za-z][A-Za-z0-9]{1,8});/g, (m: string, c: string) => {
+    if (c[0] === '#') {
+      const n = c[1] === 'x' || c[1] === 'X' ? parseInt(c.slice(2), 16) : parseInt(c.slice(1), 10)
+      return n >= 32 && n <= 0x10ffff && !(n >= 0xd800 && n <= 0xdfff) ? String.fromCodePoint(n) : m
+    }
+    return Object.prototype.hasOwnProperty.call(CODES, c) ? CODES[c] : m
+  })
+}
+const extractOf = (raw: string, limit = 240): string => {
   const HEADER = /^(?:Module|Component|Term|Reference|Title|Learning Module|Document|Section|Category):\s*/i
+  const text = decodeCodes(raw)
   const lines = String(text || '').split(/\r?\n/).map((l) => l.trim()).filter(Boolean)
   const body = lines.filter((l) => !HEADER.test(l))
   const out = (body.length ? body : lines.map((l) => l.replace(HEADER, ''))).join(' ').replace(/\s+/g, ' ').trim()

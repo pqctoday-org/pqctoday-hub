@@ -2,7 +2,7 @@
 import { normName } from '@/services/knowledge/knowledgeReader'
 import type { KnowledgeCore, KnowledgeRecord } from '@/services/knowledge/knowledgeTypes'
 import type { KnowledgeTextEntry, KnowledgeTextFile } from '@/services/knowledge/knowledgeText'
-import type { Catalogue, Passage, Resource } from './engine/answerer'
+import { decodeCodes, type Catalogue, type Passage, type Resource } from './engine/answerer'
 import type { Model, Rec } from './engine/strict'
 
 /**
@@ -10,6 +10,9 @@ import type { Model, Rec } from './engine/strict'
  * runs on (`Model`), and the resources, passages, dimensions and curriculum the finders run on (`Catalogue`).
  * Pure: no fetch, no state. The engine itself is the unchanged TypeScript engine; this file is the only place that knows
  * the shape of the knowledge files.
+ *
+ * The knowledge text keeps the character codes of the pages it was read from ("&quot;", "&mdash;"). They are decoded here,
+ * in every title, extract and passage the learner may be shown, and nowhere else.
  */
 
 const ACTIVE = (r: KnowledgeRecord) => (r.status ?? 'active') === 'active' && r.active !== false
@@ -83,7 +86,7 @@ export function groupOf(link: string, type = ''): string {
 
 /** The Hub's own words of a record, one line, at most `limit` characters, cut at a word. */
 export function extractOf(text: string, limit = 240): string {
-  const lines = String(text || '')
+  const lines = decodeCodes(text)
     .split(/\r?\n/)
     .map((l) => l.trim())
     .filter(Boolean)
@@ -154,7 +157,7 @@ export function buildEngineInput(core: KnowledgeCore, text: KnowledgeTextFile): 
       type: r.type,
       family: r.family,
       key: keyOf(r),
-      label: r.label,
+      label: decodeCodes(r.label),
       definition: definitionOf(r, entries[r.id]?.full),
       status: r.status,
       active: ACTIVE(r),
@@ -213,7 +216,7 @@ export function buildEngineInput(core: KnowledgeCore, text: KnowledgeTextFile): 
     if (!cur) {
       resources.set(r.link, {
         link: r.link,
-        title: r.label,
+        title: decodeCodes(r.label),
         type: r.type,
         group: groupOf(r.link, r.type),
         extract,
@@ -228,12 +231,14 @@ export function buildEngineInput(core: KnowledgeCore, text: KnowledgeTextFile): 
 
   // ---------------------------------------------------------------- passages: each active record's own text
   const passages: Passage[] = []
-  const addPassage = (r: KnowledgeRecord, title: string, content: string, source: string) => {
+  const addPassage = (r: KnowledgeRecord, rawTitle: string, rawContent: string, source: string) => {
+    const title = decodeCodes(rawTitle)
+    const content = decodeCodes(rawContent)
     let res = resources.get(r.link)
     if (!res) {
       res = {
         link: r.link,
-        title: r.label,
+        title: decodeCodes(r.label),
         type: r.kind,
         group: groupOf(r.link),
         extract: '',

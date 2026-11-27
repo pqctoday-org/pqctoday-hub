@@ -12,6 +12,7 @@ import {
 } from './adapter'
 import { directValueFits } from './engineHost'
 import { buildEngineInput, extractOf, FAMILY_FILE_PREFIX, groupOf } from './buildEngine'
+import { decodeCodes } from './engine/answerer'
 import {
   ASSISTANT_GROUPS,
   ASSISTANT_ROWS_PER_GROUP,
@@ -453,6 +454,27 @@ describe('what the file builder reads from the knowledge files', () => {
       ['/y', 'Page Y', 'page', ['PAGE:y', 'CHK:a', 'CHK:b']],
       ['/z', 'Third item', 'checklistitem', ['CHK:c', 'CHK:d']],
     ])
+  })
+
+  it('shows no character code of the source pages in a title, an extract or a passage', () => {
+    const code =
+      /&(?:#\d+|#x[0-9a-f]+|quot|apos|mdash|ndash|ldquo|rdquo|lsquo|rsquo|bull|rarr|sect|nbsp|times|hellip);/i
+    const shown = [
+      ...built.catalogue.resources.flatMap((r) => [r.title, r.extract]),
+      ...built.catalogue.passages.flatMap((p) => [p.title, p.text]),
+      ...built.model.records.map((r) => r.label),
+    ]
+    expect(shown.length).toBeGreaterThan(10_000)
+    expect(shown.filter((t) => code.test(t)).slice(0, 3)).toEqual([])
+    // the knowledge text itself keeps its codes: they are decoded for the Assistant only
+    expect(readFileSync(join(ROOT, 'public/data/knowledge-text.json'), 'utf8')).toMatch(code)
+    expect(
+      decodeCodes('don&apos;t &quot;x&quot; a &amp; b &mdash; c&nbsp;d &#8217; &#x2019;')
+    ).toBe('don\'t "x" a & b — c d ’ ’')
+    expect(decodeCodes('&amp;quot; R&D; &sup5; &#0;')).toBe('&quot; R&D; &sup5; &#0;')
+    expect(extractOf('Term: X\nA &ldquo;quoted&rdquo; line &mdash; decoded.')).toBe(
+      'A “quoted” line — decoded.'
+    )
   })
 
   it('groups links as the Hub pages do, and keeps an extract to one short line', () => {
