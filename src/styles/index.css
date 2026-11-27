@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+/* UX grammar: chip-tone colours and named type styles, generated from grammarTokens.json. */
+@import './grammar-tokens.css';
 
 /* Inter — self-hosted (CSP `font-src 'self'` forbids external font CDNs). Single
    variable woff2 covers weights 100–900. `--font-family-sans` (below) declares

@@ -1,0 +1,181 @@
+{
+  "source": "hub-ux-grammar-tokens-11262026.json (chip tones) and §5 of hub-ux-grammar-tokens-11262026.md (type scale). Page title is not here: O4 is built on another branch.",
+  "chipTones": [
+    {
+      "tone": "critical",
+      "light": {
+        "fg": "#9F1D14",
+        "bg": "#FBE4E1"
+      },
+      "dark": {
+        "fg": "#FFB4A9",
+        "bg": "#4A1A16"
+      }
+    },
+    {
+      "tone": "high",
+      "light": {
+        "fg": "#8A3B06",
+        "bg": "#FCE9D7"
+      },
+      "dark": {
+        "fg": "#FFC08F",
+        "bg": "#45260E"
+      }
+    },
+    {
+      "tone": "medium",
+      "light": {
+        "fg": "#6B5304",
+        "bg": "#F6EDC9"
+      },
+      "dark": {
+        "fg": "#F2D27A",
+        "bg": "#3B3110"
+      }
+    },
+    {
+      "tone": "low",
+      "light": {
+        "fg": "#3C5560",
+        "bg": "#E4EEF2"
+      },
+      "dark": {
+        "fg": "#B9D3DE",
+        "bg": "#1E333B"
+      }
+    },
+    {
+      "tone": "ok",
+      "light": {
+        "fg": "#1D6B45",
+        "bg": "#DDF1E6"
+      },
+      "dark": {
+        "fg": "#8FE0B2",
+        "bg": "#173A2C"
+      }
+    },
+    {
+      "tone": "warn",
+      "light": {
+        "fg": "#7A4D05",
+        "bg": "#F6EBCF"
+      },
+      "dark": {
+        "fg": "#F1D19A",
+        "bg": "#3A2F1A"
+      }
+    },
+    {
+      "tone": "mute",
+      "light": {
+        "fg": "#5A534A",
+        "bg": "#ECEFF1"
+      },
+      "dark": {
+        "fg": "#C9C2B8",
+        "bg": "#2A3236"
+      }
+    },
+    {
+      "tone": "info",
+      "light": {
+        "fg": "#065666",
+        "bg": "#D3E8EC"
+      },
+      "dark": {
+        "fg": "#9ADBE0",
+        "bg": "#123A42"
+      }
+    },
+    {
+      "tone": "neutral",
+      "light": {
+        "fg": "#2A2620",
+        "bg": "#FDFEFF",
+        "border": "#BCD0DC"
+      },
+      "dark": {
+        "fg": "#EEF3F1",
+        "bg": "#13252B",
+        "border": "#4A6670"
+      }
+    }
+  ],
+  "typeStyles": {
+    "hero": {
+      "font": "display",
+      "weight": 700,
+      "lineHeight": 1.1,
+      "phone": 28,
+      "md": 44,
+      "note": "Home and Sponsor only"
+    },
+    "section-title": {
+      "font": "display",
+      "weight": 600,
+      "lineHeight": 1.25,
+      "phone": 18,
+      "md": 22
+    },
+    "block-title": {
+      "font": "display",
+      "weight": 600,
+      "lineHeight": 1.3,
+      "phone": 15,
+      "md": 16
+    },
+    "eyebrow": {
+      "font": "sans",
+      "weight": 800,
+      "lineHeight": 1.3,
+      "phone": 11,
+      "md": 11,
+      "caps": true,
+      "tracking": "0.12em"
+    },
+    "body": {
+      "font": "sans",
+      "weight": 400,
+      "lineHeight": 1.5,
+      "phone": 14,
+      "md": 14
+    },
+    "small": {
+      "font": "sans",
+      "weight": 400,
+      "lineHeight": 1.4,
+      "phone": 12,
+      "md": 12
+    },
+    "button": {
+      "font": "sans",
+      "weight": 700,
+      "lineHeight": 1.2,
+      "phone": 14,
+      "md": 14
+    },
+    "chip": {
+      "font": "sans",
+      "weight": 800,
+      "lineHeight": 1.2,
+      "phone": 11,
+      "md": 11
+    },
+    "code": {
+      "font": "mono",
+      "weight": 400,
+      "lineHeight": 1.4,
+      "phone": 12,
+      "md": 12
+    },
+    "field": {
+      "font": "sans",
+      "weight": 400,
+      "lineHeight": 1.4,
+      "phone": 16,
+      "md": 14
+    }
+  }
+}

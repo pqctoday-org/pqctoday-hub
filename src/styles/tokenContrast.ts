@@ -8,6 +8,8 @@ import { resolve } from 'node:path'
 export type Mode = 'light' | 'dark'
 
 const CSS_PATH = resolve(__dirname, 'index.css')
+// The UX grammar's chip-tone tokens live in their own generated file (grammarTokens.json).
+const GRAMMAR_CSS_PATH = resolve(__dirname, 'grammar-tokens.css')
 
 // Remove CSS comments so a colon or brace inside prose cannot confuse the parser.
 function stripComments(css: string): string {
@@ -44,8 +46,13 @@ let cache: Record<Mode, Record<string, string>> | undefined
 export function loadTokens(): Record<Mode, Record<string, string>> {
   if (cache) return cache
   const css = stripComments(readFileSync(CSS_PATH, 'utf8'))
-  const light = parseVars(ruleBody(css, ':root'))
-  const dark = { ...light, ...parseVars(ruleBody(css, '.dark')) }
+  const grammar = stripComments(readFileSync(GRAMMAR_CSS_PATH, 'utf8'))
+  const light = { ...parseVars(ruleBody(css, ':root')), ...parseVars(ruleBody(grammar, ':root')) }
+  const dark = {
+    ...light,
+    ...parseVars(ruleBody(css, '.dark')),
+    ...parseVars(ruleBody(grammar, '.dark')),
+  }
   cache = { light, dark }
   return cache
 }
