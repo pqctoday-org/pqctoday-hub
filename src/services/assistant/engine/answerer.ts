@@ -23,6 +23,10 @@ type Item = Record<string, any>
 const GROUPS = ['Learn', 'References', 'Tools', 'Data pages']
 const PER_GROUP = 3
 const STRONG = 2.0
+/** A row the plain text match adds beside the finders' rows must hold this many different words of the question: one rare word alone ("ok", "new") is not a match. */
+const PLAIN_MIN_WORDS = 2
+/** The reader's confidence when it recognised nothing in the question (no name, no shape): the reading is broad by default, not because the question is. */
+const UNREAD = 0.1
 const STOP = new Set('the a an of to in on for and or is are was were be what which who whom how does do did can could would should i me my we our you your it its this that these those with by from about tell show give please there any some as at into if when where why'.split(' '))
 const ASK = new Set('list show find tell explain describe learn lesson lessons module modules section sections tool tools tutorial course page pages information info resource resources material materials guide guides example examples understand know want need looking look use using work works available offer offers provide get give help site hub'.split(' '))
 const GENERIC = ['handshake', 'overview', 'basics', 'fundamentals', 'protocol', 'standard', 'algorithm', 'concept', 'concepts', 'model', 'framework', 'principles']
@@ -91,20 +95,27 @@ class Search {
     this.n = this.len.length
     this.avg = this.n ? this.len.reduce((a, c) => a + c, 0) / this.n : 1
   }
-  hits(question: string, k = 200): [number, number][] {
+  /** The passages that match the question's words, best first. With `minWords`, a passage must hold at least that many different words of the question (or every word the index knows, when the question has fewer), or one of the `enough` words. */
+  hits(question: string, k = 200, minWords = 1, enough: string[] = []): [number, number][] {
     const score = new Map<number, number>()
+    const held = new Map<number, number>()
+    const alone = new Set(enough)
+    const kept = new Set<number>()
+    let known = 0
     for (const w of [...new Set(tokens(question).filter((t) => !STOP.has(t)))].sort()) {
       const plist = this.post.get(w)
       if (!plist) continue
+      known++
       const idf = Math.log(1 + (this.n - plist.length + 0.5) / (plist.length + 0.5))
-      for (const [i, f] of plist) score.set(i, (score.get(i) ?? 0) + (idf * f * (this.k1 + 1)) / (f + this.k1 * (1 - this.b + (this.b * this.len[i]) / this.avg)))
+      for (const [i, f] of plist) { score.set(i, (score.get(i) ?? 0) + (idf * f * (this.k1 + 1)) / (f + this.k1 * (1 - this.b + (this.b * this.len[i]) / this.avg))); held.set(i, (held.get(i) ?? 0) + 1); if (alone.has(w)) kept.add(i) }
     }
-    return [...score.entries()].map(([i, s]) => [s, i] as [number, number]).sort((x, y) => y[0] - x[0] || x[1] - y[1]).slice(0, k)
+    const need = Math.min(minWords, known)
+    return [...score.entries()].filter(([i]) => (held.get(i) ?? 0) >= need || kept.has(i)).map(([i, s]) => [s, i] as [number, number]).sort((x, y) => y[0] - x[0] || x[1] - y[1]).slice(0, k)
   }
-  resources(question: string, k = 60): { link: string; score: number; passage: number }[] {
+  resources(question: string, k = 60, minWords = 1, enough: string[] = []): { link: string; score: number; passage: number }[] {
     const out: { link: string; score: number; passage: number }[] = []
     const seen = new Set<string>()
-    for (const [s, i] of this.hits(question)) {
+    for (const [s, i] of this.hits(question, 200, minWords, enough)) {
       const link = this.passages[i].link
       if (seen.has(link)) continue
       seen.add(link)
@@ -404,7 +415,9 @@ export class Answerer {
   }
   withFallback(reading: Reading & { question: string }, out: Record<string, Item[]>, size: number): void {
     const plain: Record<string, Item[]> = Object.fromEntries(GROUPS.map((g) => [g, []]))
-    for (const h of this.search.resources(reading.clean, 80)) {
+    // a word of a name the question was read to hold ("sphincs" in "who created sphincs+") is enough on its own
+    const nameWords = [...new Set(reading.names.flatMap((n) => tokens(n.text)))]
+    for (const h of this.search.resources(reading.clean, 80, PLAIN_MIN_WORDS, nameWords)) {
       const r = this.resByLink.get(h.link)
       if (!r || !this.statusOk(r) || r.link.startsWith('http')) continue
       plain[r.group].push({ link: r.link, title: r.title, type: r.type, group: r.group, extract: r.extract, record_ids: r.record_ids, score: round(h.score, 4), text: 1.0, res: 0.0, title_overlap: 0.0, named: false, follow: 0.0, reader: 0.0 })
@@ -735,7 +748,12 @@ export class Answerer {
     const model: Item = { question, intent, intents: reading.intents, role, answerText: N.answer_text.default, note: '', direct: null, source: null, nameCard: null, choices: null, groups: [], reading: { names: reading.names.map((n) => n.text), scores: reading.scores, filters: reading.filters } }
     if (intent === 'name') return this.nameAnswer(model, reading, role, page)
     let findReading = reading
-    if (intent === 'broad' || intent === 'not_fact') findReading = { ...reading, intents: [reading.names.length ? 'concept' : 'risk'], intent: reading.names.length ? 'concept' : 'risk', clean: reading.clean && reading.intent !== 'broad' ? reading.clean : 'post-quantum cryptography introduction basics' }
+    if (intent === 'broad' || intent === 'not_fact') {
+      // a question nothing was recognised in, but which has words of its own ("5g", "quantum"), is searched by those words;
+      // only a request with no topic at all ("hello", "tell me something") gets the introduction
+      const ownWords = intent === 'broad' && (reading.confidence ?? 0) <= UNREAD && this.contentWords(reading).length > 0
+      findReading = { ...reading, intents: [reading.names.length ? 'concept' : 'risk'], intent: reading.names.length ? 'concept' : 'risk', clean: reading.clean && (reading.intent !== 'broad' || ownWords) ? reading.clean : 'post-quantum cryptography introduction basics' }
+    }
     let groups = this.find(findReading, PER_GROUP, PER_GROUP)
     const order = this.groupOrder(intent, role)
     const d = intent !== 'broad' && intent !== 'not_fact' ? this.direct(question, reading) : null
