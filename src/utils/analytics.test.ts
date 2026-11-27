@@ -18,6 +18,7 @@ import {
   logComplianceSearch,
   logLeadersSearch,
   logLibrarySearch,
+  logChatQuestion,
   logMigrateAssetSearch,
   logTimelineFilterText,
   logExploreTileClick,
@@ -576,6 +577,21 @@ describe('analytics', () => {
       expect(call.category).toBe(category)
       expect(call.action).toBe(action)
       expectScrubbed(call.label)
+    })
+
+    it('an Assistant question is scrubbed and carries the kind of answer shown', () => {
+      logChatQuestion(RAW, 'resources')
+      const call = lastCall()
+      expect(call.category).toBe('Chat')
+      expect(call.action).toBe('Question')
+      expect(call.label).toMatch(/^resources \| /i)
+      expectScrubbed(call.label)
+    })
+
+    it('an Assistant question is cut at 80 characters after the kind of answer', () => {
+      const long = 'ab '.repeat(60)
+      logChatQuestion(long, 'broad')
+      expect(lastCall().label).toBe(`broad | ${long.slice(0, 80)}`)
     })
 
     it('patent search omits every typed field instead of retaining scrubbed text', () => {

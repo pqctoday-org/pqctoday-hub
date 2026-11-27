@@ -440,6 +440,14 @@ export const logChatOpened = () => {
   logEvent('Chat', 'Opened')
 }
 
+/**
+ * One answered Assistant question: the kind of answer shown, then the question scrubbed like every
+ * other typed text. The Terms, the About page and the FAQ say this is recorded; change them together.
+ */
+export const logChatQuestion = (question: string, answerState: string) => {
+  logEvent('Chat', 'Question', `${answerState} | ${sanitizeQuery(question)}`)
+}
+
 // --- Command Center tracking ---
 
 export const logBusinessToolOpen = (toolId: string, toolName: string) => {
