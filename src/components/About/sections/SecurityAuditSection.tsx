@@ -53,8 +53,8 @@ export function SecurityAuditSection() {
                 that every component avoids HTML insertion.
               </li>
               <li>
-                The site asks for no secret credentials and stores none. Public identifiers set when
-                the site is built are not secrets.
+                The site asks for no passwords and saves no secrets; optional Drive sync keeps its
+                token in tab memory only. Public build identifiers are not secrets.
               </li>
             </ul>
           </div>

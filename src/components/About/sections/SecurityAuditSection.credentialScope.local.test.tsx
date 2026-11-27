@@ -29,11 +29,9 @@ afterEach(() => {
 
 it('the real desktop security section says it holds no secret credentials and separates public build identifiers from them', async () => {
   render(<SecurityAuditSection />)
-  const disclosure = screen.getByText(/The site asks for no secret credentials and stores none/)
+  const disclosure = screen.getByText(/The site asks for no passwords and saves no secrets/)
   await waitFor(() => expect(disclosure).toBeVisible())
-  expect(disclosure).toHaveTextContent(
-    'Public identifiers set when the site is built are not secrets'
-  )
+  expect(disclosure).toHaveTextContent('Public build identifiers are not secrets')
   expect(document.body.textContent ?? '').not.toMatch(/user-supplied cloud api keys/i)
   expect(
     screen.queryByText(/all credentials.*environment|credentials.*exclusively.*environment/i)
@@ -49,9 +47,9 @@ it('the real phone Trust accordion gives the same credential classification with
     </MemoryRouter>
   )
   fireEvent.click(screen.getByRole('button', { name: /Trust & verification/ }))
-  const disclosure = screen.getByText(/The site never asks for or stores secret credentials/)
+  const disclosure = screen.getByText(/The site never asks for passwords or saves secrets/)
   expect(disclosure).toBeVisible()
-  expect(disclosure).toHaveTextContent('public identifiers set when it is built are not secrets')
+  expect(disclosure).toHaveTextContent('public build IDs are not secrets')
   expect(
     screen.queryByText(/all credentials.*environment|credentials.*exclusively.*environment/i)
   ).not.toBeInTheDocument()

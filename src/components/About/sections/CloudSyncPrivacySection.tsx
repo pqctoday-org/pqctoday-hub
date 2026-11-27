@@ -58,8 +58,8 @@ export function CloudSyncPrivacySection() {
             <span className="text-status-success mt-1 shrink-0">&#9679;</span>
             <span>
               <strong className="text-foreground">No secret credentials are synced.</strong> The
-              site never asks for or stores any passwords or tokens, so none can be included in what
-              is synced.
+              site never asks for a password, and any Drive access token is held only in tab memory
+              and is never saved to disk or synced.
             </span>
           </li>
           <li className="flex items-start gap-2.5">

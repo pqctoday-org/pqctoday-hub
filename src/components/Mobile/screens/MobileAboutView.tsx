@@ -237,8 +237,9 @@ export function MobileAboutView() {
                         Latest recorded report: {lastAudited}. This dated production npm dependency
                         scan and static-code review concerns an earlier application version; it does
                         not establish current vulnerability status or OWASP Top 10 compliance. HTML
-                        insertion requires controls at each use. The site never asks for or stores
-                        secret credentials; public identifiers set when it is built are not secrets.
+                        insertion requires controls at each use. The site never asks for passwords
+                        or saves secrets; any Drive sync token stays only in tab memory, and public
+                        build IDs are not secrets.
                       </Row>
                     </>
                   )}
