@@ -45,7 +45,7 @@ export function GoRedirect() {
   if (lookup.reason === 'ambiguous') {
     return (
       <div className="mx-auto max-w-2xl px-4 py-12" data-testid="go-ambiguous">
-        <h1 className="mb-4 text-2xl font-bold text-foreground">Which one do you mean?</h1>
+        <h1 className="page-title mb-4">Which one do you mean?</h1>
         <ul className="space-y-2">
           {lookup.candidates.map((r) => (
             <li key={r.id}>

@@ -410,7 +410,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
           {simEmbed ? (
             <h2 className="text-2xl font-bold mb-3 font-display text-heading">No Report Yet</h2>
           ) : (
-            <h1 className="text-2xl font-bold mb-3 font-display text-heading">No Report Yet</h1>
+            <h1 className="page-title mb-3">No Report Yet</h1>
           )}
           <p className="text-muted-foreground mb-6">
             {isCurious

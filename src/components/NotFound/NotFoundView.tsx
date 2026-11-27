@@ -29,7 +29,7 @@ export function NotFoundView() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-12" data-testid="not-found">
-      <h1 className="mb-4 font-display text-3xl font-bold text-heading">Page not found</h1>
+      <h1 className="page-title mb-4">Page not found</h1>
       <p className="mb-6 text-muted-foreground">
         We could not find{' '}
         <code className="break-all rounded-lg bg-chip px-1.5 py-0.5 text-chip-foreground">

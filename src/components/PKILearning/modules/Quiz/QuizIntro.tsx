@@ -114,7 +114,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: reduced ? 0 : 0.3 }}
       >
-        <h1 className="text-2xl md:text-3xl font-bold mb-2 text-gradient">PQC Knowledge Quiz</h1>
+        <h1 className="page-title mb-2">PQC Knowledge Quiz</h1>
         <p className="text-muted-foreground">
           Test your understanding of post-quantum cryptography across {categories.length} topic
           areas.

@@ -82,7 +82,7 @@ export const DockerPlaygroundView = () => {
 
   const intro = (
     <header className="rounded-2xl border border-border bg-muted/20 p-4">
-      <h1 className="text-xl font-bold font-display text-heading">PQC Docker Sandbox</h1>
+      <h1 className="page-title">PQC Docker Sandbox</h1>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         Run full-fidelity post-quantum integration scenarios against containerized applications and
         infrastructure. The public page explains the workflow and requirements; exercises need a

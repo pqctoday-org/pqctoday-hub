@@ -66,7 +66,7 @@ export const PlaygroundToolRoute = () => {
   if (!tool) {
     return (
       <section className="mx-auto max-w-2xl space-y-4 py-12 text-center">
-        <h1 className="text-3xl font-bold font-display text-heading">Crypto Lab tool not found</h1>
+        <h1 className="page-title">Crypto Lab tool not found</h1>
         <p className="text-muted-foreground">
           No supported Crypto Lab tool matches this address. It may have moved or the link may be
           incomplete.

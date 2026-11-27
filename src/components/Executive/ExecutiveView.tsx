@@ -105,7 +105,7 @@ export const ExecutiveView: React.FC = () => {
             <BarChart3 className="text-primary" size={28} />
           </div>
         </div>
-        <h1 className="text-3xl md:text-4xl font-bold font-display text-heading mb-2 print:text-foreground print:text-2xl">
+        <h1 className="page-title mb-2 print:text-foreground print:text-2xl">
           PQC Readiness Summary
         </h1>
         <p className="text-muted-foreground print:text-muted-foreground">

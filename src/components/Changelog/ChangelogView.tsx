@@ -419,7 +419,7 @@ export const ChangelogView = () => {
               <FileText className="text-primary" size={24} aria-hidden="true" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold font-display text-heading">Changelog</h1>
+              <h1 className="page-title">Changelog</h1>
               <p className="text-sm text-muted-foreground">
                 Current version:{' '}
                 <span className="font-mono text-primary font-bold">v{version}</span>
