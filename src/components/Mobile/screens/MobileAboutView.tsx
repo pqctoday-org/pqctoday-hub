@@ -232,9 +232,9 @@ export function MobileAboutView() {
                         Latest recorded report: {lastAudited}. This dated production npm dependency
                         scan and static-code review concerns an earlier application version; it does
                         not establish current vulnerability status or OWASP Top 10 compliance. HTML
-                        insertion requires controls at each use. The site asks for no API key and
-                        stores none; public build-time identifiers are distinct from secret
-                        credentials.
+                        insertion requires controls at each use. The site never asks for passwords
+                        or saves secrets; any Drive sync token stays only in tab memory, and public
+                        build IDs are not secrets.
                       </Row>
                     </>
                   )}
@@ -337,8 +337,8 @@ export function MobileAboutView() {
                       <Row title="PQC Assistant">
                         Answers from the Hub's own records, on your device: it finds the closest
                         records and shows them with their sources and a link to the exact page. It
-                        uses no language model, no API key and no model download, and your question
-                        is not sent anywhere.
+                        needs no account, extra files, or outside service, and your question never
+                        leaves your browser.
                       </Row>
                       {!isEmbedded && (
                         <Row title="Community">

@@ -5,16 +5,9 @@ const manifest: ModuleManifest = {
   id: 'tls-basics',
   whyThisMatters:
     "TLS protects nearly all web traffic; the 1.3 handshake is the prerequisite for every hybrid-PQC rollout you'll plan.",
-  // The legacy bespoke 'downgrade' tab is folded into the standard `visual` slot
-  // (P3.1) so the tab *values* are catalog-standard; the label keeps its name.
-  tabs: [
-    { value: 'learn', label: 'Learn' },
-    { value: 'workshop', label: 'Workshop' },
-    { value: 'visual', label: 'Downgrade Attack' },
-    { value: 'exercises', label: 'Exercises' },
-    { value: 'references', label: 'References' },
-    { value: 'tools', label: 'Tools & Products' },
-  ],
+  // Standard six tabs in the standard order. The quantum downgrade scenario that used to
+  // sit in a renamed Visual tab is the last Workshop step; `?tab=downgrade-attack` still
+  // opens it (see MODULE_TAB_ALIASES).
   learnSections: [
     { id: 'handshake', label: 'TLS 1.3 Handshake' },
     { id: 'certificates', label: 'PQC Certificate Chains' },
@@ -26,6 +19,7 @@ const manifest: ModuleManifest = {
     { id: 'config', label: 'Configure TLS Parameters' },
     { id: 'comparison', label: 'Cipher Suite Comparison' },
     { id: 'hsm-demo', label: 'HSM-Backed TLS Server' },
+    { id: 'downgrade', label: 'Quantum Downgrade Attack' },
   ],
   // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
   startHere: {

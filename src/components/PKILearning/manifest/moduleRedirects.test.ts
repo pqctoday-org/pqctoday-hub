@@ -4,6 +4,8 @@ import {
   SPLIT_MODULE_REDIRECTS,
   MOVED_CONTENT_REDIRECTS,
   REORDERED_WORKSHOP_STEPS,
+  RENAMED_MODULE_TABS,
+  resolveRenamedTabRedirect,
   resolveSplitRedirect,
   resolveMovedContentRedirect,
   resolveReorderedStepRedirect,
@@ -194,5 +196,39 @@ describe('renamed learn sections inside a module (redirect to itself)', () => {
         expect(current.has(now), `${id}: ${now} is not a section`).toBe(true)
       }
     }
+  })
+})
+
+describe('renamed module tabs', () => {
+  it('only names live modules, and each rule points at the step it says', () => {
+    for (const [id, rules] of RENAMED_MODULE_TABS) {
+      const manifest = MANIFESTS.find((m) => m.id === id)
+      expect(manifest, `${id} is a live module`).toBeDefined()
+      for (const [oldTab, rule] of rules) {
+        expect(manifest?.tabs?.some((t) => t.value === oldTab) ?? false).toBe(false)
+        expect(manifest?.workshopSteps?.[rule.step]?.id).toBe(rule.stepId)
+      }
+    }
+  })
+
+  it('sends the old TLS Basics "downgrade-attack" tab to the Workshop downgrade step', () => {
+    expect(resolveRenamedTabRedirect('tls-basics', '?tab=downgrade-attack')).toBe(
+      '/learn/tls-basics?tab=workshop&step=4'
+    )
+    expect(resolveRenamedTabRedirect('tls-basics', '?tab=downgrade-attack&x=1', '#a')).toBe(
+      '/learn/tls-basics?tab=workshop&x=1&step=4#a'
+    )
+  })
+
+  it('leaves every other TLS Basics link alone, including the Visual tab', () => {
+    expect(resolveRenamedTabRedirect('tls-basics', '')).toBeNull()
+    expect(resolveRenamedTabRedirect('tls-basics', '?tab=visual')).toBeNull()
+    expect(resolveRenamedTabRedirect('tls-basics', '?tab=workshop&step=2')).toBeNull()
+    expect(resolveRenamedTabRedirect('hsm-pqc', '?tab=downgrade-attack')).toBeNull()
+  })
+
+  it('TLS Basics uses the standard tab set in the standard order', () => {
+    const manifest = MANIFESTS.find((m) => m.id === 'tls-basics')
+    expect(manifest?.tabs ?? null).toBeNull()
   })
 })

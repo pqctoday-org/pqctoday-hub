@@ -36,6 +36,8 @@ import { MAX_COMPARE } from './useAlgorithmExplorer'
 import { AlgorithmComparisonPanel } from './AlgorithmComparisonPanel'
 import { algoMatchesHighlight } from './highlightMatch'
 import { HardwareBenchmarkEvidence } from './HardwareBenchmarkEvidence'
+import { compareMissingLast } from '@/components/ui/missingData'
+import { MissingAwareText } from '@/components/ui/NeedsDataCue'
 
 /**
  * What the RAM column can and cannot tell a reader.
@@ -538,14 +540,14 @@ function NoImplementationBadge({ algo }: { algo: AlgorithmDetail }) {
 function ByteSize({ algo, field }: { algo: AlgorithmDetail; field: AlgorithmSizeField }) {
   const text = formatAlgorithmSize(algo, field)
   if (algorithmSizeState(algo, field) === 'stated') return <>{text}</>
-  return <span className="italic text-muted-foreground">{text}</span>
+  return <MissingAwareText text={text} />
 }
 
 /** Stack RAM's shared text ("~6,000 B" for an estimate), or its missing-data words. */
 function RamSize({ algo }: { algo: AlgorithmDetail }) {
   const text = formatStackRam(algo)
   if (stackRamState(algo) === 'stated') return <>{text}</>
-  return <span className="italic">{text}</span>
+  return <MissingAwareText text={text} />
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -584,13 +586,9 @@ function BrowseTable({
     if (key === 'stackRAM') return stackRamState(algo) === 'stated' ? algo.stackRAM : null
     return algorithmSizeBytes(algo, key === 'publicKeySize' ? 'publicKey' : 'signatureOrCiphertext')
   }
-  // Missing values always sort last, whichever direction is chosen.
-  const compareSizes = (a: number | null, b: number | null, dir: number) => {
-    if (a === null && b === null) return 0
-    if (a === null) return 1
-    if (b === null) return -1
-    return dir * (a - b)
-  }
+  // Missing values always sort last, whichever direction is chosen (see missingData.ts).
+  const compareSizes = (a: number | null, b: number | null, dir: 1 | -1) =>
+    compareMissingLast(a, b, dir, (x, y) => x - y)
 
   const sorted = useMemo(() => {
     return [...algorithms].sort((a, b) => {
@@ -731,8 +729,8 @@ function BrowseTable({
                           {formatSecurityLevel(algo)}
                         </span>
                       ) : (
-                        <span className="text-xs italic text-muted-foreground">
-                          Security level: {formatSecurityLevel(algo)}
+                        <span className="text-xs text-muted-foreground">
+                          Security level: <MissingAwareText text={formatSecurityLevel(algo)} />
                         </span>
                       )}
                       <AlgoCtaStrip
@@ -816,8 +814,8 @@ function BrowseTable({
                     L{algo.securityLevel}
                   </span>
                 ) : (
-                  <span className="text-[11px] italic text-muted-foreground shrink-0">
-                    Level: {formatSecurityLevel(algo)}
+                  <span className="text-[11px] text-muted-foreground shrink-0">
+                    Level: <MissingAwareText text={formatSecurityLevel(algo)} />
                   </span>
                 )}
               </div>

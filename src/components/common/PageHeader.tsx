@@ -105,7 +105,7 @@ export const PageHeader = ({
 
   return (
     <div className="text-center mb-2 md:mb-12" data-testid={testId}>
-      <h1 className="text-xl md:text-4xl font-bold mb-1 md:mb-4 font-display text-heading flex items-center justify-center gap-2 md:gap-3">
+      <h1 className="page-title mb-1 md:mb-4 flex items-center justify-center gap-2 md:gap-3">
         <Icon className="w-5 h-5 md:w-9 md:h-9 text-heading shrink-0" aria-hidden="true" />
         {title}
       </h1>

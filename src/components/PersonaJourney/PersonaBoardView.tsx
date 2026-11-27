@@ -228,9 +228,7 @@ export function PersonaBoardView({
         </div>
       )}
 
-      <h1 className="font-display text-heading mt-3 text-3xl font-extrabold leading-tight sm:text-4xl">
-        {board.headline}
-      </h1>
+      <h1 className="page-title mt-3">{board.headline}</h1>
 
       <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
         {board.sub}

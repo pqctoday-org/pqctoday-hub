@@ -634,9 +634,7 @@ export function AlgorithmsView({
   if (isMobileDetailed) {
     return (
       <div className="px-4 pb-4 pt-4">
-        <h1 className="text-[17px] font-extrabold leading-tight text-foreground">
-          Detailed Comparison
-        </h1>
+        <h1 className="page-title">Detailed Comparison</h1>
         <p className="mt-1 text-[11.5px] leading-relaxed text-muted-foreground">
           Key sizes, security levels, publication status, and scoped evidence for each algorithm.
         </p>
@@ -669,9 +667,7 @@ export function AlgorithmsView({
   if (isMobileLandscape) {
     return (
       <div className="px-4 pb-4 pt-4">
-        <h1 className="text-[17px] font-extrabold leading-tight text-foreground">
-          Industry use cases
-        </h1>
+        <h1 className="page-title">Industry use cases</h1>
         <p className="mb-3 mt-1 text-[11.5px] leading-relaxed text-muted-foreground">
           Learn where cryptography appears and which migration questions to ask.
         </p>

@@ -54,7 +54,7 @@ export function EditorialIndependenceView() {
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <ShieldCheck className="text-primary shrink-0" size={28} aria-hidden="true" />
-          <h1 className="text-2xl font-bold font-display text-heading">Editorial Independence</h1>
+          <h1 className="page-title">Editorial Independence</h1>
         </div>
         <p className="text-muted-foreground text-sm">
           The binding policy that governs how sponsorship and editorial content interact at PQC

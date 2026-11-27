@@ -2277,7 +2277,7 @@ export function SimulationView() {
             <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-primary">
               Choose how to start
             </span>
-            <h1 className="mt-2 text-xl font-extrabold text-foreground">
+            <h1 className="page-title mt-2">
               Practise on a sample organization, or run it on your own
             </h1>
             <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground">
@@ -2797,7 +2797,7 @@ export function SimulationView() {
               {phase.number !== null ? `Phase ${phase.number}` : 'Foundations'}{' '}
               {phaseCleared ? '· cleared' : '· active'}
             </span>
-            <h1 className="text-lg font-extrabold text-foreground">{phase.name}</h1>
+            <h1 className="page-title">{phase.name}</h1>
             {phaseTree?.gate && (
               <p className="mt-0.5 text-[11px] text-muted-foreground">
                 Gate {phaseTree.gate.id}: {phaseTree.gate.criterion}

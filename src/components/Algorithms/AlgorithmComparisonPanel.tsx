@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { AlgoCtaStrip } from './AlgoCtaStrip'
+import { MissingAwareText } from '@/components/ui/NeedsDataCue'
 import { Fragment, useState, useCallback, useMemo } from 'react'
 import { X, Loader2, Play, AlertTriangle, ChevronRight } from 'lucide-react'
 import { Button } from '../ui/button'
@@ -240,7 +241,9 @@ export function AlgorithmComparisonPanel({
                                 ✓
                               </span>
                             )}
-                            {field.format ? field.format(a) : formatValue(val)}
+                            <MissingAwareText
+                              text={field.format ? field.format(a) : formatValue(val)}
+                            />
                           </>
                         )}
                       </td>

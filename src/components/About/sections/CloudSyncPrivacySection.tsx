@@ -57,8 +57,9 @@ export function CloudSyncPrivacySection() {
           <li className="flex items-start gap-2.5">
             <span className="text-status-success mt-1 shrink-0">&#9679;</span>
             <span>
-              <strong className="text-foreground">No API keys are synced.</strong> The site asks for
-              no API key and stores none, so there is none to include in the sync payload.
+              <strong className="text-foreground">No secret credentials are synced.</strong> The
+              site never asks for a password, and any Drive access token is held only in tab memory
+              and is never saved to disk or synced.
             </span>
           </li>
           <li className="flex items-start gap-2.5">

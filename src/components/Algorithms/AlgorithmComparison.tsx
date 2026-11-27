@@ -31,6 +31,8 @@ import { MobileAlgorithmList } from './MobileAlgorithmList'
 import { MobileTransitionWizard } from './MobileTransitionWizard'
 import { transitionMatchesHighlight, transitionRowId } from './highlightMatch'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
+import { compareMissingLast, isMissingDataLabel } from '@/components/ui/missingData'
+import { MissingAwareText } from '@/components/ui/NeedsDataCue'
 import { AlgorithmCheckButton } from './AlgorithmCheckButton'
 import { jurisdictionStanceForRegion, type JurisdictionStance } from './cnsa20'
 import { isCertifiedTier, tierBadge, tierBadgeClasses } from '../../data/algorithmStatusTier'
@@ -147,44 +149,45 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
   // Sort the data
   const sortedData = useMemo(() => {
     if (!sortColumn || !sortDirection) return filteredData
-    return [...filteredData].sort((a, b) => {
-      let aValue: string = ''
-      let bValue: string = ''
-
+    const dir = sortDirection === 'asc' ? 1 : -1
+    // The text a row is ordered by in this column; null when the row has nothing there (a blank, one
+    // of the four missing-data words, or a deprecation date with no year). Such rows sort last in
+    // both directions (see missingData.ts).
+    const orderKey = (row: (typeof filteredData)[number]): string | null => {
+      let value = ''
       switch (sortColumn) {
         case 'function':
-          aValue = a.function
-          bValue = b.function
+          value = row.function
           break
         case 'classical':
-          aValue = a.classical
-          bValue = b.classical
+          value = row.classical
           break
         case 'pqc':
-          aValue = a.pqc
-          bValue = b.pqc
+          value = row.pqc
           break
-        case 'deprecation':
+        case 'deprecation': {
           // Extract first year for sorting
-          aValue = a.deprecationDate.match(/\d{4}/)?.[0] || '9999'
-          bValue = b.deprecationDate.match(/\d{4}/)?.[0] || '9999'
+          const year = row.deprecationDate.match(/\d{4}/)?.[0]
+          if (!year) return null
           // Entries with "Deprecated" phase sort before "Disallowed"-only (more urgent)
-          if (a.deprecationDate.includes('Deprecated')) aValue = (parseInt(aValue) - 0.5).toString()
-          if (b.deprecationDate.includes('Deprecated')) bValue = (parseInt(bValue) - 0.5).toString()
-          break
+          return row.deprecationDate.includes('Deprecated')
+            ? (parseInt(year) - 0.5).toString()
+            : year
+        }
         case 'region':
-          aValue = a.region
-          bValue = b.region
+          value = row.region
           break
         case 'status':
-          aValue = a.status
-          bValue = b.status
+          value = row.status
           break
       }
-
-      const comparison = aValue.localeCompare(bValue, undefined, { numeric: true })
-      return sortDirection === 'asc' ? comparison : -comparison
-    })
+      return value.trim() === '' || isMissingDataLabel(value) ? null : value
+    }
+    return [...filteredData].sort((a, b) =>
+      compareMissingLast(orderKey(a), orderKey(b), dir, (x, y) =>
+        x.localeCompare(y, undefined, { numeric: true })
+      )
+    )
   }, [filteredData, sortColumn, sortDirection])
 
   // Handle sort click
@@ -643,7 +646,10 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                                   </span>
                                 )}
                                 <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border bg-muted border-border text-muted-foreground">
-                                  pk: {formatAlgorithmSize(pqcDetail, 'publicKey')}
+                                  pk:{' '}
+                                  <MissingAwareText
+                                    text={formatAlgorithmSize(pqcDetail, 'publicKey')}
+                                  />
                                 </span>
                               </div>
                             )}

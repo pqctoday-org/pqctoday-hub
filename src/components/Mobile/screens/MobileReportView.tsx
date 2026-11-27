@@ -102,7 +102,7 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
           <FileBarChart size={22} className="text-muted-foreground" aria-hidden="true" />
         </div>
-        <h1 className="text-[16px] font-extrabold text-foreground">No Report Yet</h1>
+        <h1 className="page-title">No Report Yet</h1>
         <p className="max-w-xs text-[11.5px] leading-relaxed text-muted-foreground">
           {isCurious
             ? 'Curious what a finished report looks like? Browse an example before committing to the assessment — or jump straight in.'

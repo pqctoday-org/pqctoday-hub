@@ -90,7 +90,7 @@ export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }
             <ArrowLeft size={16} aria-hidden="true" />
             Back to Dashboard
           </Button>
-          <h1 className="text-3xl font-bold text-gradient">{moduleMeta.title}</h1>
+          <h1 className="page-title">{moduleMeta.title}</h1>
           {/* Release 5: step bar of the objective in focus, other-role lens, resume line. */}
           <div className="mt-3">
             <ModuleJourneyHeader moduleId={moduleId} compact={isMobileShell} />

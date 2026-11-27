@@ -609,7 +609,7 @@ export const ModuleShell = ({
             </span>
           ) : null}
         </div>
-        <h1 className="text-3xl font-bold text-foreground">{title ?? manifest.title}</h1>
+        <h1 className="page-title">{title ?? manifest.title}</h1>
         <ModuleFitStrip moduleId={manifest.id} />
         {/* Release 5: resume line, step bar of the objective in focus, other-role lens. */}
         <div className="mt-3">

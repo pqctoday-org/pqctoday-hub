@@ -1327,9 +1327,7 @@ export const PlaygroundWorkshop = () => {
   if (searchActive) {
     mainBody = (
       <section>
-        <h1 className="text-xl font-bold tracking-tight font-display text-heading">
-          Results for “{searchText.trim()}”
-        </h1>
+        <h1 className="page-title">Results for “{searchText.trim()}”</h1>
         <p className="mt-1 text-[13px] text-muted-foreground">
           {searchResults.length} {searchResults.length === 1 ? 'tool' : 'tools'} across all
           categories
@@ -1350,9 +1348,7 @@ export const PlaygroundWorkshop = () => {
       <section>
         <div className="flex items-center justify-between gap-4">
           <div className="min-w-0">
-            <h1 className="text-xl font-bold tracking-tight font-display text-heading">
-              Tools to {verbLabel.toLowerCase()}
-            </h1>
+            <h1 className="page-title">Tools to {verbLabel.toLowerCase()}</h1>
             <p className="mt-1 text-[13px] text-muted-foreground">
               {intentTools.length} {intentTools.length === 1 ? 'tool' : 'tools'} across all
               categories
@@ -1379,7 +1375,7 @@ export const PlaygroundWorkshop = () => {
   } else if (activeNav === 'mytools') {
     mainBody = (
       <section>
-        <h1 className="text-xl font-bold tracking-tight font-display text-heading">My tools</h1>
+        <h1 className="page-title">My tools</h1>
         <p className="mt-1 text-[13px] text-muted-foreground">
           Tools you’ve bookmarked for quick access
         </p>
@@ -1463,7 +1459,7 @@ export const PlaygroundWorkshop = () => {
       <section>
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <h1 className="text-[22px] font-bold tracking-tight text-foreground">{cat}</h1>
+            <h1 className="page-title">{cat}</h1>
             <p className="mt-1 max-w-xl text-[13px] text-muted-foreground">{meta.description}</p>
           </div>
           {recommendedInCat > 0 && (
@@ -1573,9 +1569,7 @@ export const PlaygroundWorkshop = () => {
             ]}
           />
         )}
-        <h1 className="text-[26px] font-extrabold tracking-tight text-foreground">
-          Explore cryptographic operations and models
-        </h1>
+        <h1 className="page-title">Explore cryptographic operations and models</h1>
         <p className="mt-2 max-w-2xl text-sm text-muted-foreground leading-relaxed">
           Pick a category on the left, jump into a full playground, or start with what fits your
           role. Execution badges distinguish sample cryptographic operations, protocol models,

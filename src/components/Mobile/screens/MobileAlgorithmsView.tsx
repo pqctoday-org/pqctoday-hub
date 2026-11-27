@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { AlgoCtaStrip } from '@/shared/algorithm-actions/AlgorithmActions'
 import { StandardSizeBudget } from '@/components/Algorithms/StandardSizeBudget'
+import { MissingAwareText } from '@/components/ui/NeedsDataCue'
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import { ChevronRight, Shield } from 'lucide-react'
@@ -453,7 +454,7 @@ export function MobileAlgorithmsView() {
                   Security level
                 </dt>
                 <dd className="mt-0.5 text-[12px] text-foreground">
-                  {securityLevelText(selected)}
+                  <MissingAwareText text={securityLevelText(selected)} />
                 </dd>
               </div>
               <div>
@@ -461,7 +462,9 @@ export function MobileAlgorithmsView() {
                   {selected.fipsStandard === 'FIPS 203' ? 'Encapsulation key' : 'Public key'}
                 </dt>
                 <dd className="mt-0.5 font-mono text-[12px] text-foreground">
-                  {formatByteField(selected.publicKeyBytes, selected.evidence?.publicKey)}
+                  <MissingAwareText
+                    text={formatByteField(selected.publicKeyBytes, selected.evidence?.publicKey)}
+                  />
                 </dd>
               </div>
               <div>
@@ -469,7 +472,9 @@ export function MobileAlgorithmsView() {
                   {selected.fipsStandard === 'FIPS 203' ? 'Decapsulation key' : 'Private key'}
                 </dt>
                 <dd className="mt-0.5 font-mono text-[12px] text-foreground">
-                  {formatByteField(selected.privateKeyBytes, selected.evidence?.privateKey)}
+                  <MissingAwareText
+                    text={formatByteField(selected.privateKeyBytes, selected.evidence?.privateKey)}
+                  />
                 </dd>
               </div>
               <div>
@@ -481,10 +486,12 @@ export function MobileAlgorithmsView() {
                       : 'Signature / ciphertext'}
                 </dt>
                 <dd className="mt-0.5 font-mono text-[12px] text-foreground">
-                  {formatByteField(
-                    selected.signatureOrCiphertextBytes,
-                    selected.evidence?.signatureOrCiphertext
-                  )}
+                  <MissingAwareText
+                    text={formatByteField(
+                      selected.signatureOrCiphertextBytes,
+                      selected.evidence?.signatureOrCiphertext
+                    )}
+                  />
                 </dd>
               </div>
               {selected.sharedSecretBytes != null && (
@@ -493,7 +500,12 @@ export function MobileAlgorithmsView() {
                     Shared secret
                   </dt>
                   <dd className="mt-0.5 font-mono text-[12px] text-foreground">
-                    {formatByteField(selected.sharedSecretBytes, selected.evidence?.sharedSecret)}
+                    <MissingAwareText
+                      text={formatByteField(
+                        selected.sharedSecretBytes,
+                        selected.evidence?.sharedSecret
+                      )}
+                    />
                   </dd>
                 </div>
               )}

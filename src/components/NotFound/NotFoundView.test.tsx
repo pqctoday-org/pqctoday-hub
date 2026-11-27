@@ -3,16 +3,21 @@ import { afterEach, describe, expect, it } from 'vitest'
 // eslint-disable-next-line testing-library/no-manual-cleanup -- the afterEach below must unmount before it clears the head
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter, Route, Routes } from 'react-router'
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router'
 import '@testing-library/jest-dom'
 import { PageMeta } from '@/seo/PageMeta'
-import { NOT_FOUND_LINKS, NOT_FOUND_TITLE } from '@/seo/notFoundContent'
+import { NOT_FOUND_LINKS, NOT_FOUND_SEARCH, NOT_FOUND_TITLE } from '@/seo/notFoundContent'
 import { NotFoundView } from './NotFoundView'
 
 /**
  * The screen for an address with no page, together with PageMeta: it must say so, be noindex with no
  * canonical, and give all of that back as soon as the visitor reaches a real page.
  */
+
+function LocationEcho() {
+  const { pathname, search } = useLocation()
+  return <p data-testid="where">{pathname + search}</p>
+}
 
 function renderAt(path: string) {
   return render(
@@ -48,6 +53,20 @@ describe('NotFoundView', () => {
     for (const link of NOT_FOUND_LINKS) {
       expect(screen.getByRole('link', { name: link.label })).toHaveAttribute('href', link.path)
     }
+  })
+
+  it('has a search box that opens the library search with the typed words', async () => {
+    render(
+      <MemoryRouter initialEntries={['/nothing-here']}>
+        <Routes>
+          <Route path="/library" element={<LocationEcho />} />
+          <Route path="*" element={<NotFoundView />} />
+        </Routes>
+      </MemoryRouter>
+    )
+    await userEvent.type(screen.getByRole('searchbox', { name: NOT_FOUND_SEARCH.label }), 'ml kem')
+    await userEvent.click(screen.getByRole('button', { name: NOT_FOUND_SEARCH.button }))
+    expect(await screen.findByTestId('where')).toHaveTextContent('/library?q=ml%20kem')
   })
 
   it('does not redirect: the address stays the one that was asked for', () => {

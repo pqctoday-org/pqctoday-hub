@@ -112,7 +112,7 @@ export const CommonGroundPath: React.FC = () => {
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <Shield size={22} className="text-primary" />
-          <h1 className="text-gradient text-2xl font-bold">PQC for Your Organization</h1>
+          <h1 className="page-title">PQC for Your Organization</h1>
         </div>
         <p className="text-muted-foreground">
           A plain-language introduction to post-quantum cryptography for procurement, legal, HR, and

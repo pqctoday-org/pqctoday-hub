@@ -61,7 +61,7 @@ export function TermsView() {
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <Scale className="text-primary shrink-0" size={28} aria-hidden="true" />
-          <h1 className="text-2xl font-bold font-display text-heading">Terms of Service</h1>
+          <h1 className="page-title">Terms of Service</h1>
         </div>
         <p className="text-muted-foreground text-sm">
           Legal terms governing the use of PQC Today and its embedded cryptographic software
@@ -386,7 +386,7 @@ export function TermsView() {
           </p>
           <p>
             The Platform&apos;s <strong>PQC Assistant</strong> answers from the Platform&apos;s own
-            records, on your device. It uses no language model and asks for no API key, and your
+            records, on your device. It works entirely in your browser without an account, and your
             questions are not sent to any outside service.
           </p>
           <p>

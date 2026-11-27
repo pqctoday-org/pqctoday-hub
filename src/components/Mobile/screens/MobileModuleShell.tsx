@@ -154,9 +154,7 @@ export function MobileModuleShell({
             <span className={mobileChip}>{durationLabel ?? manifest.duration}</span>
           )}
         </div>
-        <h1 className="text-[19px] font-extrabold leading-tight text-foreground">
-          {title ?? manifest.title}
-        </h1>
+        <h1 className="page-title">{title ?? manifest.title}</h1>
         <ModuleFitStrip moduleId={manifest.id} />
         <div className="mt-3">
           <ModuleJourneyHeader moduleId={manifest.id} compact />

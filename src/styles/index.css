@@ -907,6 +907,23 @@
     outline: 1px solid hsl(var(--border));
   }
 
+  /* Page title (H1): the one style of every page title except the Home and Sponsor heroes.
+     20px bold on phones, 36px bold from 768px up (the Tailwind md width), Fredoka. Pages and
+     titles set only layout beside it (margins, flex), never their own size or weight. */
+  .page-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: hsl(var(--heading));
+  }
+
+  @media (min-width: 768px) {
+    .page-title {
+      font-size: 36px;
+    }
+  }
+
   /* Kept as a name for existing call sites: a heading-coloured title, no gradient. */
   .text-gradient {
     @apply text-heading;

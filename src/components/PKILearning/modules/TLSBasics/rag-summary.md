@@ -37,7 +37,7 @@ The workshop is a live TLS handshake simulator with the following features:
 
 ## Workshop / Interactive Activities (Downgrade Scenario)
 
-- **Downgrade Attack Scenario tab** — interactive walkthrough of a quantum downgrade attack: an attacker-in-the-middle makes the PQC attempt fail, the client retries in compatibility mode with a classical-only ClientHello, the server negotiates X25519, and compare the negotiated session against a non-attacked connection; then apply PQ Lock (and the proposed PQC Continuity) after a prior PQC visit and observe the fallback being refused
+- **Downgrade Attack Scenario (last Workshop step)** — interactive walkthrough of a quantum downgrade attack: an attacker-in-the-middle makes the PQC attempt fail, the client retries in compatibility mode with a classical-only ClientHello, the server negotiates X25519, and compare the negotiated session against a non-attacked connection; then apply PQ Lock (and the proposed PQC Continuity) after a prior PQC visit and observe the fallback being refused
 
 ## Related Standards
 

@@ -252,9 +252,7 @@ export function CuriousMobileBoard({ variantId, onSelectVariant }: CuriousMobile
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-primary">
           {board.heroEyebrow}
         </p>
-        <h1 className="font-display text-heading mt-3 text-2xl font-extrabold leading-tight sm:text-3xl">
-          {board.headline}
-        </h1>
+        <h1 className="page-title mt-3">{board.headline}</h1>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{board.sub}</p>
 
         <div className="mt-5 flex flex-col gap-3">

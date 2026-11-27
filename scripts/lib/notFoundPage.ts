@@ -3,6 +3,7 @@ import { JSDOM } from 'jsdom'
 import {
   NOT_FOUND_DESCRIPTION,
   NOT_FOUND_LINKS,
+  NOT_FOUND_SEARCH,
   NOT_FOUND_TITLE,
 } from '../../src/seo/notFoundContent'
 
@@ -45,6 +46,11 @@ function notFoundBody(): string {
     '<main id="main-content">' +
     '<h1>Page not found</h1>' +
     `<p>${escapeHtml(NOT_FOUND_DESCRIPTION)}</p>` +
+    `<form role="search" action="${escapeHtml(NOT_FOUND_SEARCH.action)}" method="get">` +
+    `<label for="not-found-search">${escapeHtml(NOT_FOUND_SEARCH.label)}</label> ` +
+    `<input id="not-found-search" type="search" name="${NOT_FOUND_SEARCH.param}" autocomplete="off"> ` +
+    `<button type="submit">${escapeHtml(NOT_FOUND_SEARCH.button)}</button>` +
+    '</form>' +
     `<ul>${links}</ul>` +
     '</main>'
   )
@@ -98,6 +104,14 @@ export function validateNotFoundPage(html: string): string[] {
     if (root.querySelectorAll('h1').length !== 1) errors.push('404.html needs exactly one <h1>')
     if (!/not found/i.test(root.querySelector('h1')?.textContent ?? '')) {
       errors.push('404.html does not say the page was not found')
+    }
+    const searchForm = root.querySelector('form[role="search"]')
+    if (
+      !searchForm ||
+      searchForm.getAttribute('action') !== NOT_FOUND_SEARCH.action ||
+      !searchForm.querySelector(`input[type="search"][name="${NOT_FOUND_SEARCH.param}"]`)
+    ) {
+      errors.push('404.html has no search box')
     }
     if (root.getAttributeNames().some((name) => name.startsWith('data-prerender-'))) {
       errors.push('404.html still carries a prerender marker from the page it was copied from')
