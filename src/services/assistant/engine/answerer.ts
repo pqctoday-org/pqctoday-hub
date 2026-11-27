@@ -27,6 +27,7 @@ const STRONG = 2.0
 const PLAIN_MIN_WORDS = 2
 /** The reader's confidence when it recognised nothing in the question (no name, no shape): the reading is broad by default, not because the question is. */
 const UNREAD = 0.1
+const INTRODUCTION = 'post-quantum cryptography introduction basics' // what a request with no topic of its own is searched by
 const STOP = new Set('the a an of to in on for and or is are was were be what which who whom how does do did can could would should i me my we our you your it its this that these those with by from about tell show give please there any some as at into if when where why'.split(' '))
 const ASK = new Set('list show find tell explain describe learn lesson lessons module modules section sections tool tools tutorial course page pages information info resource resources material materials guide guides example examples understand know want need looking look use using work works available offer offers provide get give help site hub'.split(' '))
 const GENERIC = ['handshake', 'overview', 'basics', 'fundamentals', 'protocol', 'standard', 'algorithm', 'concept', 'concepts', 'model', 'framework', 'principles']
@@ -769,9 +770,14 @@ export class Answerer {
       // a question nothing was recognised in, but which has words of its own ("5g", "quantum"), is searched by those words;
       // only a request with no topic at all ("hello", "tell me something") gets the introduction
       const ownWords = intent === 'broad' && (reading.confidence ?? 0) <= UNREAD && this.contentWords(reading).length > 0
-      findReading = { ...reading, intents: [reading.names.length ? 'concept' : 'risk'], intent: reading.names.length ? 'concept' : 'risk', clean: reading.clean && (reading.intent !== 'broad' || ownWords) ? reading.clean : 'post-quantum cryptography introduction basics' }
+      findReading = { ...reading, intents: [reading.names.length ? 'concept' : 'risk'], intent: reading.names.length ? 'concept' : 'risk', clean: reading.clean && (reading.intent !== 'broad' || ownWords) ? reading.clean : INTRODUCTION }
     }
     let groups = this.find(findReading, PER_GROUP, PER_GROUP)
+    if (intent === 'broad' && findReading.clean !== INTRODUCTION && !Object.values(groups).some((g) => g.length)) {
+      // words the Hub holds nothing on ("qwertyzzxx blorp") are answered like a request with no topic: the introduction
+      findReading = { ...findReading, clean: INTRODUCTION }
+      groups = this.find(findReading, PER_GROUP, PER_GROUP)
+    }
     const order = this.groupOrder(intent, role)
     const d = intent !== 'broad' && intent !== 'not_fact' ? this.direct(question, reading) : null
     model.direct = d ? { value: d.value, evidence_line: d.evidence_line, tag: d.tag, field: d.field, evidence: d.evidence } : null

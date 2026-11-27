@@ -234,6 +234,10 @@ describe('lessons under their own name, plain matches, and questions nothing is 
     expect(hello.state).toBe('broad')
     expect(learnRows(hello)[0].title).toBe('PQC 101')
     expect(learnRows(hello).map((r) => r.tag)).not.toEqual(learnRows(fiveG).map((r) => r.tag))
+    // words the Hub holds nothing on get the introduction too, never an empty answer
+    const nothing = held(await answer('qwertyzzxx blorp'))
+    expect(nothing.state).toBe('broad')
+    expect(learnRows(nothing)[0].title).toBe('PQC 101')
   })
 
   it('does not show a record that holds only one word of a longer question beside the best matches', async () => {
