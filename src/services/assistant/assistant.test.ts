@@ -248,7 +248,7 @@ describe('lessons under their own name, plain matches, and questions nothing is 
     const firstLesson: Record<string, RegExp> = {
       '5g': /5G/,
       iot: /IoT/,
-      banking: /Banking/,
+      banking: /Financial Services/,
       satellites: /Aerospace/,
     }
     for (const [q, title] of Object.entries(firstLesson)) {
@@ -273,6 +273,30 @@ describe('lessons under their own name, plain matches, and questions nothing is 
     // the same words about something else are not a question about the site
     for (const q of ['What is the latest version of OpenSSL?', 'Is ML-KEM free to use?'])
       expect(held(await answer(q)).intent, q).not.toBe('site')
+  })
+
+  it("reads a decision about the visitor's own migration as planning", async () => {
+    for (const q of [
+      'should I migrate now or wait',
+      'do we need to migrate yet',
+      'is it too early to migrate',
+      'when should we start the migration',
+    ]) {
+      const a = held(await answer(q))
+      expect(a.intent, q).toBe('planning')
+      expect(a.groups[0].name, q).toBe('Tools')
+      expect(a.groups[0].rows[0].link, q).toBe('/assess')
+    }
+    // a choice between two algorithms is not a migration decision
+    expect(held(await answer('should I use ML-KEM-768 or ML-KEM-1024')).intent).not.toBe('planning')
+  })
+
+  it('puts the lesson that is about the question first among the lessons and their parts', async () => {
+    const learn = held(await answer('banking')).groups.find((g) => g.name === 'Learn')
+    expect(learn?.rows[0]).toMatchObject({
+      kind: 'Module',
+      title: 'Financial Services & Payments PQC',
+    })
   })
 
   it('shows the sentence that matched the question when it says more than the first lines of the record', async () => {

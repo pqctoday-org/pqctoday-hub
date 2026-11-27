@@ -899,7 +899,15 @@
     "milestones"
    ]
   },
-  "version": 1
+  "version": 1,
+  "whole_lesson": {
+   "floor": 1.0,
+   "inner": [],
+   "top": 2.2,
+   "types": [
+    "module"
+   ]
+  }
  },
  "intents": {
   "groups": {
@@ -1894,6 +1902,10 @@
     {
      "rx": "\\b(?:what should (?:a|an|the|our|we|my|i)\\b.{0,40}(?:do|prioriti[sz]e|start|first)|prioriti[sz]e|prioriti[sz]ation)\\b",
      "w": 3
+    },
+    {
+     "rx": "\\bshould (?:i|we|you|my \\w+|our \\w+) (?:\\w+ ){0,3}(?:migrate|upgrade|start|begin|wait|act|move|adopt|prepare|replace|transition|do (?:first|now|next|today|anything|something))\\b|\\b(?:now or (?:wait|later)|wait or (?:act|migrate|start|move)|too (?:early|soon|late) (?:to|for)|(?:is it|is now the) time to (?:migrate|start|act|upgrade|move|prepare)|when should (?:i|we|you|my \\w+|our \\w+) (?:start|begin|migrate|upgrade|act|move|prepare)|do (?:i|we|you) (?:really |actually |already |even )?(?:need|have) to (?:migrate|upgrade|act|start|prepare|do (?:anything|something)|change|replace|switch|move))\\b",
+     "w": 4
     }
    ],
    "products": [

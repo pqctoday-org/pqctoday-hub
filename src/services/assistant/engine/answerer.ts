@@ -418,14 +418,24 @@ export class Answerer {
     const pool = new Map<string, Item>()
     const sw = [...words].sort()
     const denom = Math.max(1e-9, sw.reduce((a, w) => a + this.res.idf(w), 0))
-    for (const [ln, text] of links) {
+    for (const [ln, found] of links) {
       const r = this.resByLink.get(ln)
       if (!r || !this.statusOk(r) || (ln.startsWith('http') && !named.has(ln))) continue
+      const text = found * this.about(r, via.get(ln), sw, named.has(ln))
       const tw = new Set(tokens(r.title))
       const overlap = words.length ? sw.filter((w) => tw.has(w)).reduce((a, w) => a + this.res.idf(w), 0) / denom : 0
       pool.set(ln, { link: ln, title: r.title, type: r.type, group: r.group, extract: r.extract, record_ids: r.record_ids, text, res: (resScores.get(ln) ?? 0) / rtop, title_overlap: overlap, named: named.has(ln), follow: follow.get(ln) ?? 0, reader: readers.get(ln) ?? 0, passage: via.get(ln) ?? null, asked: asked.get(ln) ?? 0 })
     }
     return pool
+  }
+  /** What the text match of a whole lesson is multiplied by (`whole_lesson` in the finder settings): 1 for anything that is not a whole lesson (or is one the question names), else floor + (top - floor) x the share (by rarity) of the question's words that stand in the lesson's title, summary or the subjects the curriculum says it explains. */
+  about(r: Resource, passage: number | null | undefined, sw: string[], named: boolean): number {
+    const wl = this.data.finders.whole_lesson
+    if (!wl || named || !sw.length || typeof passage !== 'number' || !(wl.types ?? []).includes(r.type) || (wl.inner.length > 0 && !wl.inner.includes(this.cat.passages[passage].source))) return 1.0
+    const m = this.cat.curriculum?.modules[r.link.slice('/learn/'.length).split('?')[0].split('#')[0].replace(/^\/+|\/+$/g, '')]
+    const own = new Set([...tokens(r.title), ...tokens(r.extract), ...((m?.explains ?? []) as string[]).flatMap((e) => tokens(e))])
+    const share = sw.filter((w) => own.has(w)).reduce((a, w) => a + this.res.idf(w), 0) / Math.max(1e-9, sw.reduce((a, w) => a + this.res.idf(w), 0))
+    return wl.floor + ((wl.top ?? 1) - wl.floor) * share
   }
   /** For each page of the site that has words of its own: the share of the question's words that are among them. */
   askedPages(clean: string): Map<string, number> {
@@ -514,12 +524,14 @@ export class Answerer {
     const plain: Record<string, Item[]> = Object.fromEntries(GROUPS.map((g) => [g, []]))
     // a word of a name the question was read to hold ("sphincs" in "who created sphincs+") is enough on its own
     const nameWords = [...new Set(reading.names.flatMap((n) => tokens(n.text)))]
+    const sw = [...this.contentWords(reading)].sort(); const named = this.namedLinks(reading)
     for (const h of this.search.resources(reading.clean, 80, PLAIN_MIN_WORDS, nameWords)) {
       const r = this.resByLink.get(h.link)
       if (!r || !this.statusOk(r) || r.link.startsWith('http')) continue
-      plain[r.group].push({ link: r.link, title: r.title, type: r.type, group: r.group, extract: r.extract, record_ids: r.record_ids, score: round(h.score, 4), text: 1.0, res: 0.0, title_overlap: 0.0, named: false, follow: 0.0, reader: 0.0, passage: h.passage })
+      plain[r.group].push({ link: r.link, title: r.title, type: r.type, group: r.group, extract: r.extract, record_ids: r.record_ids, score: round(h.score * this.about(r, h.passage, sw, named.has(r.link)), 4), text: 1.0, res: 0.0, title_overlap: 0.0, named: false, follow: 0.0, reader: 0.0, passage: h.passage })
     }
     for (const g of GROUPS) {
+      plain[g].sort((x, y) => y.score - x.score)          // a scaled lesson takes its new place; equal scores keep their order
       const certain = reading.intents.includes('compare') ? out[g].filter((x) => x.named).slice(0, size) : []
       const mine = out[g].filter((x) => !certain.includes(x)); const theirs = plain[g]
       const seen = new Set(certain.map((x) => x.link)); const merged: Item[] = [...certain]
