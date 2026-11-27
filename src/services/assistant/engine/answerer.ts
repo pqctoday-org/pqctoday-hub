@@ -28,6 +28,8 @@ const PLAIN_MIN_WORDS = 2
 /** The reader's confidence when it recognised nothing in the question (no name, no shape): the reading is broad by default, not because the question is. */
 const UNREAD = 0.1
 const INTRODUCTION = 'post-quantum cryptography introduction basics' // what a request with no topic of its own is searched by
+/** A single word that stands in more than this share of the resources' titles is the subject of the whole Hub ("quantum" is in about one title in ten; "security" in one in twenty; "5g" in three in a thousand). */
+const WHOLE_SUBJECT_SHARE = 0.075
 const STOP = new Set('the a an of to in on for and or is are was were be what which who whom how does do did can could would should i me my we our you your it its this that these those with by from about tell show give please there any some as at into if when where why'.split(' '))
 const ASK = new Set('list show find tell explain describe learn lesson lessons module modules section sections tool tools tutorial course page pages information info resource resources material materials guide guides example examples understand know want need looking look use using work works available offer offers provide get give help site hub'.split(' '))
 const GENERIC = ['handshake', 'overview', 'basics', 'fundamentals', 'protocol', 'standard', 'algorithm', 'concept', 'concepts', 'model', 'framework', 'principles']
@@ -193,6 +195,8 @@ class Search {
 
 class ResIndex {
   post = new Map<string, [number, number][]>()
+  /** In how many resources' titles each word stands. */
+  inTitles = new Map<string, number>()
   len: number[] = []
   links: string[]
   n: number
@@ -206,6 +210,7 @@ class ResIndex {
     res.forEach((r, i) => {
       const tf = new Map<string, number>()
       for (const w of [...tokens(r.title), ...tokens(r.title), ...tokens(r.title), ...tokens(r.extract)]) tf.set(w, (tf.get(w) ?? 0) + 1)
+      for (const w of new Set(tokens(r.title))) this.inTitles.set(w, (this.inTitles.get(w) ?? 0) + 1)
       let total = 0
       for (const [w, f] of tf) { total += f; const a = this.post.get(w); if (a) a.push([i, f]); else this.post.set(w, [[i, f]]) }
       this.len.push(total)
@@ -213,6 +218,8 @@ class ResIndex {
     this.n = this.links.length
     this.avg = this.len.reduce((a, c) => a + c, 0) / Math.max(1, this.n)
   }
+  /** The share of the resources whose title holds the word. */
+  titleShare(w: string): number { return (this.inTitles.get(w) ?? 0) / Math.max(1, this.n) }
   idf(w: string): number { const n = this.post.get(w)?.length ?? 0; return Math.log(1 + (this.n - n + 0.5) / (n + 0.5)) }
   scores(words: string[]): Map<string, number> {
     const out = new Map<string, number>()
@@ -834,7 +841,9 @@ export class Answerer {
     if (intent === 'broad' || intent === 'not_fact') {
       // a question nothing was recognised in, but which has words of its own ("5g", "quantum"), is searched by those words;
       // only a request with no topic at all ("hello", "tell me something") gets the introduction
-      const ownWords = intent === 'broad' && (reading.confidence ?? 0) <= UNREAD && this.contentWords(reading).length > 0
+      // a single word that stands in the titles of very many records ("quantum") names the subject of the whole Hub, not a topic: it gets the introduction too
+      const own = this.contentWords(reading)
+      const ownWords = intent === 'broad' && (reading.confidence ?? 0) <= UNREAD && own.length > 0 && !(own.length === 1 && this.res.titleShare(own[0]) > WHOLE_SUBJECT_SHARE)
       findReading = { ...reading, intents: [reading.names.length ? 'concept' : 'risk'], intent: reading.names.length ? 'concept' : 'risk', clean: reading.clean && (reading.intent !== 'broad' || ownWords) ? reading.clean : INTRODUCTION }
     }
     let groups = this.find(findReading, PER_GROUP, PER_GROUP)

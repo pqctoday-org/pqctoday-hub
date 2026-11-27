@@ -240,6 +240,23 @@ describe('lessons under their own name, plain matches, and questions nothing is 
     expect(learnRows(nothing)[0].title).toBe('PQC 101')
   })
 
+  it('answers the one word that names the whole subject of the Hub with the introduction', async () => {
+    const quantum = held(await answer('quantum'))
+    expect(quantum.state).toBe('broad')
+    expect(learnRows(quantum)[0].title).toBe('PQC 101')
+    // a single word with a subject of its own keeps that subject
+    const firstLesson: Record<string, RegExp> = {
+      '5g': /5G/,
+      iot: /IoT/,
+      banking: /Banking/,
+      satellites: /Aerospace/,
+    }
+    for (const [q, title] of Object.entries(firstLesson)) {
+      const a = held(await answer(q))
+      expect(learnRows(a)[0].title, q).toMatch(title)
+    }
+  })
+
   it('shows the sentence that matched the question when it says more than the first lines of the record', async () => {
     const a = held(await answer('is aes 256 quantum safe'))
     const lessons = allRows(a).filter((r) => r.kind === 'Module')
