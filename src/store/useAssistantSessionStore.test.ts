@@ -18,11 +18,18 @@ vi.mock('@/components/Assistant/assistantClient', () => ({
     ),
 }))
 
+const analytics = vi.hoisted(() => ({ logChatQuestion: vi.fn() }))
+vi.mock('@/utils/analytics', async (original) => ({
+  ...(await original<typeof import('@/utils/analytics')>()),
+  logChatQuestion: analytics.logChatQuestion,
+}))
+
 const ctx = { persona: null }
 const store = () => useAssistantSessionStore.getState()
 
 beforeEach(() => {
   client.pending = []
+  analytics.logChatQuestion.mockClear()
   store().reset()
   useAchievementStore.getState().resetAchievements()
 })
@@ -220,5 +227,24 @@ describe('counting the questions asked (for the Conversation Starter badge)', ()
     expect(
       JSON.parse(localStorage.getItem('pqc-achievements') ?? '{}').state.assistantQuestionCount
     ).toBe(1)
+  })
+})
+
+describe('recording the question asked (a usage event, scrubbed where it is sent)', () => {
+  it('records each answered question once, with the kind of answer shown', async () => {
+    const p = store().ask('  what is ML-KEM  ', ctx)
+    expect(analytics.logChatQuestion).not.toHaveBeenCalled()
+    client.pending[0]({ ...broadMatch, question: 'what is ML-KEM' })
+    await p
+    expect(analytics.logChatQuestion).toHaveBeenCalledTimes(1)
+    expect(analytics.logChatQuestion).toHaveBeenCalledWith('what is ML-KEM', broadMatch.state)
+  })
+
+  it('records nothing when the data did not load, and nothing for a blank question', async () => {
+    const p = store().ask('one', ctx)
+    client.pending[0](null)
+    await p
+    await store().ask('   ', ctx)
+    expect(analytics.logChatQuestion).not.toHaveBeenCalled()
   })
 })

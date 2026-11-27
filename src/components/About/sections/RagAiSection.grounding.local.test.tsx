@@ -11,7 +11,7 @@ describe('Assistant disclosure on the About page', () => {
     expect(text).toMatch(/answers from the Hub.s own records/)
     expect(text).toMatch(/There is no language model behind it/)
     expect(text).toMatch(/nothing to download and no API key/)
-    expect(text).toMatch(/not sent to Google or to any other outside service/)
+    expect(text).toMatch(/recorded in Google Analytics as a usage event/)
     expect(text).toMatch(/check it before relying on an answer for a decision/)
   })
 

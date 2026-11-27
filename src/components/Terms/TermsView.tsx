@@ -386,8 +386,12 @@ export function TermsView() {
           </p>
           <p>
             The Platform&apos;s <strong>PQC Assistant</strong> answers from the Platform&apos;s own
-            records, on your device. It uses no language model and asks for no API key, and your
-            questions are not sent to any outside service.
+            records, on your device. It uses no language model and asks for no API key, and the
+            answer is built on your device. Each question you ask is recorded in Google Analytics as
+            a usage event, with the kind of answer shown: the text is scrubbed of email addresses,
+            web addresses, IP addresses and long key-like strings, and cut to 80 characters. We use
+            it to see what visitors ask and to improve the answers. Do not type personal or
+            confidential information into the Assistant.
           </p>
           <p>
             Local browser storage (localStorage) keeps your learning progress, preferences and saved
