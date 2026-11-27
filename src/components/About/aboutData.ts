@@ -35,7 +35,7 @@ export function buildMissionTags(counts: {
     `${counts.patentCount.toLocaleString()} PQC patents`,
     'PKCS#11 v3.2 simulator',
     'FIPS 203 / 204 / 205',
-    'AI assistant — local or cloud',
+    "Assistant that answers from the Hub's own records",
     'No accounts, anonymous usage analytics',
   ]
 }
