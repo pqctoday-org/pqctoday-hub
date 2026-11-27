@@ -124,8 +124,8 @@ export interface AssistantGroup {
   /** The rows after the first three, best first (the drawer joins them across groups under "Show n more records"). */
   more: AssistantRow[]
   /**
-   * Set when the question asks for one kind of resource and this group's first row is not a strong
-   * match: its rows are listed after the rows of the other groups.
+   * Set when this group is not the first and its first row is not a strong match for the question:
+   * its rows are listed after the rows of the other groups.
    */
   late?: true
 }

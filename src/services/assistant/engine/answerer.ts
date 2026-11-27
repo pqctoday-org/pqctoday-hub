@@ -348,10 +348,10 @@ export class Answerer {
   cfg(intent: string): any {
     const row = this.data.finders.intents[intent] ?? {}
     const d = this.data.finders.default
-    return { w: { ...d.w, ...(row.w ?? {}) }, prior: row.prior ?? {}, only: row.only ?? {}, follow: row.follow ?? d.follow, journey: row.journey ?? d.journey, pin: row.pin ?? {}, filter: !!row.filter, field_bonus: row.field_bonus ?? {}, name_types: row.name_types ?? [], follow_fields: row.follow_fields ?? [], lead: row.lead ?? '', first_turn: row.first_turn ?? '' }
+    return { w: { ...d.w, ...(row.w ?? {}) }, prior: row.prior ?? {}, only: row.only ?? {}, follow: row.follow ?? d.follow, journey: row.journey ?? d.journey, pin: row.pin ?? {}, filter: !!row.filter, field_bonus: row.field_bonus ?? {}, name_types: row.name_types ?? [], follow_fields: row.follow_fields ?? [], lead: row.lead ?? '', first_turn: row.first_turn ?? d.first_turn ?? '' }
   }
-  /** True when a group that is not the first comes after the others on the card (`first_turn: strong` of the intent): the question asks for one
-   *  kind of resource and this group's first row is not a strong match (named by the question, or `strong_title` of the question's words in its title). */
+  /** True when a group that is not the first comes after the others on the card (`first_turn: strong`, the default): the first group is the
+   *  answer, and this group's first row is not a strong match (named by the question, or `strong_title` of the question's words in its title). */
   lateGroup(intent: string, head: Item | undefined): boolean {
     if (this.cfg(intent).first_turn !== 'strong') return false
     return !(head && (head.named || (head.title_overlap ?? 0.0) >= (this.data.finders.strong_title as number)))

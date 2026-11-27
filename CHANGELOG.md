@@ -31,11 +31,11 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.228.2] - 2026-11-26
 
-The Assistant's answer card shows the best resource of each kind first, reads more kinds of question for what they ask, and shows the sentence that matched your question. Questions asked in the Assistant are now recorded as scrubbed usage events.
+The Assistant's answer card shows the best resource of every kind among its first rows, reads more kinds of question for what they ask, and shows the sentence that matched your question. Questions asked in the Assistant are now recorded as scrubbed usage events.
 
 ### Changed
 
-- **The answer card shows the best resource of each kind first** [view:/] [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: An answer used to list all the rows of one kind before the next kind, so a fitting lesson or tool could sit below five data pages. The card now starts with the best row of each kind (data pages, references, lessons, tools), then the second of each. On our own test questions, the resource a question was written for is among the first five rows for about 88 in 100 questions, up from 68.
+- **The answer card shows the best resource of every kind among its first rows** [view:/] [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: An answer used to list all the rows of one kind before the next kind, so a fitting lesson or tool could sit below five data pages. The card now starts with the rows of the kind your question asks for, then the best row of each other kind (data pages, references, lessons, tools) that matches your question closely, then the rest. On our own test questions, the resource a question was written for is among the first five rows for about 88 in 100 questions, up from 68.
 - **Questions asked in the Assistant are recorded as usage events** [view:/] [view:/terms] [view:/about] [view:/faq] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: Each question you ask the Assistant is now recorded in Google Analytics as a usage event, with the kind of answer shown. The text is scrubbed of email addresses, web addresses, IP addresses and long key-like strings, and cut to 80 characters. We use it to see what visitors ask and to improve the answers. The answer is still built on your device. The Terms, the About page and the FAQ now say this. Do not type personal or confidential information into the Assistant.
 
 ### Fixed

@@ -216,14 +216,17 @@ describe('buildResourceTabs', () => {
     expect(total).toBe(16)
   })
 
-  it('shows the best row of every group first: Top 5 is the first five of the rank, and each tab keeps the rank order', () => {
+  it('shows the first group together, then the best row of every other group: Top 5 is the first five of the rank, and each tab keeps the rank order', () => {
     const { tabs, rankOf } = buildResourceTabs(cnsa)
     const top = tabs[0].rows.map((r) => r.tag)
-    // the first row of each of the four groups, in the engine's group order, then the second row of the first group
-    expect(top).toEqual(['CMP:CNSA-2', 'LIB:a', 'LM-001', 'TOOL:assess', 'TL:one'])
+    // the rows of the first group, then the first row of each other group, in the engine's group order
+    expect(top).toEqual(['CMP:CNSA-2', 'TL:one', 'TL:two', 'LIB:a', 'LM-001'])
     expect(rankOf['CMP:CNSA-2']).toBe(1)
-    expect(rankOf['LM-001']).toBeLessThan(rankOf['TL:one'])
-    expect(rankOf['LIB:b']).toBeLessThan(rankOf['TL:two'])
+    expect(rankOf['LM-001']).toBeLessThan(rankOf['TOOL:assess'])
+    // the other groups' second rows follow by turns
+    expect(rankOf['TOOL:assess']).toBeLessThan(rankOf['LIB:b'])
+    expect(rankOf['LIB:b']).toBeLessThan(rankOf['LM-001/s:a'])
+    expect(rankOf['LM-001/s:a']).toBeLessThan(rankOf['GL:cnsa'])
     // every group's visible rows come before any group's "more" rows
     expect(rankOf['LM-002']).toBeLessThan(rankOf['CMP:two'])
     for (const tab of tabs) {
@@ -245,13 +248,13 @@ describe('buildResourceTabs', () => {
       ),
     } as RenderableAnswer
     const { tabs, rankOf, total } = buildResourceTabs(waiting)
-    // the two groups that take their turn fill the first rows; the first group keeps the first place
+    // the first group, then the one other group that takes its turn, fill the first rows
     expect(tabs[0].rows.map((r) => r.tag)).toEqual([
       'CMP:CNSA-2',
-      'LIB:a',
       'TL:one',
-      'LIB:b',
       'TL:two',
+      'LIB:a',
+      'LIB:b',
     ])
     expect(rankOf['GL:cnsa']).toBeLessThan(rankOf['LM-001'])
     // the late groups then take turns among themselves
@@ -260,6 +263,20 @@ describe('buildResourceTabs', () => {
     expect(rankOf['LM-002']).toBeLessThan(rankOf['CMP:two'])
     // nothing is added or removed
     expect(total).toBe(buildResourceTabs(cnsa).total)
+  })
+
+  it('does not hold the other groups back when the first group has no row to show', () => {
+    const emptyFirst = {
+      ...cnsa,
+      groups: cnsa.groups.map((g, i) => (i === 0 ? { ...g, rows: [] } : g)),
+    } as RenderableAnswer
+    expect(buildResourceTabs(emptyFirst).tabs[0].rows.map((r) => r.tag)).toEqual([
+      'LIB:a',
+      'LIB:b',
+      'GL:cnsa',
+      'LM-001',
+      'TOOL:assess',
+    ])
   })
 
   it('builds the concept shape: algorithms, products, certifications, tools, library and glossary', () => {
