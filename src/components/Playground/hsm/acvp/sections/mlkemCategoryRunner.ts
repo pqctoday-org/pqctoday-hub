@@ -24,6 +24,7 @@ import type { AcvpCaseMeta, MldsaAcvpSectionCtx } from './mldsaAcvp'
 import { runMlkemAcvpSection } from './mlkemAcvp'
 import { runMlkemKeyCheckDepthSection } from './mlkemKeyCheckDepth'
 import { runOptionalInputSection } from './optionalInputAcvp'
+import { formatSessionTime } from '@/lib/format'
 
 export interface MlkemCategoryRunnerCtx extends MldsaAcvpSectionCtx {
   engineId: HsmKey['engine']
@@ -134,7 +135,7 @@ export async function runMlkemCategory(ctx: MlkemCategoryRunnerCtx): Promise<voi
         addLog(`[DISCREPANCY] [${eName}] [id:${id7}] ${algo} Decapsulate: SS mismatch`)
         addHsmLog({
           id: Date.now(),
-          timestamp: new Date().toLocaleTimeString(),
+          timestamp: formatSessionTime(new Date()),
           fn: `[${eName}] C_DecapsulateKey(${algo})`,
           args: 'ACVP KAT Validation — SS MISMATCH',
           rvHex: '0x00000000',
@@ -157,7 +158,7 @@ export async function runMlkemCategory(ctx: MlkemCategoryRunnerCtx): Promise<voi
       addLog(`[DISCREPANCY] [${eName}] [id:${id7}] ${algo} Error: ${errorMessage}`)
       addHsmLog({
         id: Date.now(),
-        timestamp: new Date().toLocaleTimeString(),
+        timestamp: formatSessionTime(new Date()),
         fn: `[${eName}] C_DecapsulateKey(${algo})`,
         args: 'ACVP KAT Validation',
         rvHex: '0x00000005',

@@ -42,6 +42,7 @@ import { Button } from '@/components/ui/button'
 import { SPONSORS } from '@/data/sponsors'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { useUrlBackedText } from '@/hooks/useUrlBackedText'
+import { formatDate } from '@/lib/format'
 
 type FilterType = 'added' | 'changed' | 'fixed' | 'data' | 'security'
 
@@ -169,15 +170,10 @@ const now = Date.now()
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function formatDate(dateStr: string): string {
+function formatChangelogDate(dateStr: string): string {
   const parts = dateStr.split('-').map(Number)
   if (parts.length !== 3 || parts.some(isNaN)) return dateStr
-  const [year, month, day] = parts
-  return new Date(year, month - 1, day).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
+  return formatDate(dateStr, 'day', { relative: false })
 }
 
 // Strip inline code spans and markdown links from a title so it reads as plain
@@ -509,13 +505,7 @@ export const ChangelogView = () => {
                   {isStale && <span className="w-1.5 h-1.5 rounded-full bg-warning shrink-0" />}
                   <span className="font-medium">{label}</span>
                   <span className="opacity-60">·</span>
-                  <span>
-                    {date.toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })}
-                  </span>
+                  <span>{formatDate(date, 'day', { relative: false })}</span>
                 </span>
               )
             })}
@@ -812,7 +802,7 @@ export const ChangelogView = () => {
                 <div className="mb-4 pb-3 border-b border-border">
                   <div className="flex items-baseline gap-3 flex-wrap">
                     <h2 className="text-xl font-semibold font-display text-heading">
-                      {formatDate(group.date)}
+                      {formatChangelogDate(group.date)}
                     </h2>
                     <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-chip text-chip-foreground font-bold">
                       {versionLabel}

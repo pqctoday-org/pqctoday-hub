@@ -16,16 +16,13 @@
  * rather than a plausible-looking number nobody can trace.
  */
 import { ALGORITHM_REGISTRY, type AlgorithmProps } from './algorithmProperties'
+import { formatBytes } from '@/lib/format'
 
 /**
  * Byte formatter matching `personaConfig.ts`'s own — plain grouped bytes, never
  * KB. An executive reading "3.3 KB" next to "256 B" has to do the conversion in
  * their head to feel the jump; "3,309 B next to 256 B" carries it for free.
  */
-function formatBytes(n: number): string {
-  return `${n.toLocaleString()} B`
-}
-
 export interface AlgorithmConsequence {
   /** The plain sentence to render under the row. */
   sentence: string

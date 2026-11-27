@@ -22,6 +22,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
+import { formatDateStamp } from '@/lib/format'
 
 /** Common acceleration triggers offered as toggle chips — the three trigger
  *  types named by framework Activity 4.7. */
@@ -404,7 +405,7 @@ export const AcceleratedExecutionProfile: React.FC = () => {
             id: `accelerated-execution-profile-${Date.now()}`,
             moduleId: 'migration-program',
             type: 'accelerated-execution-profile',
-            title: `Accelerated Execution Profile — ${new Date().toLocaleDateString()}`,
+            title: `Accelerated Execution Profile — ${formatDateStamp(new Date())}`,
             data: exportMarkdown,
             inputs: {
               ...state,

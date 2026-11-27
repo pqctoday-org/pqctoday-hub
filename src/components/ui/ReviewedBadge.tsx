@@ -2,6 +2,7 @@
 import { CheckCircle, Circle } from 'lucide-react'
 import { useRevisions, byRecord, type RevisionEntry } from '@/hooks/useRevisions'
 import { Button } from '@/components/ui/button'
+import { formatDate } from '@/lib/format'
 
 interface ReviewedBadgeProps {
   /** Any revision domain: 'module' | 'tool' for content; 'library' | 'compliance' | 'migrate' | 'threats' | 'algorithms' for data records */
@@ -22,12 +23,7 @@ interface ReviewedBadgeProps {
 }
 
 function formatMonth(isoTimestamp: string): string {
-  try {
-    const d = new Date(isoTimestamp)
-    return d.toLocaleString('en-US', { month: 'short', year: 'numeric' })
-  } catch {
-    return isoTimestamp.slice(0, 7)
-  }
+  return formatDate(isoTimestamp, 'month')
 }
 
 export function ReviewedBadge({

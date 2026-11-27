@@ -24,6 +24,7 @@ import {
   hsm_getAllSlots,
 } from '../../../wasm/softhsm'
 import { keyIdentity } from '../keystore/keyIdentity'
+import { formatSessionTime } from '@/lib/format'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -479,7 +480,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     (label: string) => {
       addHsmLog({
         id: Math.random(),
-        timestamp: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        timestamp: formatSessionTime(new Date()),
         fn: label,
         args: '',
         rvHex: '',

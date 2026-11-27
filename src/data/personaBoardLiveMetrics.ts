@@ -20,6 +20,7 @@ import { libraryData } from './libraryData'
 import { complianceFrameworks } from './complianceData'
 import { timelineData } from './timelineData'
 import { recordedDateCoverage, recordedDateCoveragePhrase } from './recordedDateCoverage'
+import { formatDate } from '@/lib/format'
 
 /**
  * Live active-row count for the library corpus, read from the same loader
@@ -34,12 +35,7 @@ export const LIBRARY_ACTIVE_SOURCE_COUNT = libraryData.length
 export function formatVerifiedDate(isoDate: string): string {
   const d = new Date(`${isoDate}T00:00:00Z`)
   if (Number.isNaN(d.getTime())) return isoDate
-  return d.toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
-  })
+  return formatDate(d, 'day', { relative: false, utc: true })
 }
 
 /** Separate populations from the same active-row loaders the boards use. */

@@ -2,6 +2,7 @@
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
 import { buildPackageParts, type Slide, type TextRun } from './pptxOoxml'
+import { formatDateStamp } from '@/lib/format'
 
 /**
  * Convert an artifact's markdown export into a 16:9 PPTX deck.
@@ -109,7 +110,7 @@ export function markdownToSlides(markdown: string): Slide[] {
           yIn: 4.8,
           wIn: 12.3,
           hIn: 0.4,
-          runs: [{ text: new Date().toLocaleDateString(undefined, { dateStyle: 'long' }) }],
+          runs: [{ text: formatDateStamp(new Date()) }],
           fontSize: 12,
           color: '94A3B8',
           align: 'ctr',

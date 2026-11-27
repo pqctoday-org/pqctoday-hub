@@ -20,6 +20,7 @@ import { vendorRoadmaps } from '@/data/vendorRoadmapData'
 import { loadIndustryLandscape } from '@/data/industryLandscapeData'
 import { PROTOCOL_MATRIX } from '@/data/pqcProtocolMatrix'
 import { glossaryTerms } from '@/data/glossaryData'
+import { formatDateStamp } from '@/lib/format'
 
 // Excludes the synthetic 'quiz' entry — matches the count Landing already shows.
 const MODULE_COUNT = Object.keys(MODULE_CATALOG).filter((k) => k !== 'quiz').length
@@ -48,7 +49,7 @@ const LANDSCAPE_USE_CASE_COUNT = loadIndustryLandscape().useCases.length
 
 function formatLastUpdate(date: Date | null | undefined): string | null {
   if (!date) return null
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  return formatDateStamp(date)
 }
 
 export function DataFoundationSection() {

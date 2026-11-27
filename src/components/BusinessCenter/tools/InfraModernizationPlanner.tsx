@@ -21,6 +21,7 @@ import { Input } from '@/components/ui/input'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
+import { formatDateStamp } from '@/lib/format'
 
 export interface InfraModernizationState {
   // PKI modernization
@@ -584,7 +585,7 @@ export const InfraModernizationPlanner: React.FC = () => {
             id: `infra-modernization-plan-${Date.now()}`,
             moduleId: 'network-security-pqc',
             type: 'infra-modernization-plan',
-            title: `Infrastructure Modernization Plan — ${new Date().toLocaleDateString()}`,
+            title: `Infrastructure Modernization Plan — ${formatDateStamp(new Date())}`,
             data: exportMarkdown,
             inputs: state,
             createdAt: Date.now(),

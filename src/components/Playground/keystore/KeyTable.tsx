@@ -6,6 +6,7 @@ import type { Key } from '../../../types'
 import { getKeySize, formatBytes } from './keySizeUtils'
 import { KeyKcvBadge } from './KeyKcvBadge'
 import { Button } from '@/components/ui/button'
+import { formatDateTime } from '@/lib/format'
 
 interface KeyTableProps {
   keyStore: Key[]
@@ -223,7 +224,7 @@ export const KeyTable: React.FC<KeyTableProps> = ({
                       {key.id}
                     </td>
                     <td className="p-4 text-xs text-muted-foreground truncate font-mono">
-                      {key.timestamp ? new Date(key.timestamp).toLocaleString() : '-'}
+                      {key.timestamp ? formatDateTime(key.timestamp) : 'Not recorded'}
                     </td>
                   </tr>
                 ))

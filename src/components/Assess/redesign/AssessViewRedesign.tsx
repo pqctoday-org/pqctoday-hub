@@ -56,6 +56,7 @@ import {
   RENDER_ORDER_QUICK,
   type AssessStepKey,
 } from './assessFlowModel'
+import { formatDataSourceLine, formatDateTime } from '@/lib/format'
 
 // Legacy-order step labels (the meaning of store.currentStep). Used by the
 // resume banner + the phase overlay, identical to AssessView.
@@ -408,7 +409,7 @@ export const AssessViewRedesign: React.FC<{
     setPageActions({
       title: 'PQC Risk Assessment',
       dataSource: metadata
-        ? `${metadata.filename} • Updated: ${metadata.lastUpdate.toLocaleDateString()}`
+        ? formatDataSourceLine(metadata.filename, metadata.lastUpdate)
         : undefined,
       endorseUrl: buildEndorsementUrl({
         category: 'pqc-tool-endorsement',
@@ -565,14 +566,7 @@ export const AssessViewRedesign: React.FC<{
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     You left off at step{' '}
                     {resume ? `${resume.position} of ${resume.total}` : currentStep + 1}
-                    {resume ? ` (${resume.label})` : ''} on{' '}
-                    {new Date(lastWizardUpdate).toLocaleDateString(undefined, {
-                      month: 'short',
-                      day: 'numeric',
-                      hour: 'numeric',
-                      minute: '2-digit',
-                    })}
-                    .
+                    {resume ? ` (${resume.label})` : ''} on {formatDateTime(lastWizardUpdate)}.
                   </p>
                 </div>
                 <div className="flex w-full shrink-0 items-center gap-2 sm:w-auto">

@@ -20,6 +20,7 @@ import { useSavedArtifactDocuments } from '@/hooks/useSavedArtifactInputs'
 import type { SimRoadmapInput } from '@/simulation/simRoadmap'
 import type { RunScoreBreakdown } from '@/simulation/runScore'
 import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
+import { formatDateStamp } from '@/lib/format'
 
 const GRADE_TONE: Record<RunScoreBreakdown['grade'], string> = {
   A: 'bg-success/15 text-success-legible border-success/30',
@@ -30,11 +31,7 @@ const GRADE_TONE: Record<RunScoreBreakdown['grade'], string> = {
 
 function formatDate(ts: number | undefined): string {
   if (!ts) return 'an earlier date'
-  return new Date(ts).toLocaleDateString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
+  return formatDateStamp(ts)
 }
 
 function PhaseList({ phases }: { phases: SimRoadmapInput['phases'] }) {

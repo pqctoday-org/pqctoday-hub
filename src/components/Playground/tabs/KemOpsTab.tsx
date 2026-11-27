@@ -27,6 +27,7 @@ import {
   hsm_extractKeyValue,
   hsm_importMLKEMPublicKey,
 } from '../../../wasm/softhsm'
+import { formatSessionTime } from '@/lib/format'
 
 // ── HSM KEM Panel ─────────────────────────────────────────────────────────────
 
@@ -107,12 +108,7 @@ export const HsmKemPanel: React.FC = () => {
           extractable
         )
         setHandles({ pub: pubHandle, priv: privHandle })
-        const ts = new Date().toLocaleTimeString([], {
-          hour12: false,
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-        })
+        const ts = formatSessionTime(new Date())
         registerKey(M, hSession, {
           handle: pubHandle,
           family: 'ml-kem',

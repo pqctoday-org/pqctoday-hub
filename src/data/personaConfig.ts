@@ -1926,10 +1926,6 @@ export function joinWithAnd(items: string[]): string {
   return `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`
 }
 
-function formatBytes(n: number): string {
-  return `${n.toLocaleString()} B`
-}
-
 const ML_DSA_65 = ALGORITHM_REGISTRY['ML-DSA-65']
 
 export const ML_DSA_65_PUBLIC_KEY_ROW = `${formatBytes(ML_DSA_65.publicKeyBytes)} · was 64`
@@ -2284,6 +2280,7 @@ export {
 } from './generated/roleBoardContent.generated'
 
 import { PERSONA_JOURNEY_BOARD_VARIANTS as BOARD_VARIANTS } from './generated/roleBoardContent.generated'
+import { formatBytes } from '@/lib/format'
 
 /**
  * The board option to render for `personaId`, given a requested variant id

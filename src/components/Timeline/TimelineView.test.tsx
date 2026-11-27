@@ -83,7 +83,9 @@ describe('TimelineView', () => {
       // TimelineView's own tree, so this checks the store registration
       // directly rather than DOM text that no longer exists here.
       render(<TimelineView />)
-      expect(usePageActionsStore.getState().current?.dataSource).toMatch(/Updated:/)
+      expect(usePageActionsStore.getState().current?.dataSource).toMatch(
+        /updated \d{1,2} [A-Z][a-z]{2} \d{4}|updated \d+ days? ago|updated (today|yesterday)/
+      )
     })
 
     it('renders the Gantt chart on desktop', () => {

@@ -8,6 +8,7 @@
  */
 import { Button } from '@/components/ui/button'
 import type { PatentItem } from '@/types/PatentTypes'
+import { formatDate } from '@/lib/format'
 
 interface PatentsRecentlyAddedProps {
   items: PatentItem[]
@@ -20,7 +21,7 @@ function formatPatentDate(raw: string): string {
   if (!raw) return ''
   const d = new Date(raw)
   if (Number.isNaN(d.getTime())) return raw
-  return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+  return formatDate(d, 'day', { relative: false })
 }
 
 export function PatentsRecentlyAdded({ items, onOpen, limit = 16 }: PatentsRecentlyAddedProps) {

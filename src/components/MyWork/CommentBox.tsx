@@ -34,6 +34,7 @@ import { FAILURE_WORDS, type StorageFailureReason } from '@/store/deviceLocalJso
 import { currentContentVersion, parseTag } from '@/services/myWork/tags'
 import { trackMyWork } from '@/services/myWork/myWorkAnalytics'
 import { useTagLabels } from './useTagLabels'
+import { formatDate } from '@/lib/format'
 
 export interface CommentBoxProps {
   /** Canonical tag of what is being commented on: `LM-008`, `LM-008/s:handshake`, `LM-008/w:simulate`. */
@@ -62,9 +63,7 @@ const FAILURE_INTACT: Record<Failure['action'], string> = {
 
 const dayLabel = (iso: string): string => {
   const d = new Date(iso)
-  return Number.isNaN(d.getTime())
-    ? ''
-    : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+  return Number.isNaN(d.getTime()) ? '' : formatDate(d, 'day', { relative: false })
 }
 
 export function CommentBox({

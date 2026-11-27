@@ -21,6 +21,7 @@
  */
 
 import type { OpenGap, RunResultSource } from '@/data/validation/coverageModel'
+import { formatDate } from '@/lib/format'
 
 /** The current evidence a plain entry may be written from. */
 export interface GapPlainContext {
@@ -176,13 +177,7 @@ const RUNNER_PLAIN_NAME: Readonly<Record<string, string>> = {
 
 const thousands = (n: number): string => n.toLocaleString('en-US')
 
-const longDate = (iso: string): string =>
-  new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-    timeZone: 'UTC',
-  })
+const longDate = (iso: string): string => formatDate(iso, 'day', { relative: false })
 
 /** Where a recorded run executed, in words a reader can check: Node.js (not a browser), a browser, or the raw host. */
 const venueText = (r: RunResultSource): string => {

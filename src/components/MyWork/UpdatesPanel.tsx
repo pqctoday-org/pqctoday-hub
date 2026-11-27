@@ -25,6 +25,7 @@ import { trackMyWork } from '@/services/myWork/myWorkAnalytics'
 import { FAILURE_WORDS, type StorageFailureReason } from '@/store/deviceLocalJson'
 import { useUpdates } from './useUpdates'
 import { useTagLabels } from './useTagLabels'
+import { formatDate } from '@/lib/format'
 
 export interface UpdatesPanelProps {
   /** The learner's objectives with their steps. Lane C's objective maps onto this structure. */
@@ -41,9 +42,7 @@ export interface UpdatesPanelProps {
 const releasedOn = (iso?: string | null): string | undefined => {
   if (!iso) return undefined
   const d = new Date(iso)
-  return Number.isNaN(d.getTime())
-    ? undefined
-    : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+  return Number.isNaN(d.getTime()) ? undefined : formatDate(d, 'day', { relative: false })
 }
 
 const NOTICE_LABEL: Record<UpdateNotice['kind'], string> = {

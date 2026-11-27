@@ -30,6 +30,7 @@ import { XmssPanel, LmsPanel } from '../hsm/StatefulHashSignPanels'
 import { HsmReadyGuard } from '../hsm/shared'
 import { HsmKeyInspector } from '../../shared/HsmKeyInspector'
 import { slhDsaParamSetOptions, SLH_DSA_INTERNAL_PARAMS } from './softhsm/SoftHsmUI'
+import { formatSessionTime } from '@/lib/format'
 
 // FIPS 205 §11 HashSLH-DSA approved hash functions only
 const FIPS205_SLH_PREHASH_OPTIONS = [
@@ -219,12 +220,7 @@ const HsmSignPanel: React.FC<{ initialAlgo?: string; onAlgoChange?: (algo: strin
           extractable
         )
         setHandles({ pub: pubHandle, priv: privHandle })
-        const ts = new Date().toLocaleTimeString([], {
-          hour12: false,
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-        })
+        const ts = formatSessionTime(new Date())
         registerKey(M, hSession, {
           handle: pubHandle,
           family: 'ml-dsa',
@@ -634,12 +630,7 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
           extractable
         )
         setHandles({ pub: pubHandle, priv: privHandle })
-        const ts = new Date().toLocaleTimeString([], {
-          hour12: false,
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-        })
+        const ts = formatSessionTime(new Date())
         registerKey(M, hSession, {
           handle: pubHandle,
           family: 'slh-dsa',

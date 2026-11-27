@@ -49,6 +49,7 @@ import {
   SEARCH_SCRUB_CLAUSE,
   EXPORT_EVENTS_CLAUSE,
 } from '@/components/About/analyticsStatement'
+import { formatDateStamp } from '@/lib/format'
 
 declare const __BUILD_TIMESTAMP__: string
 
@@ -110,13 +111,7 @@ export function MobileAboutView() {
     () => timelineData.flatMap((c) => c.bodies.flatMap((b) => b.events)).length,
     []
   )
-  const lastAudited = securityAuditDate
-    ? securityAuditDate.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
-    : 'date unavailable'
+  const lastAudited = securityAuditDate ? formatDateStamp(securityAuditDate) : 'date unavailable'
 
   const toggle = (id: GroupId) => setOpenGroup((cur) => (cur === id ? null : id))
 

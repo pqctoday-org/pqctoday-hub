@@ -5,6 +5,7 @@ import { Link } from 'react-router'
 import { GitMerge, Bot, ChevronRight, History } from 'lucide-react'
 import { useRevisions, byDomain, type RevisionEntry } from '@/hooks/useRevisions'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
+import { FormattedDate } from '@/lib/format'
 
 interface ContentUpdatesFeedProps {
   /** Filter to a specific domain; omit for all domains */
@@ -15,18 +16,6 @@ interface ContentUpdatesFeedProps {
   title?: string
   /** Default collapsed state */
   defaultCollapsed?: boolean
-}
-
-function formatDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  } catch {
-    return iso.slice(0, 10)
-  }
 }
 
 function UpdateRow({ r }: { r: RevisionEntry }) {
@@ -48,7 +37,7 @@ function UpdateRow({ r }: { r: RevisionEntry }) {
           {r.scope_summary || r.change_type.replace(/_/g, ' ')}
         </p>
         <p className="text-xs text-muted-foreground">
-          {revisionReviewLabel(r)} · {formatDate(r.merge_timestamp)}
+          {revisionReviewLabel(r)} · <FormattedDate value={r.merge_timestamp} />
         </p>
       </div>
     </div>

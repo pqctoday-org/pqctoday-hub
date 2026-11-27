@@ -5,6 +5,7 @@ import type { GanttCountryData } from '../../types/timeline'
 import type { Region } from '../../store/usePersonaStore'
 import { timelineRegionCountries } from '../../data/timelineRegionCountries'
 import { Button } from '../ui/button'
+import { formatDateStamp } from '@/lib/format'
 
 const REGION_DISPLAY: { id: Region; label: string }[] = [
   { id: 'americas', label: 'Americas' },
@@ -108,7 +109,7 @@ export const CoverageByRegion = ({ data, selectedRegion, onSelectRegion }: Props
               </div>
               <div className="text-[10px] text-muted-foreground">
                 {s.countries} countr{s.countries === 1 ? 'y' : 'ies'}
-                {s.lastUpdate && ` · ${s.lastUpdate.toLocaleDateString()}`}
+                {s.lastUpdate && ` · ${formatDateStamp(s.lastUpdate)}`}
               </div>
               {s.countries > 0 && (
                 <div className="text-[10px] text-muted-foreground">

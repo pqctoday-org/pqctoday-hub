@@ -62,6 +62,7 @@ import {
   MIGRATE_TRANSIENT_LINK_PARAMS,
   type MigrateLinkIntent,
 } from './workbenchCatalog'
+import { formatDataSourceLine } from '@/lib/format'
 
 interface MigrationWorkbenchProps {
   /** When embedded in the Simulation, hide the PageHeader and don't touch the URL. */
@@ -410,7 +411,7 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
       // current the whole product list is, only individual rows' own
       // verified-pill tooltips (which needed expanding to see).
       dataSource: softwareMetadata
-        ? `${softwareMetadata.filename} • Catalog as of ${softwareMetadata.lastUpdate.toLocaleDateString()}`
+        ? formatDataSourceLine(softwareMetadata.filename, softwareMetadata.lastUpdate)
         : undefined,
       // FIX 2026-08-02 (Grade-A remediation): this page used to render its
       // own second ShareButton next to PageHeader — the exact "one control,

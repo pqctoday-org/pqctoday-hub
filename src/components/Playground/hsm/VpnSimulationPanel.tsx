@@ -88,6 +88,7 @@ import {
   vpnSimRunMarkdown,
   type VpnSimRunInputs,
 } from '@/services/opsArtifacts'
+import { formatDateTime } from '@/lib/format'
 
 export interface VpnSimulationPanelProps {
   initialMode?: IKEv2Mode
@@ -5494,8 +5495,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       {row.mode} · {row.authMode} · {row.clientVariant} / {row.serverVariant}
                     </div>
                     <div className="text-muted-foreground">
-                      {new Date(row.createdAt).toLocaleString()} · id{' '}
-                      <code>{row.id.slice(-8)}</code>
+                      {formatDateTime(row.createdAt)} · id <code>{row.id.slice(-8)}</code>
                     </div>
                   </div>
                   <div className="flex gap-1">

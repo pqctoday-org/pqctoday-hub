@@ -11,6 +11,7 @@ import type { ExecutionMode, ClassicalAlgorithm } from '../PlaygroundContext'
 import { useModuleStore } from '../../../store/useModuleStore'
 import { openSSLService } from '../../../services/crypto/OpenSSLService'
 import { secp256k1 } from '@noble/curves/secp256k1.js'
+import { formatSessionTime } from '@/lib/format'
 
 interface UseKeyGenerationProps {
   algorithm: string
@@ -62,7 +63,7 @@ export const useKeyGeneration = ({
           throw new Error('WASM libraries not loaded')
         }
 
-        const timestamp = new Date().toLocaleTimeString([], { hour12: false })
+        const timestamp = formatSessionTime(new Date())
         const idBase = Math.random().toString(36).substring(2, 9)
 
         let newKeys: Key[] = []
@@ -315,7 +316,7 @@ export const useKeyGeneration = ({
         // Mock Mode - Simulated operations
         await new Promise((resolve) => setTimeout(resolve, 800))
 
-        const timestamp = new Date().toLocaleTimeString([], { hour12: false })
+        const timestamp = formatSessionTime(new Date())
         const idBase = Math.random().toString(36).substring(2, 9)
 
         const algorithmLabel = algorithm === 'ML-KEM' ? `ML-KEM-${keySize}` : `ML-DSA-${keySize}`
@@ -385,7 +386,7 @@ export const useKeyGeneration = ({
     const start = performance.now()
 
     try {
-      const timestamp = new Date().toLocaleTimeString([], { hour12: false })
+      const timestamp = formatSessionTime(new Date())
       const idBase = Math.random().toString(36).substring(2, 9)
       let newKeys: Key[] = []
       let keyPairResult

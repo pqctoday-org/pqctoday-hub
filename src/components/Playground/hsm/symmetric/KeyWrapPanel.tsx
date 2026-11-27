@@ -55,6 +55,7 @@ import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { HsmReadyGuard, HsmResultRow, toHex, hexSnippet } from '../shared'
 import { downloadCsv } from '@/utils/csvExport'
 import { ProtectedBackupPanel } from './ProtectedBackupPanel'
+import { formatSessionTime } from '@/lib/format'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -785,7 +786,7 @@ export const KeyWrapPanel = ({
         role: 'secret',
         label: `AES-${unwrapTargetBits} (unwrapped)`,
         variant: String(unwrapTargetBits),
-        generatedAt: new Date().toLocaleTimeString([], { hour12: false }),
+        generatedAt: formatSessionTime(new Date()),
       })
       addLogEntry({
         mode: wrapMode,
@@ -833,7 +834,7 @@ export const KeyWrapPanel = ({
         role: 'secret',
         label: `AES-${unwrapTargetBits} (unwrapped)`,
         variant: String(unwrapTargetBits),
-        generatedAt: new Date().toLocaleTimeString([], { hour12: false }),
+        generatedAt: formatSessionTime(new Date()),
       })
       addLogEntry({
         mode: 'indirect',
@@ -903,7 +904,7 @@ export const KeyWrapPanel = ({
         role: 'secret',
         label: `AES-${unwrapTargetBits} (unwrapped)`,
         variant: String(unwrapTargetBits),
-        generatedAt: new Date().toLocaleTimeString([], { hour12: false }),
+        generatedAt: formatSessionTime(new Date()),
       })
       addLogEntry({
         mode: 'pqc',
@@ -1038,7 +1039,7 @@ export const KeyWrapPanel = ({
       const { pubHandle, privHandle } = hsm_generateRSAWrapKeyPair(M, hSession, rsaKeyBits)
       setRsaPubHandle(pubHandle)
       setRsaPrivHandle(privHandle)
-      const ts = new Date().toLocaleTimeString([], { hour12: false })
+      const ts = formatSessionTime(new Date())
       registerKey(M, hSession, {
         handle: pubHandle,
         family: 'rsa',
@@ -1061,7 +1062,7 @@ export const KeyWrapPanel = ({
     withLoading('gen-hybrid', async () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
-      const ts = new Date().toLocaleTimeString([], { hour12: false })
+      const ts = formatSessionTime(new Date())
 
       // ML-KEM pair
       const { pubHandle: mkPub, privHandle: mkPriv } = hsm_generateMLKEMKeyPair(

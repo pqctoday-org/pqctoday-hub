@@ -43,7 +43,7 @@ describe('Library drawer: document dates', () => {
       })
     )
     expect(line).toHaveTextContent(
-      'First published Sep 21, 2020 · Catalog record updated Aug 19, 2026 · catalog checked Sep 24, 2026'
+      'First published 21 Sep 2020 · Catalog record updated 19 Aug 2026 · catalog checked 24 Sep 2026'
     )
     // The check date is never presented as a bare "verified" date.
     expect(line).not.toHaveTextContent(/\bverified\b/i)
@@ -59,9 +59,9 @@ describe('Library drawer: document dates', () => {
       })
     )
     expect(line).toHaveTextContent(
-      'First published Sep 2020 · Catalog record updated Apr 9, 2026 · catalog checked Sep 24, 2026'
+      'First published Sep 2020 · Catalog record updated 9 Apr 2026 · catalog checked 24 Sep 2026'
     )
-    expect(line).not.toHaveTextContent('Sep 1, 2020')
+    expect(line).not.toHaveTextContent('1 Sep 2020')
   })
 
   it('leaves out a date that is missing', () => {
@@ -75,7 +75,7 @@ describe('Library drawer: document dates', () => {
     const line = openDrawer(
       withDates({ initialPublicationDate: '', lastUpdateDate: '', lastVerified: '2026-09-24' })
     )
-    expect(line).toHaveTextContent(/^catalog checked Sep 24, 2026$/)
+    expect(line).toHaveTextContent(/^catalog checked 24 Sep 2026$/)
   })
 
   it('renders no dates line when nothing is recorded', () => {

@@ -16,6 +16,7 @@ import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill
 import { MarkdownView } from '@/components/ui/MarkdownView'
 import { findUnresolvedPlaceholders } from '@/utils/unresolvedPlaceholders'
 import { CitedText } from '@/components/common/CitedText'
+import { formatDateStamp } from '@/lib/format'
 
 export interface ArtifactField {
   id: string
@@ -257,7 +258,7 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
 
     let md = `# ${title}\n\n`
     if (description) md += `${description}\n\n`
-    md += `Generated: ${new Date().toLocaleDateString()}\n\n---\n\n`
+    md += `Generated: ${formatDateStamp(new Date())}\n\n---\n\n`
 
     for (const section of sections) {
       md += `## ${section.title}\n\n`

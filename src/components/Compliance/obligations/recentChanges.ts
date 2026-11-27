@@ -16,6 +16,7 @@
  */
 import type { RevisionEntry } from '@/hooks/useRevisions'
 import type { ObligationRow } from './obligationsModel'
+import { formatDate } from '@/lib/format'
 
 export interface RecentChangeSummary {
   /** ISO timestamp of the most recent recorded compliance change. */
@@ -60,5 +61,5 @@ export function formatChangeDate(iso: string | null): string | null {
   if (!iso) return null
   const date = new Date(iso)
   if (Number.isNaN(date.getTime())) return null
-  return date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
+  return formatDate(date, 'day', { relative: false })
 }

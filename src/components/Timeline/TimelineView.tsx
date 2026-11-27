@@ -59,6 +59,7 @@ import { MobileTimelineView } from '@/components/Mobile/screens/MobileTimelineVi
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { TIMELINE_REGION_LABELS as REGION_LABELS } from './timelineRegions'
+import { formatDataSourceLine } from '@/lib/format'
 
 export const TIMELINE_PERSONA_HINTS: Record<string, string> = {
   executive:
@@ -555,7 +556,7 @@ export const TimelineView = () => {
     setPageActions({
       title: 'Global Migration Timeline',
       dataSource: timelineMetadata
-        ? `${timelineMetadata.filename} • Updated: ${timelineMetadata.lastUpdate.toLocaleDateString()}`
+        ? formatDataSourceLine(timelineMetadata.filename, timelineMetadata.lastUpdate)
         : undefined,
       dataSourceLoading: !timelineMetadata,
       onExport: () => handleExportCsv(),

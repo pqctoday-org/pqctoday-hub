@@ -22,6 +22,7 @@ import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { INSTANCES_PER_PRODUCT_ESTIMATE } from '@/data/roleCrosswalk'
+import { formatDateStamp } from '@/lib/format'
 
 const MAX_SYSTEMS = 20
 const MAX_VENDORS = 10
@@ -717,7 +718,7 @@ export const InitialScopingAssessment: React.FC = () => {
             id: `initial-scoping-${Date.now()}`,
             moduleId: 'pqc-governance',
             type: 'initial-scoping',
-            title: `Initial Scoping Assessment — ${new Date().toLocaleDateString()}`,
+            title: `Initial Scoping Assessment — ${formatDateStamp(new Date())}`,
             data: exportMarkdown,
             inputs: state,
             createdAt: Date.now(),

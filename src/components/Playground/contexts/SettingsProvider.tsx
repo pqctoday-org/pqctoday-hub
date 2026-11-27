@@ -11,6 +11,7 @@ import {
   INTERACTIVE_TAB_IDS,
   type InteractiveTabId,
 } from './interactiveTabs'
+import { formatSessionTime } from '@/lib/format'
 
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // State definitions — ?algo= deep link pre-selects algorithm on mount
@@ -140,13 +141,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const addLog = useCallback((entry: Omit<LogEntry, 'id' | 'timestamp'>) => {
     const newEntry: LogEntry = {
       id: Math.random().toString(36).substring(2, 9),
-      timestamp: new Date().toLocaleTimeString([], {
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        fractionalSecondDigits: 3,
-      }),
+      timestamp: formatSessionTime(new Date()),
       ...entry,
     }
     setLogs((prev) => {

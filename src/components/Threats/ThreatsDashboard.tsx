@@ -127,6 +127,7 @@ import {
   THREAT_RECORD_TYPES,
   type ThreatRecordType,
 } from '@/data/threatRecordTypes'
+import { formatDataSourceLine } from '@/lib/format'
 
 // Threat Detail Dialog Component - Moved outside to ./ThreatDetailDialog.tsx
 
@@ -779,7 +780,10 @@ export const ThreatsDashboard: React.FC<{
     const { setPageActions, clearPageActions } = usePageActionsStore.getState()
     setPageActions({
       title: 'Quantum Threats',
-      dataSource: `${threatsMetadata?.filename ?? 'quantum_threats_hsm_industries.csv'} • Updated: ${threatsMetadata?.lastUpdate?.toLocaleDateString() ?? 'Unknown'}`,
+      dataSource: formatDataSourceLine(
+        threatsMetadata?.filename ?? 'quantum_threats_hsm_industries.csv',
+        threatsMetadata?.lastUpdate
+      ),
       endorseUrl: buildEndorsementUrl({
         category: 'threat-endorsement',
         title: 'Endorse: Quantum Threats Dashboard',

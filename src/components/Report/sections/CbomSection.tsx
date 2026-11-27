@@ -30,6 +30,7 @@ import { Link } from 'react-router'
 import { CollapsibleSection } from './reportContentShared'
 import { useSavedArtifactDocuments } from '@/hooks/useSavedArtifactInputs'
 import type { CbomReportSummary } from '@/services/cbom/reportSummary'
+import { formatDateStamp } from '@/lib/format'
 
 interface SavedCbomInputs {
   mode?: string
@@ -60,11 +61,7 @@ const CBOM_BUILDER_LINK = '/learn/crypto-mgmt-modernization?tab=workshop&step=2'
 
 function formatDate(ts: number | undefined): string {
   if (!ts) return 'an earlier date'
-  return new Date(ts).toLocaleDateString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
+  return formatDateStamp(ts)
 }
 
 function StatBar({

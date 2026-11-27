@@ -29,6 +29,7 @@ import { ExportableArtifact } from '@/components/PKILearning/common/executive/Ex
 import { useModuleStore } from '@/store/useModuleStore'
 import { ROLE_CROSSWALK, type FrameworkRoleId } from '@/data/roleCrosswalk'
 import { FRAMEWORK_PHASES } from '@/data/frameworkPhases'
+import { formatDateStamp } from '@/lib/format'
 
 /** Governance review cadences offered for the SteerCo. */
 const CADENCE_OPTIONS = ['Weekly', 'Bi-weekly', 'Monthly', 'Quarterly'] as const
@@ -744,7 +745,7 @@ export const ProgramCharter: React.FC = () => {
             id: `program-charter-${Date.now()}`,
             moduleId: 'pqc-governance',
             type: 'program-charter',
-            title: `Program Charter — ${new Date().toLocaleDateString()}`,
+            title: `Program Charter — ${formatDateStamp(new Date())}`,
             data: exportMarkdown,
             inputs: state,
             createdAt: Date.now(),

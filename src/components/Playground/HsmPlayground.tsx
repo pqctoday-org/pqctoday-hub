@@ -69,6 +69,7 @@ import { isRailId, type RailId } from './hsm/railIds'
 import type { Pkcs11LessonStep } from './hsm/learn/pkcs11Lessons'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { EducationNotice } from '@/components/shared/EducationNotice'
+import { formatSessionTime } from '@/lib/format'
 
 /**
  * Four modes (design handoff design_handoff_kmip_pkcs11_playground,
@@ -286,11 +287,7 @@ export const HsmPlayground = () => {
     const M = moduleRef.current
     const hSession = hSessionRef.current
     const engineLabel: 'cpp' | 'rust' = (engine ?? engineMode) === 'rust' ? 'rust' : 'cpp'
-    const ts = new Date().toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    })
+    const ts = formatSessionTime(new Date())
     switch (target) {
       case 'sign': {
         const variant: 44 | 65 | 87 = algo === 'ML-DSA-44' ? 44 : algo === 'ML-DSA-87' ? 87 : 65

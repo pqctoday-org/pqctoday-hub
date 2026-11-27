@@ -9,6 +9,7 @@ import { addressOf, currentContentVersion, placeOf } from './tags'
 import { summarizeAnswerPayload } from './answerSummary'
 import { storageWords } from './storageWords'
 import type { MyWorkItem } from './items'
+import { formatDate } from '@/lib/format'
 
 export interface ExportOptions {
   /** Learner-facing name for a tag (section titles). Defaults to the lesson title and the part id. */
@@ -21,9 +22,7 @@ export interface ExportOptions {
 
 const day = (iso: string): string => {
   const d = new Date(iso)
-  return Number.isNaN(d.getTime())
-    ? iso
-    : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+  return Number.isNaN(d.getTime()) ? iso : formatDate(d, 'day', { relative: false })
 }
 
 const quote = (text: string): string =>

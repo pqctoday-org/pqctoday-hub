@@ -26,6 +26,7 @@ import {
   seedTeamAllocation,
   type TeamSizingContext,
 } from '@/utils/teamSizingModel'
+import { formatDateStamp } from '@/lib/format'
 
 const SOURCING_OPTIONS = ['build', 'borrow', 'buy'] as const
 type Sourcing = (typeof SOURCING_OPTIONS)[number]
@@ -123,7 +124,7 @@ export const SkillsTeamPlan: React.FC = () => {
       id: `skills-team-plan-${Date.now()}`,
       moduleId: 'pqc-governance',
       type: 'skills-team-plan',
-      title: `Skills & Team Plan — ${new Date().toLocaleDateString()}`,
+      title: `Skills & Team Plan — ${formatDateStamp(new Date())}`,
       data: value.markdown,
       inputs: { ...value.state },
       createdAt: Date.now(),

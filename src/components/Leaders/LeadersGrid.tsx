@@ -63,6 +63,7 @@ import { readLeadersTableSort, writeLeadersTableSort } from './leadersTableSort'
 import { compareLeaderCountries, compareLeaderNames, leaderMatchesIndustries } from './leadersSort'
 import { canonicalLeaderCountry } from '@/data/leaderCountry'
 import type { LeadersTableSort } from './leadersTableSort'
+import { formatDataSourceLine } from '@/lib/format'
 
 type FilterKey = 'region' | 'country' | 'sector' | 'category' | 'layer'
 
@@ -663,7 +664,7 @@ export const LeadersGrid = ({
     setPageActions({
       title: 'Community',
       dataSource: leadersMetadata
-        ? `${leadersMetadata.filename} • Updated: ${leadersMetadata.lastUpdate.toLocaleDateString()}`
+        ? formatDataSourceLine(leadersMetadata.filename, leadersMetadata.lastUpdate)
         : undefined,
       onExport: handleExportCsv,
       endorseUrl: buildEndorsementUrl({

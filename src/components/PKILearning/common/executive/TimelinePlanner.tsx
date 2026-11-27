@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ExportableArtifact } from './ExportableArtifact'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { formatDateStamp } from '@/lib/format'
 
 export interface Milestone {
   id: string
@@ -120,7 +121,7 @@ export const TimelinePlanner: React.FC<TimelinePlannerProps> = ({
 
   const exportMarkdown = useMemo(() => {
     let md = `# ${title}\n\n`
-    md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+    md += `Generated: ${formatDateStamp(new Date())}\n\n`
 
     if (visibleDeadlines.length > 0) {
       md += '## External Deadlines\n\n'

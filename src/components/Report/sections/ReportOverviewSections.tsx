@@ -14,6 +14,7 @@ import { GlossaryAutoWrap } from '../../PKILearning/common/GlossaryAutoWrap'
 import { ReportTimelineStrip } from '../ReportTimelineStrip'
 import { CollapsibleSection } from './reportContentShared'
 import { RiskScoreWorking } from '../RiskScoreWorking'
+import { formatDateTime } from '@/lib/format'
 
 // The risk level colours only the left bar; the card keeps its ink outline.
 const RISK_LEFT_BAR: Record<string, string> = {
@@ -98,14 +99,7 @@ export const RiskScoreSection = ({
       )}
       {lastModifiedAt && (
         <p className="text-[10px] text-muted-foreground text-center mt-1 font-mono print:hidden">
-          Last updated:{' '}
-          {new Date(lastModifiedAt).toLocaleDateString(undefined, {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: '2-digit',
-          })}
+          Last updated: {formatDateTime(lastModifiedAt)}
         </p>
       )}
       <p className="text-sm text-muted-foreground text-center mt-4 leading-relaxed print:text-muted-foreground">

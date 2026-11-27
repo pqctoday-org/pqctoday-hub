@@ -3,6 +3,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { useModuleStore } from '../../store/useModuleStore'
 import type { Pkcs11LogEntry } from '../../wasm/softhsm'
+import { formatSessionTime } from '@/lib/format'
 
 export interface VirtualFile {
   name: string
@@ -147,7 +148,7 @@ export const useOpenSSLStore = create<OpenSSLStudioState>()(
             ...state.logs,
             {
               id: Math.random().toString(36).substring(2),
-              timestamp: new Date().toLocaleTimeString(),
+              timestamp: formatSessionTime(new Date()),
               type,
               message,
             },
@@ -161,7 +162,7 @@ export const useOpenSSLStore = create<OpenSSLStudioState>()(
           structuredLogs: [
             {
               id: Math.random().toString(36).substring(2),
-              timestamp: new Date().toLocaleTimeString(),
+              timestamp: formatSessionTime(new Date()),
               ...entry,
             },
             ...state.structuredLogs,
@@ -179,7 +180,7 @@ export const useOpenSSLStore = create<OpenSSLStudioState>()(
             ...state.pkcs11Log,
             {
               id: state.pkcs11Log.length + 1,
-              timestamp: new Date().toLocaleTimeString(),
+              timestamp: formatSessionTime(new Date()),
               ...entry,
             },
           ].slice(-500),

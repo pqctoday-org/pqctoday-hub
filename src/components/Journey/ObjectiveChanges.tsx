@@ -23,11 +23,10 @@ import { objectiveTitle } from '@/services/journey/stepView'
 import { useAllChangeGroups, useObjectiveChanges } from '@/hooks/useObjectiveChanges'
 import { useRoleObjectives } from '@/hooks/useJourney'
 import type { Objective } from '@/services/journey/types'
+import { formatDate } from '@/lib/format'
 
 const dateWords = (ms?: number): string | undefined =>
-  ms === undefined
-    ? undefined
-    : new Date(ms).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+  ms === undefined ? undefined : formatDate(ms, 'day', { relative: false })
 
 interface CardProps {
   objective: Objective

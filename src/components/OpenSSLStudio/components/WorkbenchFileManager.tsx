@@ -17,6 +17,7 @@ import { useOpenSSLStore } from '../store'
 import { logEvent } from '../../../utils/analytics'
 import { getSecurityLevel } from '../../../utils/security'
 import { Button } from '@/components/ui/button'
+import { formatBytes as formatBytesShared, formatDateTime } from '@/lib/format'
 
 export const WorkbenchFileManager: React.FC<{
   executeCommand: (command?: string) => Promise<void>
@@ -42,25 +43,9 @@ export const WorkbenchFileManager: React.FC<{
     }
   }, [])
 
-  const formatBytes = (bytes: number) => {
-    if (bytes === 0) return '0 B'
-    const k = 1024
-    const sizes = ['B', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    // eslint-disable-next-line security/detect-object-injection
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]
-  }
+  const formatBytes = (bytes: number) => formatBytesShared(bytes, { kib: true })
 
-  const formatCompactDate = (timestamp: number) => {
-    const date = new Date(timestamp)
-    return date.toLocaleString('en-US', {
-      month: 'numeric',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    })
-  }
+  const formatCompactDate = (timestamp: number) => formatDateTime(timestamp)
 
   const handleExtractPublicKey = (privateKeyFile: string) => {
     if (!privateKeyFile.endsWith('.key') && !privateKeyFile.endsWith('.pem')) {

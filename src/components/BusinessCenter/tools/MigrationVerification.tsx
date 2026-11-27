@@ -37,6 +37,7 @@ import {
   FRAMEWORK_URL,
   FRAMEWORK_VERSION,
 } from '@/data/frameworkPhases'
+import { formatDateStamp } from '@/lib/format'
 
 type EvidenceField =
   | 'observedNegotiation'
@@ -803,7 +804,7 @@ export const MigrationVerification: React.FC = () => {
             id: `migration-verification-${Date.now()}`,
             moduleId: 'migration-program',
             type: 'migration-verification',
-            title: `Migration Verification & Closure — ${new Date().toLocaleDateString()}`,
+            title: `Migration Verification & Closure — ${formatDateStamp(new Date())}`,
             data: exportMarkdown,
             inputs: state,
             createdAt: Date.now(),

@@ -27,6 +27,7 @@ import {
   reportingOnlyStatus,
   withoutNeverEnteredReportingScores,
 } from './reportingOnlyMeasure'
+import { formatDateStamp } from '@/lib/format'
 
 export interface ScorecardDimension {
   id: string
@@ -408,7 +409,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
         return d ? valueOrigin(d) : undefined
       }
     )
-    md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+    md += `Generated: ${formatDateStamp(new Date())}\n\n`
     md +=
       'Scored-value coverage is value availability, not evidence verification or production readiness. Sample notes and review labels are learner supplied.\n\n'
     const hasTargets = includeTargetsInExport && dimensions.some((d) => d.target !== undefined)

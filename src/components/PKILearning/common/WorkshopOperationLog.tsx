@@ -2,6 +2,7 @@
 import React, { useEffect, useRef } from 'react'
 import { Loader2, CheckCircle2, XCircle, MinusCircle } from 'lucide-react'
 import clsx from 'clsx'
+import { formatDuration } from '@/lib/format'
 
 export interface LogEntry {
   status: 'pending' | 'success' | 'error' | 'skipped'
@@ -86,7 +87,9 @@ export const WorkshopOperationLog: React.FC<WorkshopOperationLogProps> = ({
           >
             {entry.message}
             {entry.durationMs !== undefined && (
-              <span className="ml-1.5 text-muted-foreground">[{entry.durationMs}ms]</span>
+              <span className="ml-1.5 text-muted-foreground">
+                {formatDuration(entry.durationMs, 'ms')}
+              </span>
             )}
           </span>
         </div>

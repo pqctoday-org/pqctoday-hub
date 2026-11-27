@@ -2,6 +2,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type { HistoryEvent, HistoryEventType } from '@/types/HistoryTypes'
+import { formatDateStamp } from '@/lib/format'
 
 const MAX_HISTORY_EVENTS = 500
 
@@ -109,7 +110,7 @@ function dedup(events: Omit<HistoryEvent, 'id'>[]): Omit<HistoryEvent, 'id'>[] {
       result.push(event)
       continue
     }
-    const day = new Date(event.timestamp).toDateString()
+    const day = formatDateStamp(event.timestamp)
     const key = `${event.type}:${event.moduleId ?? ''}:${day}`
     if (!seen.has(key)) {
       seen.add(key)

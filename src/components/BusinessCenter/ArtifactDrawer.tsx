@@ -21,6 +21,7 @@ import { useIsEmbedded } from '@/embed/EmbedProvider'
 import { ARTIFACT_TYPE_TO_TOOL_ID, TOOL_LABELS_BY_ARTIFACT_TYPE } from './businessToolsRegistry'
 import { BUSINESS_TOOL_COMPONENTS } from './businessToolComponents'
 import { artifactProducerFor, producerHref, producerNote } from './lib/artifactProducers'
+import { formatDateStamp } from '@/lib/format'
 
 // Builders are sourced from the single registry in businessToolsRegistry.tsx,
 // which also powers the /business/tools/:id route. One registry, one lazy
@@ -172,8 +173,7 @@ export function ArtifactDrawer({
     mode === 'create'
       ? `New ${toolLabel?.name ?? TYPE_LABELS[activeType] ?? 'artifact'}`
       : (document?.title ?? '')
-  const formatDate = (ts: number) =>
-    new Date(ts).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+  const formatDate = (ts: number) => formatDateStamp(ts)
   const docUpdatedAt = document?.updatedAt ?? document?.createdAt ?? 0
   const docWasEdited = !!document && docUpdatedAt > document.createdAt
   const docRevisionCount = document?.revisions?.length ?? 0

@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { useOpenSSL } from './hooks/useOpenSSL'
 import { Button } from '@/components/ui/button'
+import { formatSessionTime } from '@/lib/format'
 
 export const FileManager = () => {
   const { files, removeFile, addFile, editingFile, setEditingFile } = useOpenSSLStore()
@@ -170,7 +171,7 @@ export const FileManager = () => {
                       </>
                     )}
                     <span className="opacity-50">•</span>
-                    <span>{new Date(file.timestamp).toLocaleTimeString()}</span>
+                    <span>{formatSessionTime(new Date(file.timestamp))}</span>
                   </div>
                 </div>
               </div>

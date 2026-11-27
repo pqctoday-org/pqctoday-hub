@@ -16,6 +16,7 @@ import {
   unestablishedCaption,
 } from './fipsStageProgressModel'
 import { formatIsoDate } from './recordSemantics'
+import { formatDate } from '@/lib/format'
 
 interface PqcCertificationTrendChartProps {
   /** Records already filtered to the reader's record scope (current only by default). */
@@ -60,10 +61,7 @@ function formatMonthTick(ym: string): string {
 
 function formatMonthLong(ym: string): string {
   const [year, month] = ym.split('-').map(Number)
-  return new Date(year, month - 1, 1).toLocaleDateString('en-US', {
-    month: 'long',
-    year: 'numeric',
-  })
+  return formatDate(new Date(year, month - 1, 1), 'month')
 }
 
 interface CatalogueData {

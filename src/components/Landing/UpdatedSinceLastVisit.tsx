@@ -8,12 +8,11 @@
 import { Link } from 'react-router'
 import { GitMerge, ArrowRight } from 'lucide-react'
 import { useRevisionsSinceLastVisit } from '@/hooks/useRevisionsSinceLastVisit'
+import { formatDate } from '@/lib/format'
 
 function formatSince(iso: string): string {
   const d = new Date(iso)
-  return Number.isNaN(d.getTime())
-    ? ''
-    : d.toLocaleDateString(undefined, { day: 'numeric', month: 'short' })
+  return Number.isNaN(d.getTime()) ? '' : formatDate(d, 'day', { relative: false })
 }
 
 export function UpdatedSinceLastVisit({ className }: { className?: string }) {

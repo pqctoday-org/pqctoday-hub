@@ -19,6 +19,7 @@ import { CollapsibleSection } from './sections/reportContentShared'
 import type { AssessmentResult } from '../../hooks/assessmentTypes'
 import type { AssessmentSnapshot } from '../../store/useAssessmentStore'
 import { URGENCY_TIERS } from '../../hooks/assessment/urgencyTiers'
+import { formatDate } from '@/lib/format'
 
 interface KPITrendingSectionProps {
   history: AssessmentSnapshot[]
@@ -75,10 +76,7 @@ export const KPITrendingSection: React.FC<KPITrendingSectionProps> = ({
   const lineData = useMemo(
     () =>
       history.map((snap) => ({
-        date: new Date(snap.completedAt).toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-        }),
+        date: formatDate(snap.completedAt, 'day', { relative: false }),
         riskScore: snap.riskScore,
         riskLevel: snap.riskLevel,
       })),
@@ -152,11 +150,7 @@ export const KPITrendingSection: React.FC<KPITrendingSectionProps> = ({
             {history.map((snap, i) => (
               <tr key={i}>
                 <td className="py-1 pr-4">
-                  {new Date(snap.completedAt).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  })}
+                  {formatDate(snap.completedAt, 'day', { relative: false })}
                 </td>
                 <td className="py-1 pr-4">{snap.riskScore}</td>
                 <td className="py-1">{RISK_LEVEL_LABEL[snap.riskLevel] ?? snap.riskLevel}</td>

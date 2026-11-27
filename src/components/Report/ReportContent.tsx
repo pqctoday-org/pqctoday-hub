@@ -91,6 +91,7 @@ import { SimulationOutcomesSection } from './sections/SimulationOutcomesSection'
 import { printReport, exportAlgorithmMigrationsCsv } from './sections/reportContentActions'
 import { findReferenceEstate } from '@/data/assessmentScenarios'
 import { milestoneForPressure } from '@/utils/timelineMilestone'
+import { formatDateStamp, formatDateTime } from '@/lib/format'
 
 declare const __APP_VERSION__: string
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'
@@ -332,19 +333,9 @@ export const ReportContent: React.FC<AssessReportProps> = ({
 
   const handleCSVExport = () => exportAlgorithmMigrationsCsv(result)
 
-  const generatedDate = new Date(result.generatedAt).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
+  const generatedDate = formatDateStamp(result.generatedAt)
 
-  const generatedDateTime = new Date(result.generatedAt).toLocaleString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  const generatedDateTime = formatDateTime(result.generatedAt)
 
   const assessUrl = `${window.location.origin}/assess`
 

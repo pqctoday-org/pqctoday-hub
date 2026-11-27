@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import type { ExecutiveDocumentApprovalStatus } from '@/services/storage/types'
 import { EXAMPLE_REVIEWER_ROLES, exampleReviewerRole } from '@/data/exampleReviewerRoles'
+import { formatDateStamp } from '@/lib/format'
 
 const PRACTICE_STATE_TIP =
   'Practice states for learning how a document moves through review. They do not record a real review.'
@@ -77,7 +78,7 @@ export function ApprovalStatusControl({
   const titleParts: string[] = [STATUS_LABEL[status]]
   if (shownRole) titleParts.push(`example reviewer role: ${shownRole}`)
   if (approvedAt) {
-    titleParts.push(`approved ${new Date(approvedAt).toLocaleDateString('en-US')}`)
+    titleParts.push(`approved ${formatDateStamp(approvedAt)}`)
   }
   const title = titleParts.join(' · ')
 

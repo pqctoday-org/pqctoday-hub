@@ -169,6 +169,7 @@ import {
   runEddsaSigGenAcvpSection,
 } from './sections/ecKeyVerSigGenAcvp'
 import type { HsmKey } from '../HsmContext'
+import { formatSessionTime } from '@/lib/format'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // useAcvpSuite — the ACVP known-answer suite's state + run logic, extracted
@@ -308,11 +309,11 @@ export function useAcvpSuite() {
   }
 
   const addLog = (msg: string) => {
-    logBufRef.current[logBufRef.current.length] = `[${new Date().toLocaleTimeString()}] ${msg}`
+    logBufRef.current[logBufRef.current.length] = `[${formatSessionTime(new Date())}] ${msg}`
     commitStream()
   }
 
-  const ts = () => new Date().toLocaleTimeString([], { hour12: false })
+  const ts = () => formatSessionTime(new Date())
 
   /** Format bytes as hex string, truncated to maxBytes with … suffix */
   const toHex = (bytes: Uint8Array, maxBytes = 32) =>
@@ -4288,7 +4289,7 @@ export function useAcvpSuite() {
       // complete the moment `loading` clears — anything still buffered by the
       // COMMIT_MS throttle lands here, before the "run completed" line.
       logBufRef.current[logBufRef.current.length] =
-        `[${new Date().toLocaleTimeString()}] Cryptographic Validation Workbench run completed.`
+        `[${formatSessionTime(new Date())}] Cryptographic Validation Workbench run completed.`
       commitStream(true)
     }
     return newResults

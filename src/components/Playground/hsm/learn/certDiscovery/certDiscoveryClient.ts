@@ -8,6 +8,7 @@
 import type { Pkcs11LogEntry } from '@/wasm/softhsm'
 import type { CallRecord, FlowResult, ProvisionResult } from './certDiscoveryCore'
 import { rvName } from './certDiscoveryCore'
+import { formatSessionTime } from '@/lib/format'
 
 type Phase = 'provision' | 'short' | 'long'
 type PhaseResult<P extends Phase> = P extends 'provision' ? ProvisionResult : FlowResult
@@ -65,7 +66,7 @@ export const runLessonPhase = <P extends Phase>(phase: P): Promise<PhaseResult<P
 
 /** CallRecord → the shared log's entry shape. */
 export const toLogEntries = (calls: CallRecord[]): Pkcs11LogEntry[] => {
-  const ts = new Date().toLocaleTimeString('en-US', { hour12: false })
+  const ts = formatSessionTime(new Date())
   return calls.map((c) => ({
     id: Math.random(),
     timestamp: ts,

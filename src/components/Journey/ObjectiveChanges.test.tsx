@@ -172,7 +172,7 @@ describe('"Curriculum changed": a lesson now lists a lesson to take first', () =
       'completed'
     )
     show()
-    expect(screen.getByText(/You completed this objective on 2 October 2026/)).toBeInTheDocument()
+    expect(screen.getByText(/You completed this objective on 2 Oct 2026/)).toBeInTheDocument()
     expect(current().state).toBe('completed')
     await user.click(screen.getByRole('button', { name: 'Add it and reopen the objective' }))
     expect(current().state).toBe('active')
@@ -190,7 +190,7 @@ describe('a retired step', () => {
     const card = screen.getByTestId('objective-change')
     expect(within(card).getByText('Retired step')).toBeInTheDocument()
     expect(
-      within(card).getByText(/IoT & OT Security was retired on 1 October 2026/)
+      within(card).getByText(/IoT & OT Security was retired on 1 Oct 2026/)
     ).toBeInTheDocument()
     expect(within(card).getByRole('button', { name: /^Swap in / })).toBeInTheDocument()
     expect(within(card).getByRole('button', { name: 'Put this step off' })).toBeInTheDocument()

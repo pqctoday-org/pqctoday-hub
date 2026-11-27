@@ -55,6 +55,7 @@ import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { resolvePatentTab } from '@/components/Patents/patentDeepLink'
+import { formatDateStamp } from '@/lib/format'
 
 const SORT_LS_KEY = 'pqc-patents-sort'
 const VALID_SORT_KEYS: SortKey[] = ['issueDate', 'impactScore', 'title', 'priorityDate']
@@ -523,7 +524,7 @@ export function PatentsViewRedesign({
   const fromDashboard = params.get('from') === 'dashboard'
 
   const dataSource = patentsMetadata
-    ? `${displayPatents.length} patents · enriched ${patentsMetadata.lastUpdate.toLocaleDateString()}`
+    ? `${displayPatents.length} patents · enriched ${formatDateStamp(patentsMetadata.lastUpdate)}`
     : `${displayPatents.length} patents`
 
   // Register this page's actions with the global top bar (page-action-strip

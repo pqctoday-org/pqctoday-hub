@@ -24,7 +24,6 @@ import {
   formatAlgorithmSize,
   formatLinkQuality,
   formatSecurityLevel,
-  formatSnapshotDate,
   formatStackRam,
   stackRamState,
   getCatalogueFreshness,
@@ -38,6 +37,7 @@ import { resolveAlgoXrefs } from '@/data/algoProductXrefData'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
 import { StandardSizeBudget } from './StandardSizeBudget'
 import { classifyCnsa20, cnsa20ChipClasses } from './cnsa20'
+import { formatDateStamp } from '@/lib/format'
 
 interface AlgorithmDetailDrawerProps {
   algo: AlgorithmDetail | null
@@ -285,7 +285,7 @@ function DrawerPanel({ algo, onClose }: { algo: AlgorithmDetail; onClose: () => 
                 </Fact>
                 <Fact label="Catalogue snapshot">
                   {loadedFileMetadata
-                    ? `${loadedFileMetadata.filename}${formatSnapshotDate(loadedFileMetadata.date) ? ` (${formatSnapshotDate(loadedFileMetadata.date)})` : ''}`
+                    ? `${loadedFileMetadata.filename}${loadedFileMetadata.date ? ` (${formatDateStamp(loadedFileMetadata.date)})` : ''}`
                     : 'Not recorded'}
                 </Fact>
                 <Fact label="Snapshot freshness">{catalogueFreshness.label}</Fact>

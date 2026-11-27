@@ -101,6 +101,7 @@ import { ProductsTab } from './products/ProductsTab'
 import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
 import { LearningFrameBanner } from './LearningFrameBanner'
 import { EvidenceClassLegend } from './EvidenceClassLegend'
+import { formatDataSourceLine } from '@/lib/format'
 
 // ── Stable tab model ───────────────────────────────────────────────────────
 // Eight tabs, same order for every persona. Persona is a LENS (it tunes content
@@ -776,7 +777,7 @@ export const ComplianceView = ({
     setPageActions({
       title: 'Standardization, Certification & Compliance',
       dataSource: complianceMetadata
-        ? `${complianceMetadata.filename} • Updated: ${complianceMetadata.lastUpdate.toLocaleDateString()}`
+        ? formatDataSourceLine(complianceMetadata.filename, complianceMetadata.lastUpdate)
         : undefined,
       onExport: exportTab ? handleTabExport : undefined,
       endorseUrl: buildEndorsementUrl({

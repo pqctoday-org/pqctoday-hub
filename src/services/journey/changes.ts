@@ -23,6 +23,7 @@ import {
 } from './curriculum'
 import { retiredEntry, retiredName } from './retiredSteps'
 import type { Objective } from './types'
+import { formatDate } from '@/lib/format'
 
 export type ChangeKind =
   | 'retired-step'
@@ -74,9 +75,7 @@ export interface CommentStamp {
 
 const dateWords = (iso: string): string => {
   const d = new Date(`${iso}T12:00:00`)
-  return Number.isNaN(d.getTime())
-    ? iso
-    : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+  return Number.isNaN(d.getTime()) ? iso : formatDate(d, 'day', { relative: false })
 }
 
 /**
@@ -183,7 +182,7 @@ export function computeObjectiveChanges(
         })
         continue
       }
-      // eslint-disable-next-line security/detect-object-injection
+
       const before = was.tools[t.toolId]
       const now = toolVersion(t)
       if (before !== null && now !== null && before !== now) {

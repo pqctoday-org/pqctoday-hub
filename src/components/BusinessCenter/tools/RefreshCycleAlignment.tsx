@@ -22,6 +22,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { getCswp39RefForArtifactType } from '@/components/BusinessCenter/businessToolsRegistry'
 import { Cswp39SectionBadge } from '@/components/BusinessCenter/widgets/Cswp39SectionBadge'
+import { formatDateStamp } from '@/lib/format'
 
 /** Default already-funded refresh programs the user can edit, add to, or remove. */
 export const SEED_PROGRAM_NAMES = [
@@ -477,7 +478,7 @@ export const RefreshCycleAlignment: React.FC = () => {
             id: `refresh-cycle-alignment-${Date.now()}`,
             moduleId: 'migration-program',
             type: 'refresh-cycle-alignment',
-            title: `Refresh-Cycle Alignment — ${new Date().toLocaleDateString()}`,
+            title: `Refresh-Cycle Alignment — ${formatDateStamp(new Date())}`,
             data: exportMarkdown,
             inputs: {
               ...state,

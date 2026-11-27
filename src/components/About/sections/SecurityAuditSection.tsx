@@ -2,15 +2,10 @@
 import { motion } from 'framer-motion'
 import { ShieldCheck } from 'lucide-react'
 import { securityAuditDate } from '@/data/securityAuditData'
+import { formatDateStamp } from '@/lib/format'
 
 export function SecurityAuditSection() {
-  const lastAudited = securityAuditDate
-    ? securityAuditDate.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
-    : 'date unavailable'
+  const lastAudited = securityAuditDate ? formatDateStamp(securityAuditDate) : 'date unavailable'
 
   return (
     <motion.div

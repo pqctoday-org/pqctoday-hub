@@ -4,6 +4,7 @@ import { Clock } from 'lucide-react'
 import { useHistoryStore } from '@/store/useHistoryStore'
 import type { HistoryEventType } from '@/types/HistoryTypes'
 import { DayGroup } from './DayGroup'
+import { formatDate } from '@/lib/format'
 
 const MILESTONE_TYPES = new Set<HistoryEventType>([
   'module_started',
@@ -27,12 +28,7 @@ export const HistoryFeed: React.FC = () => {
     const groups = new Map<string, typeof sorted>()
 
     for (const event of sorted) {
-      const dayKey = new Date(event.timestamp).toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
+      const dayKey = formatDate(event.timestamp, 'day', { relative: false })
       if (!groups.has(dayKey)) groups.set(dayKey, [])
       groups.get(dayKey)!.push(event)
     }

@@ -6,6 +6,7 @@
 import { LIFECYCLE_STYLES, type LifecycleLabel } from '@/utils/libraryLifecycle'
 import { getTrustScore } from '@/data/trustScore'
 import { getTrustTier } from '@/data/trustScore/weights'
+import { formatDate } from '@/lib/format'
 
 export function lifecycleLabel(label: LifecycleLabel): string {
   // eslint-disable-next-line security/detect-object-injection -- label is a typed enum key
@@ -90,21 +91,11 @@ export function trustInfo(referenceId: string): TrustInfo {
 export function formatLibDate(raw: string): string {
   const value = raw?.trim()
   if (!value) return ''
-  const opts: Intl.DateTimeFormatOptions = { timeZone: 'UTC', year: 'numeric' }
   if (/^\d{4}$/.test(value)) return value
-  if (/^\d{4}-\d{2}$/.test(value)) {
-    opts.month = 'short'
-  } else if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-    opts.month = 'short'
-    opts.day = 'numeric'
-  } else {
-    opts.month = 'short'
-    opts.day = 'numeric'
-    delete opts.timeZone
-  }
+  if (/^\d{4}-\d{2}$/.test(value)) return formatDate(value, 'month')
   const d = new Date(value)
   if (Number.isNaN(d.getTime())) return value
-  return d.toLocaleDateString(undefined, opts)
+  return formatDate(value, 'day', { relative: false })
 }
 
 /** True when `date` is not later than `reference`, compared as dates at the coarser of the

@@ -35,11 +35,7 @@ import { MobileKATValidationView } from '@/components/Mobile/screens/MobileKATVa
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
-import {
-  formatSnapshotDate,
-  getCatalogueFreshness,
-  getWithheldCatalogueRows,
-} from '@/data/pqcAlgorithmsData'
+import { getCatalogueFreshness, getWithheldCatalogueRows } from '@/data/pqcAlgorithmsData'
 import {
   algoMatchesHighlight,
   highlightRowSelector,
@@ -47,6 +43,7 @@ import {
   transitionMatchesHighlight,
   transitionRowId,
 } from './highlightMatch'
+import { formatDataSourceLine } from '@/lib/format'
 
 const ALGO_PERSONA_HINTS: Record<PersonaId, string> = {
   executive:
@@ -473,9 +470,11 @@ export function AlgorithmsView({
     setPageActions({
       title: 'Post-Quantum Algorithms & Protocols',
       dataSource:
-        `Data Sources: ${transitionMetadata?.filename ?? 'algorithms_transitions.csv'}, ` +
-        `${metadata?.filename ?? 'pqc_complete_algorithm_reference.csv'} • Updated: ` +
-        `${formatSnapshotDate(metadata?.date ?? transitionMetadata?.date) ?? 'date not recorded'}`,
+        `Data sources: ${transitionMetadata?.filename ?? 'algorithms_transitions.csv'}, ` +
+        formatDataSourceLine(
+          metadata?.filename ?? 'pqc_complete_algorithm_reference.csv',
+          metadata?.date ?? transitionMetadata?.date
+        ),
       onExport: handleExportCsv,
       endorseUrl: buildEndorsementUrl({
         category: 'algorithm-endorsement',

@@ -28,6 +28,7 @@ import { ExportableArtifact } from '@/components/PKILearning/common/executive/Ex
 import { decisionModelToCsv } from '@/services/export/decisionModelCsv'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
+import { formatDateStamp } from '@/lib/format'
 
 /** The five data-at-rest remediation strategies offered per store. Bulk data
  *  stays AES-256 in every case; PQC applies at the key-wrap (KEK) layer. */
@@ -446,7 +447,7 @@ export const DataAtRestStrategy: React.FC = () => {
             id: `data-at-rest-strategy-${Date.now()}`,
             moduleId: 'database-encryption-pqc',
             type: 'data-at-rest-strategy',
-            title: `Data-at-Rest Strategy — ${new Date().toLocaleDateString()}`,
+            title: `Data-at-Rest Strategy — ${formatDateStamp(new Date())}`,
             data: exportMarkdown,
             inputs: {
               ...state,

@@ -40,6 +40,7 @@ import { addressOf, currentContentVersion } from '@/services/myWork/tags'
 import { buildMarkdown, downloadMarkdown } from '@/services/myWork/markdownExport'
 import { trackMyWork } from '@/services/myWork/myWorkAnalytics'
 import { useTagLabels } from './useTagLabels'
+import { formatDate } from '@/lib/format'
 
 export interface MyWorkPanelProps {
   /** The learner's objectives, for the filter and for filing outputs. Omit when there are none. */
@@ -68,20 +69,11 @@ const TYPE_FILTERS: { id: TypeFilter; label: string }[] = [
 
 const dayHeading = (day: string): string => {
   const d = new Date(`${day}T12:00:00`)
-  return Number.isNaN(d.getTime())
-    ? day
-    : d.toLocaleDateString('en-GB', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-      })
+  return Number.isNaN(d.getTime()) ? day : formatDate(d, 'day', { relative: false })
 }
 const shortDay = (iso: string): string => {
   const d = new Date(iso)
-  return Number.isNaN(d.getTime())
-    ? ''
-    : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+  return Number.isNaN(d.getTime()) ? '' : formatDate(d, 'day', { relative: false })
 }
 
 const CLAMP = 280

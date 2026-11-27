@@ -26,6 +26,7 @@ import {
 } from '@/components/Leaders/leadersConstants'
 import { useUrlBackedText } from '@/hooks/useUrlBackedText'
 import { LeaderKeyResources } from '@/components/common/LeaderKeyResources'
+import { formatDate } from '@/lib/format'
 
 const TYPE_STYLE: Record<string, string> = {
   Public: 'bg-status-info/15 text-status-info border-status-info/30',
@@ -41,7 +42,7 @@ const TYPE_STYLE: Record<string, string> = {
 function humanizeDate(iso: string): string {
   const d = new Date(`${iso}T00:00:00Z`)
   if (Number.isNaN(d.getTime())) return iso
-  return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' })
+  return formatDate(d, 'month', { utc: true })
 }
 
 /** Desktop `/leaders` filters the phone has no control for. They narrow the

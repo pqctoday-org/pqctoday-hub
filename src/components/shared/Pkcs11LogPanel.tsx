@@ -24,6 +24,7 @@ import type { Pkcs11LogEntry } from '../../wasm/softhsm'
 import { lookupCkr } from '../../wasm/pkcs11Inspect'
 import { InspectPanel } from './Pkcs11InspectPanel'
 import { pkcs11PlainEnglish } from '../../wasm/pkcs11PlainEnglish'
+import { formatDuration } from '@/lib/format'
 
 // ── Entry row ────────────────────────────────────────────────────────────────
 
@@ -503,7 +504,10 @@ export const Pkcs11LogPanel = ({
 
   const copyAll = () => {
     const text = visibleLog
-      .map((e) => `[${e.timestamp}] ${e.fn}(${e.args}) → ${e.rvName} ${e.rvHex} [${e.ms}ms]`)
+      .map(
+        (e) =>
+          `[${e.timestamp}] ${e.fn}(${e.args}) → ${e.rvName} ${e.rvHex} ${formatDuration(e.ms, 'ms')}`
+      )
       .join('\n')
     navigator.clipboard
       .writeText(text)

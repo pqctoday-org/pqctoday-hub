@@ -31,7 +31,7 @@ describe('WorkshopOperationLog', () => {
   it('renders duration when provided', () => {
     const entries: LogEntry[] = [{ status: 'success', message: 'Signed', durationMs: 432 }]
     render(<WorkshopOperationLog entries={entries} />)
-    expect(screen.getByText('[432ms]')).toBeInTheDocument()
+    expect(screen.getByText('432 ms')).toBeInTheDocument()
   })
 
   it('shows the indeterminate progress bar when any entry is pending', () => {

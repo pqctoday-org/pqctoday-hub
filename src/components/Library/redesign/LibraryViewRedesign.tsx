@@ -78,6 +78,7 @@ import {
   resolveResearchTopicParam,
 } from '@/data/researchTopics'
 import { ResearchTopicFilter } from './ResearchTopicFilter'
+import { formatDataSourceLine } from '@/lib/format'
 
 const FILTER_PARAMS = [
   'purpose',
@@ -572,7 +573,7 @@ export function LibraryViewRedesign({
     setPageActions({
       title: 'PQC Library',
       dataSource: libraryMetadata
-        ? `${libraryMetadata.filename} • Updated: ${libraryMetadata.lastUpdate.toLocaleDateString()}`
+        ? formatDataSourceLine(libraryMetadata.filename, libraryMetadata.lastUpdate)
         : undefined,
       onExport: handleExportCsv,
       extra: (

@@ -3,6 +3,7 @@ import React from 'react'
 import type { AssessmentResult } from '../../hooks/assessmentTypes'
 import type { ROISummary } from '../shared/ROICalculatorSection'
 import { findReferenceEstate } from '../../data/assessmentScenarios'
+import { formatDateStamp } from '@/lib/format'
 
 interface BoardBriefOwnership {
   programOwner: string
@@ -104,11 +105,7 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
   const mandatedFrameworks = result.complianceImpacts?.filter((c) => c.requiresPQC === true) ?? []
   const hndlAtRisk = result.hndlRiskWindow?.isAtRisk
   const tnflAtRisk = result.tnflRiskWindow?.isAtRisk
-  const formattedDate = new Date(generatedAt).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
+  const formattedDate = formatDateStamp(generatedAt)
 
   // The per-domain scores are a full-assessment result: the engine emits coarse
   // ones on every track, but the report keeps them locked on a quick assessment,

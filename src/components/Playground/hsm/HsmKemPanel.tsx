@@ -20,6 +20,7 @@ import {
   hsm_decapsulateClassicMcEliece,
 } from '../../../wasm/softhsm/pqc'
 import { useEffect } from 'react'
+import { formatSessionTime } from '@/lib/format'
 
 /** ML-KEM has 3 parameter-set variants of ONE algorithm; the vendor KEMs
  * (BSI TR-02102-1) are each a single fixed preset — Rust engine only, not
@@ -98,7 +99,7 @@ export const HsmKemPanel = ({
       setEncapSecret(null)
       setDecapSecret(null)
 
-      const ts = new Date().toLocaleTimeString([], { hour12: false })
+      const ts = formatSessionTime(new Date())
       const engineLabel = engineMode === 'rust' ? 'rust' : 'cpp'
       registerKey(M, hSession, {
         handle: pubHandle,

@@ -23,6 +23,7 @@ import {
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import type { HistoryEvent, HistoryEventType } from '@/types/HistoryTypes'
 import { Button } from '@/components/ui/button'
+import { formatSessionTime } from '@/lib/format'
 
 const EVENT_CONFIG: Record<HistoryEventType, { icon: LucideIcon; color: string }> = {
   module_started: { icon: BookOpen, color: 'text-primary' },
@@ -55,10 +56,7 @@ export const HistoryEventRow: React.FC<HistoryEventRowProps> = ({ event }) => {
   const config = EVENT_CONFIG[event.type] ?? { icon: Calendar, color: 'text-muted-foreground' }
   const Icon = config.icon
 
-  const time = new Date(event.timestamp).toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-  })
+  const time = formatSessionTime(new Date(event.timestamp)).slice(0, 5)
 
   const handleClick = () => {
     if (event.route) {

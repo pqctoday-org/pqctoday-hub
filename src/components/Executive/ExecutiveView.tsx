@@ -19,6 +19,7 @@ import { useComplianceRefresh } from '../Compliance/services'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
+import { formatDateStamp } from '@/lib/format'
 
 const RISK_LEVEL_STYLES: Record<string, string> = {
   critical: 'text-destructive bg-destructive/10 border-destructive/20',
@@ -112,20 +113,10 @@ export const ExecutiveView: React.FC = () => {
           Executive overview of your organization&apos;s post-quantum cryptography readiness
         </p>
         <p className="text-xs text-muted-foreground mt-1 print:text-muted-foreground">
-          Generated{' '}
-          {new Date().toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })}
+          Generated {formatDateStamp(new Date())}
           {metrics.assessedAt && (
             <span className="ml-1">
-              &middot; Assessment from{' '}
-              {new Date(metrics.assessedAt).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-              })}
+              &middot; Assessment from {formatDateStamp(metrics.assessedAt)}
             </span>
           )}
         </p>
@@ -153,11 +144,7 @@ export const ExecutiveView: React.FC = () => {
                   {metrics.assessedAt && (
                     <>
                       {' \u00b7 Assessed '}
-                      {new Date(metrics.assessedAt).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
+                      {formatDateStamp(metrics.assessedAt)}
                     </>
                   )}
                 </p>

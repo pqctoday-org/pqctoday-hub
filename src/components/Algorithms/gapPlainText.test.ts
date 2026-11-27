@@ -180,7 +180,7 @@ describe('plain wording for the open-gaps register', () => {
     ).summary!
     expect(total).toBe(19176)
     expect(summary).toContain('19,176')
-    expect(summary).toContain('30 October 2026')
+    expect(summary).toContain('30 Oct 2026')
     expect(summary).toContain('Node.js')
     expect(summary).toContain('not in a browser')
     expect(summary).not.toMatch(/4,?502|3,?867|635 skip/)
@@ -196,11 +196,11 @@ describe('plain wording for the open-gaps register', () => {
     }
     const mixed = runResultsSummary([base, later])
     expect(mixed).toContain(`${(base.results + 10).toLocaleString('en-US')}`)
-    expect(mixed).toMatch(/between 30 October 2026 and 2 November 2026/)
+    expect(mixed).toMatch(/between 30 Oct 2026 and 2 Nov 2026/)
     expect(mixed).toMatch(/Node\.js v22\.23\.1, not in a browser and a browser/)
     expect(mixed).not.toContain('19,176')
     const browserOnly = runResultsSummary([later])
-    expect(browserOnly).toMatch(/recorded on 2 November 2026, executed in a browser/)
+    expect(browserOnly).toMatch(/recorded on 2 Nov 2026, executed in a browser/)
     expect(browserOnly).not.toMatch(/Node\.js|not in a browser/)
     expect(browserOnly).toContain('Browser run results are included.')
   })

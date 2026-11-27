@@ -14,6 +14,7 @@ import {
   type EvidenceRecord,
   type EvidenceStatus,
 } from './fheEvidence'
+import { formatDate } from '@/lib/format'
 
 export interface PanelFact {
   label: string
@@ -64,12 +65,7 @@ const STATUS_TEXT: Record<EvidenceStatus, string> = {
 export function formatEvidenceDate(iso: string): string {
   const d = new Date(iso.length === 10 ? `${iso}T00:00:00Z` : iso)
   if (Number.isNaN(d.getTime())) return iso
-  return d.toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
-  })
+  return formatDate(d, 'day', { relative: false, utc: true })
 }
 
 function partLine(p: EvidencePart): string {

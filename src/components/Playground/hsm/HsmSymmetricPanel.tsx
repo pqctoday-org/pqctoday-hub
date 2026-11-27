@@ -26,6 +26,7 @@ import {
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex, hexSnippet } from './shared'
+import { formatSessionTime } from '@/lib/format'
 
 // ── Types ───────────────────────────────────────────────────────────────────────
 
@@ -133,12 +134,7 @@ const AesPanel = ({
       setCiphertext(null)
       setIv(null)
       setDecrypted(null)
-      const ts = new Date().toLocaleTimeString([], {
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      })
+      const ts = formatSessionTime(new Date())
       const attrs: string[] = []
       if (ckaExtractable) attrs.push('extractable')
       if (!ckaEncrypt) attrs.push('no-enc')
@@ -362,12 +358,7 @@ const HmacPanel = () => {
       setKeyHandle(handle)
       setMac(null)
       setVerifyResult(null)
-      const ts = new Date().toLocaleTimeString([], {
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      })
+      const ts = formatSessionTime(new Date())
       registerKey(M, hSessionRef.current, {
         handle,
         family: 'hmac',
@@ -581,12 +572,7 @@ const AesCtrPanel = ({
       setKeyHandle(handle)
       setCiphertext(null)
       setDecrypted(null)
-      const ts = new Date().toLocaleTimeString([], {
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      })
+      const ts = formatSessionTime(new Date())
       const attrs: string[] = []
       if (ckaExtractable) attrs.push('extractable')
       if (!ckaEncrypt) attrs.push('no-enc')
@@ -832,12 +818,7 @@ const AesCmacPanel = ({
       setKeyHandle(handle)
       setMac(null)
       setVerified(null)
-      const ts = new Date().toLocaleTimeString([], {
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      })
+      const ts = formatSessionTime(new Date())
       const attrs: string[] = []
       if (ckaExtractable) attrs.push('extractable')
       if (!ckaEncrypt) attrs.push('no-enc')
@@ -1182,7 +1163,7 @@ const ChaCha20Panel = () => {
       setKeyHandle(handle)
       setCiphertext(null)
       setDecrypted(null)
-      const ts = new Date().toLocaleTimeString([], { hour12: false })
+      const ts = formatSessionTime(new Date())
       registerKey(M, hSessionRef.current, {
         handle,
         family: 'chacha20',

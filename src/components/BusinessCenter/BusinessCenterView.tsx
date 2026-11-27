@@ -70,6 +70,7 @@ import { ResearchWorkspacePanel } from '@/components/shared/research/ResearchWor
 import { useCommandCenterOnboardingStore } from '@/store/useCommandCenterOnboardingStore'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 import { commandCenterIntroFor } from '@/data/commandCenterIntro'
+import { formatDateStamp } from '@/lib/format'
 
 // What a persona's Command Center learn button opens, and how many of its
 // recommended sequence the welcome state foregrounds. The intro (lede and the
@@ -230,9 +231,7 @@ function ContextBanner({
   if (industry) parts.push(industry)
   if (country) parts.push(country)
   if (completedAt) {
-    parts.push(
-      `Last assessed: ${new Date(completedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
-    )
+    parts.push(`Last assessed: ${formatDateStamp(completedAt)}`)
   }
 
   return (

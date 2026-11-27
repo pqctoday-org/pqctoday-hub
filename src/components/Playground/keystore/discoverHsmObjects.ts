@@ -9,6 +9,7 @@ import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { hsm_findAllObjects, hsm_getKeyAttributes, hsm_getSessionInfo } from '../../../wasm/softhsm'
 import type { HsmContextValue, HsmFamily, HsmKey, HsmKeyRole } from '../hsm/HsmContext'
 import { getDevSlotSession, reloginDevSlotSession } from '../dev/pipeline/devSlot'
+import { formatSessionTime } from '@/lib/format'
 
 export const CKK_NAMES: Record<number, string> = {
   0x00: 'CKK_RSA',
@@ -150,7 +151,7 @@ function discoverObjectsOnSession(
         family,
         role,
         label,
-        generatedAt: new Date().toLocaleTimeString(),
+        generatedAt: formatSessionTime(new Date()),
         uniqueId: a.ckUniqueId ?? '',
         sessionHandle: hSession,
         slotId,

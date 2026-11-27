@@ -29,6 +29,7 @@ import {
 } from '../wasm/softhsm'
 import type { SoftHSMModule, Pkcs11LogEntry } from '../wasm/softhsm'
 import type { HsmFamily, HsmKey, HsmKeyRole } from '../components/Playground/hsm/HsmContext'
+import { formatSessionTime } from '@/lib/format'
 
 export type { HsmFamily, HsmKey, HsmKeyRole }
 
@@ -152,7 +153,7 @@ export function useHSM(moduleEngine: 'cpp' | 'rust' = 'rust'): UseHSMResult {
     (label: string) => {
       addLog({
         id: Math.random(),
-        timestamp: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        timestamp: formatSessionTime(new Date()),
         fn: label,
         args: '',
         rvHex: '',

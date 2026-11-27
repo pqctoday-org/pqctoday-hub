@@ -14,6 +14,7 @@ import { ApprovalStatusControl } from './widgets/ApprovalStatusControl'
 
 export { TYPE_LABELS } from '@/data/artifactLabels'
 import { TYPE_LABELS } from '@/data/artifactLabels'
+import { formatDateStamp } from '@/lib/format'
 
 const PILLAR_COLORS: Record<string, string> = {
   risk: 'bg-destructive/10 text-destructive',
@@ -62,20 +63,10 @@ export function ArtifactCard({
     ? (PILLAR_COLORS[pillar] ?? 'bg-muted text-muted-foreground')
     : 'bg-muted text-muted-foreground'
   const cswp39Ref = getCswp39RefForArtifactType(document.type)
-  const createdDate = new Date(document.createdAt).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
+  const createdDate = formatDateStamp(document.createdAt)
   const updatedTs = document.updatedAt ?? document.createdAt
   const wasEdited = updatedTs > document.createdAt
-  const updatedDate = wasEdited
-    ? new Date(updatedTs).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-      })
-    : null
+  const updatedDate = wasEdited ? formatDateStamp(updatedTs) : null
   const revisionCount = document.revisions?.length ?? 0
 
   return (
