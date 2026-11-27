@@ -248,6 +248,9 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
   { path: exact('/explore'), queryKeys: '*', description: 'Guided exploration' },
   { path: exact('/faq'), queryKeys: '*', description: 'FAQ' },
   { path: exact('/terms'), queryKeys: '*', description: 'Terms' },
+  { path: exact('/revisions'), queryKeys: '*', description: 'Content Revisions' },
+  { path: exact('/sponsor'), queryKeys: '*', description: 'Sponsor' },
+  { path: exact('/editorial-independence'), queryKeys: '*', description: 'Editorial Independence' },
 
   // Patents
   {

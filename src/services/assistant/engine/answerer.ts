@@ -4,7 +4,7 @@
  * It reads the Hub through a `Catalogue` (resources, passages, curriculum, dimensions, role paths) and the strict reader's model;
  * both are what the Hub's knowledge-file reader supplies. Rules, orders, notes and weights come from `data.generated.json`.
  */
-import { Engine, normName, type Data, type Reading } from './engine'
+import { buildVocab, Engine, fixTypo, normName, type Data, type Reading } from './engine'
 import { Strict, type Model, type Rec, type Result } from './strict'
 
 export interface Resource { link: string; title: string; type: string; group: string; extract: string; record_ids: string[]; passages: number[] }
@@ -98,10 +98,13 @@ const SENTENCE_START = /^[A-Z0-9"“‘'(\[]/
 const MATCH_SHARE = 0.5
 /** The sources of passages whose text is never shown as an extract: a known-answer test, and the passages kept from a document's own text. */
 const NOT_SHOWN = ['known-answer test', 'library']
+const JS_EXPR = /\$\{[^}\r\n]+\}/g
+const cleanExpr = (text: string): string => (text.includes('${') ? text.replace(JS_EXPR, '') : text)
 /** The sentences of a passage that may be shown, in order: its lines without titles, headings, structure and field lines, cut into sentences that start and end as one. */
 function sentencesOf(text: string): string[] {
   const out: string[] = []
   for (const raw of String(text || '').split(/\r?\n/)) {
+    if (raw.includes('${')) continue
     let line = raw.replace(/\s+/g, ' ').trim()
     if (!line || line[0] === '#' || STRUCTURE.test(line) || HEADER.test(line) || FIELD.test(line)) continue
     line = line.replace(/^[-*•] /, '').replace(/\*\*/g, '').trim()
@@ -132,7 +135,7 @@ export function matchedExtract(text: string, weights: [string, number][], limit 
   return { text: out, held }
 }
 const extractOf = (raw: string, limit = 240): string => {
-  const text = decodeCodes(raw)
+  const text = cleanExpr(decodeCodes(raw))
   const lines = String(text || '').split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !STRUCTURE.test(l))
   const body = lines.filter((l) => !HEADER.test(l))
   const out = (body.length ? body : lines.map((l) => l.replace(HEADER, ''))).join(' ').replace(/\s+/g, ' ').trim()
@@ -142,6 +145,7 @@ const extractOf = (raw: string, limit = 240): string => {
 
 class Search {
   post = new Map<string, [number, number][]>()
+  vocab: Map<string, number>
   len: number[] = []
   n: number
   avg: number
@@ -161,7 +165,9 @@ class Search {
     })
     this.n = this.len.length
     this.avg = this.n ? this.len.reduce((a, c) => a + c, 0) / this.n : 1
+    this.vocab = buildVocab([...this.post.entries()].map(([w, pl]) => [w, pl.length]))
   }
+  fix(w: string): string { return this.post.has(w) ? w : fixTypo(w, this.vocab) }
   /** The passages that match the question's words, best first. With `minWords`, a passage must hold at least that many different words of the question (or every word the index knows, when the question has fewer), or one of the `enough` words. */
   hits(question: string, k = 200, minWords = 1, enough: string[] = []): [number, number][] {
     const score = new Map<number, number>()
@@ -169,14 +175,15 @@ class Search {
     const alone = new Set(enough)
     const kept = new Set<number>()
     let known = 0
-    for (const w of [...new Set(tokens(question).filter((t) => !STOP.has(t)))].sort()) {
+    const qWords = [...new Set(tokens(question).filter((t) => !STOP.has(t)).map((t) => this.fix(t)))].sort()
+    for (const w of qWords) {
       const plist = this.post.get(w)
       if (!plist) continue
       known++
       const idf = Math.log(1 + (this.n - plist.length + 0.5) / (plist.length + 0.5))
       for (const [i, f] of plist) { score.set(i, (score.get(i) ?? 0) + (idf * f * (this.k1 + 1)) / (f + this.k1 * (1 - this.b + (this.b * this.len[i]) / this.avg))); held.set(i, (held.get(i) ?? 0) + 1); if (alone.has(w)) kept.add(i) }
     }
-    const need = Math.min(minWords, known)
+    const need = qWords.length >= 3 && minWords >= 2 ? minWords : Math.min(minWords, known)
     return [...score.entries()].filter(([i]) => (held.get(i) ?? 0) >= need || kept.has(i)).map(([i, s]) => [s, i] as [number, number]).sort((x, y) => y[0] - x[0] || x[1] - y[1]).slice(0, k)
   }
   resources(question: string, k = 60, minWords = 1, enough: string[] = []): { link: string; score: number; passage: number }[] {
@@ -195,6 +202,7 @@ class Search {
 
 class ResIndex {
   post = new Map<string, [number, number][]>()
+  vocab: Map<string, number>
   /** In how many resources' titles each word stands. */
   inTitles = new Map<string, number>()
   len: number[] = []
@@ -217,13 +225,15 @@ class ResIndex {
     })
     this.n = this.links.length
     this.avg = this.len.reduce((a, c) => a + c, 0) / Math.max(1, this.n)
+    this.vocab = buildVocab([...this.post.entries()].map(([w, pl]) => [w, pl.length]))
   }
+  fix(w: string): string { return this.post.has(w) ? w : fixTypo(w, this.vocab) }
   /** The share of the resources whose title holds the word. */
   titleShare(w: string): number { return (this.inTitles.get(w) ?? 0) / Math.max(1, this.n) }
-  idf(w: string): number { const n = this.post.get(w)?.length ?? 0; return Math.log(1 + (this.n - n + 0.5) / (n + 0.5)) }
+  idf(w: string): number { const n = this.post.get(this.fix(w))?.length ?? 0; return Math.log(1 + (this.n - n + 0.5) / (n + 0.5)) }
   scores(words: string[]): Map<string, number> {
     const out = new Map<string, number>()
-    for (const w of [...words].sort()) {
+    for (const w of [...new Set(words.map((x) => this.fix(x)))].sort()) {
       const plist = this.post.get(w)
       if (!plist) continue
       const idf = this.idf(w)
@@ -291,6 +301,9 @@ export class Answerer {
   private data: any
   private cat: Catalogue
   private model: Model
+  private pageVocab: Map<string, number>
+  private scopeRx: RegExp | null
+  private weakNames: Set<string>
   constructor(data: any, cat: Catalogue, model: Model, strictPatterns: any, statements: any, docHashes: any) {
     this.data = data
     this.cat = cat
@@ -301,11 +314,14 @@ export class Answerer {
     this.engine = new Engine(data as Data, names)
     this.search = new Search(cat.passages)
     this.res = new ResIndex(cat.resources)
+    this.pageVocab = buildVocab(Object.values((data.finders?.page_words ?? {}) as Record<string, string[]>).flatMap((ws) => ws.map((w) => [w, 1] as [string, number])))
+    this.scopeRx = data.rules?.scope_rx ? new RegExp(String(data.rules.scope_rx), 'i') : null
+    this.weakNames = new Set<string>((data.rules?.weak_single_names ?? []) as string[])
     for (const r of cat.resources) this.resByLink.set(r.link, r)
     for (const r of model.records) if (r.link) { this.linkOfRec.set(r.id, r.link); const a = this.recOfLink.get(r.link); if (a) a.push(r.id); else this.recOfLink.set(r.link, [r.id]) }
-    for (const [link, ids] of this.recOfLink) { const k = this.linkKey(link); const a = this.recOfKey.get(k); if (a) a.push(...ids); else this.recOfKey.set(k, [...ids]) }
     // a page record of the link comes first (as in the catalogue); the sort is stable
     for (const ids of this.recOfLink.values()) ids.sort((a, b) => Number(this.strict.records.get(a)!.type !== 'page') - Number(this.strict.records.get(b)!.type !== 'page'))
+    for (const [link, ids] of this.recOfLink) { const k = this.linkKey(link); const a = this.recOfKey.get(k); if (a) a.push(...ids); else this.recOfKey.set(k, [...ids]) }
   }
   /** The key a link is looked up by in the records that own it: its canonical spelling without a fragment. */
   linkKey(link: string): string { return canonicalLink(link, this.data.link_aliases ?? []).split('#')[0] }
@@ -423,14 +439,14 @@ export class Answerer {
     const asked = cfg.w.asked ? this.askedPages(reading.clean) : new Map<string, number>()
     for (const [ln, share] of asked) if (share > 0 && !links.has(ln)) links.set(ln, 0)
     const pool = new Map<string, Item>()
-    const sw = [...words].sort()
+    const sw = [...new Set(words.map((w) => this.res.fix(w)))].sort()
     const denom = Math.max(1e-9, sw.reduce((a, w) => a + this.res.idf(w), 0))
     for (const [ln, found] of links) {
       const r = this.resByLink.get(ln)
       if (!r || !this.statusOk(r) || (ln.startsWith('http') && !named.has(ln))) continue
       const text = found * this.about(r, via.get(ln), sw, named.has(ln))
       const tw = new Set(tokens(r.title))
-      const overlap = words.length ? sw.filter((w) => tw.has(w)).reduce((a, w) => a + this.res.idf(w), 0) / denom : 0
+      const overlap = sw.length ? sw.filter((w) => tw.has(w)).reduce((a, w) => a + this.res.idf(w), 0) / denom : 0
       pool.set(ln, { link: ln, title: r.title, type: r.type, group: r.group, extract: r.extract, record_ids: r.record_ids, text, res: (resScores.get(ln) ?? 0) / rtop, title_overlap: overlap, named: named.has(ln), follow: follow.get(ln) ?? 0, reader: readers.get(ln) ?? 0, passage: via.get(ln) ?? null, asked: asked.get(ln) ?? 0 })
     }
     return pool
@@ -446,7 +462,7 @@ export class Answerer {
   }
   /** For each page of the site that has words of its own: the share of the question's words that are among them. */
   askedPages(clean: string): Map<string, number> {
-    const toks = [...new Set(tokens(clean).filter((t) => !STOP.has(t)))].sort()
+    const toks = [...new Set(tokens(clean).filter((t) => !STOP.has(t)).map((t) => fixTypo(t, this.pageVocab)))].sort()
     const out = new Map<string, number>()
     for (const [ln, pageWords] of Object.entries((this.data.finders.page_words ?? {}) as Record<string, string[]>)) {
       if (this.resByLink.has(ln)) out.set(ln, toks.filter((t) => pageWords.includes(t)).length / Math.max(1, toks.length))
@@ -469,7 +485,7 @@ export class Answerer {
     const out = new Map<string, number>()
     if (!(f.industries.length || f.places.length)) return out
     for (const rec of this.model.records) {
-      if (!['guidance', 'framework'].includes(rec.type) || !isActiveStatus(rec.status)) continue
+      if (!['guidance', 'framework', 'threat', 'country'].includes(rec.type) || !isActiveStatus(rec.status)) continue
       const d = this.cat.dims[rec.id]
       if (!rec.link || !d) continue
       let bonus = 0.0
@@ -647,7 +663,7 @@ export class Answerer {
     if ((value === null || value === undefined || value === '') && intent === 'people' && String(res.text || '').split(/\s+/).filter(Boolean).length >= 5 && ['person', 'vendor', 'source'].includes(rec.type)) value = res.text
     if ((value === null || value === undefined || value === '') && intent === 'currency' && res.answer) value = res.answer.label || res.answer.key
     if (value === null || value === undefined || value === '') return null
-    if (spec.direct_field_rx && res.field && !new RegExp(spec.direct_field_rx.replace(/^\(\?i\)/, ''), spec.direct_field_rx.startsWith('(?i)') ? 'i' : '').test(String(res.field))) return null
+    if (spec.direct_field_rx && !linked && (!res.field || !new RegExp(spec.direct_field_rx.replace(/^\(\?i\)/, ''), spec.direct_field_rx.startsWith('(?i)') ? 'i' : '').test(String(res.field)))) return null
     if (spec.one_of_kind && !linked && reading.names.length && reading.names[0].ids.filter((i) => spec.one_of_kind.includes(this.rec(i).type)).length > 1) return null
     for (const n of reading.names.slice(0, 1)) {
       // a link answer is about the record the name reaches in its family: a document and a standard of one Library title are twins
@@ -867,6 +883,18 @@ export class Answerer {
     const sorted = both.map((x) => x.r)
     return [sorted.slice(0, shown.length), sorted.slice(shown.length)]
   }
+  isOffTopic(reading: Reading & { forced?: boolean }): boolean {
+    if (reading.forced || !this.scopeRx) return false
+    const intent = reading.intent
+    if (intent === 'name' || intent === 'site' || (intent === 'broad' && (reading.confidence ?? 0) >= 0.8)) return false
+    const nonStop = tokens(reading.clean).filter((t) => !STOP.has(t))
+    if (nonStop.length < 3) return false
+    if (reading.filters.industries.length || reading.filters.places.length) return false
+    if (reading.names.some((n) => !this.weakNames.has(n.text))) return false
+    const fixed = nonStop.map((t) => this.res.fix(t)).join(' ')
+    if (this.scopeRx.test(reading.clean) || this.scopeRx.test(fixed)) return false
+    return true
+  }
   ask(question: string, role: string | null = null, forceIntent: string | null = null, page: string | null = null): Item {
     let reading: Reading & { question: string; forced?: boolean } = this.engine.read(question) as any
     if (forceIntent) reading = { ...reading, intent: forceIntent, intents: [forceIntent], forced: true }
@@ -880,6 +908,10 @@ export class Answerer {
     const N = this.data.notes
     const model: Item = { question, intent, intents: reading.intents, role, answerText: N.answer_text.default, note: '', direct: null, source: null, nameCard: null, choices: null, groups: [], reading: { names: reading.names.map((n) => n.text), scores: reading.scores, filters: reading.filters } }
     if (intent === 'name') return this.nameAnswer(model, reading, role, page)
+    if (this.isOffTopic(reading)) {
+      model.note = intent === 'broad' ? N.note.broad : intent === 'not_fact' ? N.note.not_fact : N.note.no_direct.replace('{label}', spec.label)
+      return model
+    }
     let findReading = reading
     if (intent === 'broad' || intent === 'not_fact') {
       // a question nothing was recognised in, but which has words of its own ("5g", "quantum"), is searched by those words;

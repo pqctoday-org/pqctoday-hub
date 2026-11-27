@@ -18,7 +18,9 @@
     "match": [
      "Finance & Insurance",
      "Finance & Banking",
-     "Payment Card Industry"
+     "Payment Card Industry",
+     "Insurance",
+     "finance"
     ]
    },
    {
@@ -34,7 +36,9 @@
     "match": [
      "Healthcare",
      "Healthcare / Pharmaceutical",
-     "Healthcare & Life Sciences"
+     "Healthcare & Life Sciences",
+     "healthcare",
+     "pharma"
     ]
    },
    {
@@ -44,7 +48,9 @@
      "telcos",
      "telecommunications",
      "mobile operator",
-     "5g"
+     "5g",
+     "cellular",
+     "carrier"
     ],
     "match": [
      "Telecommunications"
@@ -58,10 +64,16 @@
      "military",
      "agency",
      "agencies",
-     "national security"
+     "national security",
+     "contractor",
+     "contractors"
     ],
     "match": [
-     "Government & Defense"
+     "Government & Defense",
+     "Defense Industrial Base",
+     "Public Administration",
+     "government",
+     "defense"
     ]
    },
    {
@@ -77,7 +89,8 @@
     "match": [
      "Energy & Utilities",
      "Critical Infrastructure / Energy",
-     "Critical Infrastructure"
+     "Critical Infrastructure",
+     "energy"
     ]
    },
    {
@@ -91,7 +104,8 @@
     ],
     "match": [
      "Automotive / Connected Vehicles",
-     "Automotive"
+     "Automotive",
+     "automotive"
     ]
    },
    {
@@ -113,11 +127,15 @@
      "aerospace",
      "airline",
      "airlines",
-     "airport"
+     "airport",
+     "satellite",
+     "satellites"
     ],
     "match": [
      "Aerospace / Aviation",
-     "Aerospace"
+     "Aerospace",
+     "Aerospace & Defense",
+     "aerospace"
     ]
    },
    {
@@ -141,7 +159,34 @@
      "data centre"
     ],
     "match": [
-     "Cloud Computing / Data Centers"
+     "Cloud Computing / Data Centers",
+     "Cloud",
+     "Web & Cloud"
+    ]
+   },
+   {
+    "cues": [
+     "iot",
+     "embedded",
+     "microcontroller",
+     "microcontrollers"
+    ],
+    "match": [
+     "Embedded & IoT",
+     "Internet of Things (IoT)",
+     "IoT, Embedded Systems"
+    ]
+   },
+   {
+    "cues": [
+     "hsm",
+     "hsms",
+     "smartcard",
+     "smartcards"
+    ],
+    "match": [
+     "Hardware Security Modules",
+     "Semiconductors / Secure Elements"
     ]
    }
   ],
@@ -156,6 +201,9 @@
     "match": [
      "EU",
      "PQC-REGION-EU",
+     "PQC-REGION-EUROPE",
+     "European Union",
+     "Europe",
      "DE",
      "FR",
      "NL",
@@ -163,7 +211,12 @@
      "ES",
      "PL",
      "EE",
-     "FI"
+     "FI",
+     "AT",
+     "BE",
+     "CZ",
+     "IE",
+     "IT"
     ]
    },
    {
@@ -178,7 +231,8 @@
     ],
     "match": [
      "US",
-     "PQC-REGION-US"
+     "PQC-REGION-US",
+     "United States"
     ]
    },
    {
@@ -191,7 +245,8 @@
     ],
     "match": [
      "GB",
-     "UK"
+     "UK",
+     "United Kingdom"
     ]
    },
    {
@@ -200,7 +255,8 @@
      "canadian"
     ],
     "match": [
-     "CA"
+     "CA",
+     "Canada"
     ]
    },
    {
@@ -209,7 +265,8 @@
      "australian"
     ],
     "match": [
-     "AU"
+     "AU",
+     "Australia"
     ]
    },
    {
@@ -218,7 +275,8 @@
      "indian"
     ],
     "match": [
-     "IN"
+     "IN",
+     "India"
     ]
    },
    {
@@ -227,16 +285,20 @@
      "japanese"
     ],
     "match": [
-     "JP"
+     "JP",
+     "Japan"
     ]
    },
    {
     "cues": [
      "korea",
-     "korean"
+     "korean",
+     "south korea"
     ],
     "match": [
-     "KR"
+     "KR",
+     "South Korea",
+     "KpqC"
     ]
    },
    {
@@ -245,7 +307,8 @@
      "chinese"
     ],
     "match": [
-     "CN"
+     "CN",
+     "China"
     ]
    },
    {
@@ -254,7 +317,8 @@
      "german"
     ],
     "match": [
-     "DE"
+     "DE",
+     "Germany"
     ]
    },
    {
@@ -263,7 +327,8 @@
      "french"
     ],
     "match": [
-     "FR"
+     "FR",
+     "France"
     ]
    },
    {
@@ -271,7 +336,38 @@
      "singapore"
     ],
     "match": [
-     "SG"
+     "SG",
+     "Singapore"
+    ]
+   },
+   {
+    "cues": [
+     "hong kong",
+     "hkma"
+    ],
+    "match": [
+     "HK",
+     "Hong Kong"
+    ]
+   },
+   {
+    "cues": [
+     "swiss",
+     "switzerland"
+    ],
+    "match": [
+     "CH",
+     "Switzerland"
+    ]
+   },
+   {
+    "cues": [
+     "new zealand",
+     "gcsb"
+    ],
+    "match": [
+     "NZ",
+     "New Zealand"
     ]
    },
    {
@@ -281,7 +377,9 @@
      "international"
     ],
     "match": [
-     "PQC-REGION-GLOBAL"
+     "PQC-REGION-GLOBAL",
+     "Global",
+     "International"
     ]
    }
   ],
@@ -443,6 +541,7 @@
     }
    },
    "list": {
+    "filter": true,
     "follow": [
      {
       "dir": "forward",
@@ -482,9 +581,12 @@
    "people": {
     "prior": {
      "Data pages": {
+      "type:country": 0.8,
       "type:person": 2.0,
-      "type:source": 0.8,
       "type:vendor": 1.0
+     },
+     "References": {
+      "type:source": 1.2
      }
     },
     "w": {
@@ -537,13 +639,18 @@
     }
    },
    "risk": {
-    "journey": false,
+    "filter": true,
+    "journey": true,
     "prior": {
      "Data pages": {
-      "type:threat": 4.0
+      "path:/threats": 1.5,
+      "type:threat": 4.5
      },
      "Learn": {
       "type:module": 0.4
+     },
+     "References": {
+      "type:term": 1.5
      }
     }
    },
@@ -576,6 +683,7 @@
     },
     "prior": {
      "Data pages": {
+      "path:/faq": 2.15,
       "type:page": 2.0,
       "type:release": 2.0
      },
@@ -691,14 +799,20 @@
     "center",
     "centre",
     "executive",
-    "kpi"
+    "kpi",
+    "posture",
+    "dashboard",
+    "readiness",
+    "score"
    ],
    "/business/tools": [
     "calculators",
     "calculator",
     "templates",
     "template",
-    "toolkit"
+    "toolkit",
+    "scorecards",
+    "builders"
    ],
    "/changelog": [
     "changelog",
@@ -709,6 +823,7 @@
     "versions",
     "new",
     "news",
+    "whats",
     "latest",
     "newest",
     "recent",
@@ -737,7 +852,9 @@
     "biased",
     "influence",
     "conflict",
-    "disclosure"
+    "disclosure",
+    "ratings",
+    "recommendations"
    ],
    "/explore": [
     "explore",
@@ -753,7 +870,10 @@
     "tour",
     "menu",
     "navigation",
-    "landed"
+    "landed",
+    "tools",
+    "timelines",
+    "resources"
    ],
    "/faq": [
     "faq",
@@ -815,12 +935,15 @@
     "products",
     "catalog",
     "catalogue",
-    "vendors"
+    "vendors",
+    "layers"
    ],
    "/navigate": [
     "navigate",
     "graph",
-    "map"
+    "map",
+    "3d",
+    "knowledge"
    ],
    "/openssl": [
     "openssl",
@@ -830,7 +953,8 @@
    ],
    "/patents": [
     "patents",
-    "patent"
+    "patent",
+    "landscape"
    ],
    "/playground": [
     "playground",
@@ -1507,7 +1631,7 @@
     "\\bwhat (?:can|does) (?:this|the) (?:site|website|hub|help tool) (?:help|cover|offer|do|provide)\\b",
     "\\b(?:quick|brief|high[- ]level) (?:overview|summary|tour)\\b.{0,30}(?:site|website|hub|you)",
     "^(?:main|key) (?:sections|topics|areas)\\b",
-    "\\bjust landed\\b",
+    "\\bjust landed\\b(?!.{0,30}\\bwhere can i\\b)",
     "\\bfirst time\\b.{0,40}(?:what can|where)"
    ]
   },
@@ -1546,12 +1670,21 @@
     {
      "rx": "\\b(?:business|executive|management|board|cfo|ciso|compliance|governance|enterprise|organi[sz]ation)\\b",
      "w": 1
+    },
+    {
+     "rx": "\\b(?:staff|hire|train|contract)\\b.{0,40}\\b(?:migration|transition)\\b|\\b(?:bill of materials|sbom)\\b.{0,40}\\b(?:inventory|cbom)\\b|\\b(?:contingency|contingencies)\\b.{0,50}\\bquantum\\b|\\b(?:draft|write)\\b.{0,30}\\b(?:enterprise |security )?(?:rules|policies|policy)\\b|\\b(?:retiring|deprecating) legacy algorithms\\b.{0,40}\\bsigning off\\b|\\bsequence\\b.{0,50}\\bdecision gates\\b|\\b(?:metrics|kpis?)\\b.{0,40}\\b(?:track|visualize|monitor)\\b",
+     "w": 4
     }
    ],
    "compare": [
     {
      "rx": "\\b(?:compare|comparison|comparing|versus|vs\\.?|contrast|differences? (?:between|of|in)|differ(?:s|ent)? (?:from|between)|how does .{2,50} differ|how do .{2,50} differ|distinguish\\w*|same as|similar to|better than|worse than|rather than|instead of|pros and cons|trade-?offs?)\\b",
      "w": 4
+    },
+    {
+     "min_names": 2,
+     "rx": "\\b(?:use|pick|choose|select|prefer|between)\\b.{1,60}\\bor\\b",
+     "w": 6
     },
     {
      "min_names": 2,
@@ -2044,6 +2177,10 @@
      "w": 5
     },
     {
+     "rx": "\\b3d (?:knowledge )?(?:graph|map)\\b|\\bknowledge graph\\b|\\bon the [\\w &/-]{2,45} page\\b|\\bwhere can i (?:browse|explore) (?:all )?(?:your|the)\\b|\\binfluence your\\b|\\bpqc readiness dashboard\\b|\\bsingle high[- ]level view\\b",
+     "w": 5
+    },
+    {
      "rx": "\\b(?:email alerts?|notifications?|subscribe|csv export|export (?:the |a )?(?:table|data|csv|list)|print|tracker location|contributor page|side by side|comparison tool|vendor comparison|where is (?:the )?\\w+ ?\\w* guide)\\b",
      "w": 3
     }
@@ -2073,7 +2210,7 @@
    ],
    "technical_tool": [
     {
-     "rx": "\\b(?:try|try out|play with|experiment|simulate|simulator|simulation|demo|hands-?on|in the browser|in my browser|playground|sandbox|run (?:a|the|an)|generate (?:a |an )?(?:key|keys|keypair|key pair|certificate|csr|signature)|keygen|key generation|benchmark|sign (?:a|some|my)|verify (?:a|the|my)|inspect|decode|parse|test (?:my|a|the)|handshake|openssl|pkcs ?#?11|kmip|wasm|webassembly|cli|command line|api|code|sample code|example code)\\b",
+     "rx": "\\b(?:try|try out|play with|experiment|simulate|simulator|simulation|demo|hands-?on|in the browser|in my browser|playground|sandbox|run (?:a|the|an)|generate (?:a |an )?(?:key|keys|keypair|key pair|certificate|csr|signature)|keygen|key generation|benchmark|sign (?:a|some|my)|verify (?:a|the|my)|inspect|decode|parse|test (?:my|a|the|pqc|post-quantum|tls|ml-kem|ml-dsa|slh-dsa)|handshake|openssl|pkcs ?#?11|kmip|wasm|webassembly|cli|command line|api|code|sample code|example code)\\b",
      "w": 3
     },
     {
@@ -2109,6 +2246,7 @@
    "site",
    "concept"
   ],
+  "scope_rx": "\\b(?:quant\\w*|pqc|crypt\\w*|cipher\\w*|encrypt\\w*|decrypt\\w*|hybrid\\w*|handshake\\w*|rollout\\w*|sign(?:ing|ature|atures|ed|s|er)?|keys?|keypair\\w*|keygen\\w*|cert(?:s|ificate|ificates|ification|ified)?|hash(?:es|ing)?|kems?|dsa|rsa|ecc|ecdh|ecdsa|eddsa|ed25519|x25519|secp\\w*|aes|chacha\\w*|sha\\d*|shake\\d*|tls|mtls|dtls|ssh|vpn|ipsec|ikev2|wireguard|quic|https|hsm\\w*|pki|kms|pkcs\\w*|kmip|fips|nist|ietf|rfc|etsi|iso|iec|anssi|bsi|ncsc|cisa|nsa|enisa|cnsa|dora|nis2|eidas|hipaa|fedramp|fisma|pci|gdpr|sox|cbom\\w*|sbom\\w*|oscal|lattice\\w*|isogen\\w*|code[- ]based|multivariate|stateless|stateful|shor\\w*|grover\\w*|crqc\\w*|hndl|y2q|migrat\\w*|agilit\\w*|readiness|posture|mandat\\w*|compli\\w*|regulat\\w*|standard\\w*|algorithm\\w*|protocol\\w*|vendor\\w*|supplier\\w*|product\\w*|patent\\w*|threat\\w*|vulnerab\\w*|attack\\w*|breach\\w*|side[- ]channel\\w*|deadlin\\w*|mileston\\w*|timeline\\w*|roadmap\\w*|assess\\w*|playbook\\w*|scorecard\\w*|worksheet\\w*|register|charter|policy|policies|govern\\w*|raci|roi|kpis?|contingenc\\w*|firmware|boot|uefi|tpm|tee|enclave\\w*|smart[- ]?card\\w*|sim|esim|5g|6g|iot|ot|scada|avionics|aerospace|automotive|satellit\\w*|orbit|banking|banks|financial|healthcare|telecom\\w*|openssl|liboqs|boringssl|wolfssl|cloudflare|sphincs\\w*|kyber\\w*|dilithium\\w*|falcon\\w*|mceliece|frodokem|hqc|bike|ntru\\w*|saber|mayo|hawk|sqisign|faest|sdith|mqom|gemss|rainbow|xmss\\w*|lms|hss|wots\\w*|ascon|passkey\\w*|webauthn|fido\\w*|jwt|jws|jwe|jose|cose|oauth\\w*|oidc|saml|kerberos|ldap|dnssec|bgpsec|rpki|mls|signal|openpgp|pgp|smime|cms|x\\.?509|crl|ocsp|qkd|qrng|puf|trng|drbg|random\\w*|entropy|noise|tamper\\w*|security|secure|cyber\\w*|hardware|software|token\\w*|custody|rulebook|website|glossary|faq|changelog|revisions?|playground|studio|simulation|simulator|sandbox|workbench|explore|navigate|browse|landed|3d|graph\\w*|sponsor\\w*|editorial|independ\\w*|licen[cs]\\w*|open[- ]source|privacy|terms|role|roles|persona\\w*|module\\w*|lesson\\w*|course\\w*|quiz\\w*|track\\w*|bookmark\\w*|progress|site|hub|page|zxwidget|zebra|zork|testland|acme)\\b",
   "second_ratio": 0.8,
   "strip_prefix": [
    "^(?:hi|hello|hey|ok|okay|so)[,!. ]+",
@@ -2117,7 +2255,14 @@
    "^(?:i(?:'d| would)? (?:like|want|need) to (?:know|understand|find out|see|learn)|i(?:'m| am) (?:curious|wondering)|i wonder|do you know|tell me|let me know|show me|give me|i need|i want)\\s+(?:about\\s+|to\\s+)?",
    "^(?:quick question|question)[:,]?\\s*"
   ],
-  "version": 1
+  "version": 1,
+  "weak_single_names": [
+   "library",
+   "docker",
+   "state",
+   "return",
+   "rest"
+  ]
  },
  "words": {
   "filler": [

@@ -11,7 +11,13 @@ import {
   forgetAssistant,
 } from './adapter'
 import { directValueFits } from './engineHost'
-import { buildEngineInput, extractOf, FAMILY_FILE_PREFIX, groupOf } from './buildEngine'
+import {
+  buildEngineInput,
+  extractOf,
+  FAMILY_FILE_PREFIX,
+  groupOf,
+  isOmittedFromAssistant,
+} from './buildEngine'
 import { decodeCodes, matchedExtract } from './engine/answerer'
 import {
   ASSISTANT_GROUPS,
@@ -355,6 +361,12 @@ describe('lessons under their own name, plain matches, and questions nothing is 
     const quiz = held(await answer('quiz on tls'))
     expect(quiz.groups[0].name).toBe('Learn')
     expect(learnRows(quiz).map((r) => r.title)).toContain('TLS Basics')
+    for (const q of ['quiz on tls', 'what does crypto agility mean', 'whats new on the site']) {
+      for (const r of allRows(held(await answer(q)))) {
+        expect(r.tag, q).not.toMatch(/^(?:CHG:|QZ:|QC:|PAGE:changelog$|PAGE:quiz$|LM:quiz$)/)
+        expect(r.link, q).not.toMatch(/^\/(?:changelog|learn\/quiz)(?:$|[/?#])/)
+      }
+    }
   })
 
   it('does not show a record that holds only one word of a longer question beside the best matches', async () => {
@@ -524,7 +536,9 @@ describe('what the file builder reads from the knowledge files', () => {
   it('names every lesson and page address by the lesson or the page, never by a test that runs in it', () => {
     const byLink = new Map(built.catalogue.resources.map((r) => [r.link, r]))
     const byId = new Map(core.records.map((r) => [r.id, r]))
-    const lessons = core.records.filter((r) => r.type === 'module' && r.status === 'active')
+    const lessons = core.records.filter(
+      (r) => r.type === 'module' && r.status === 'active' && !isOmittedFromAssistant(r)
+    )
     expect(lessons.length).toBeGreaterThan(50)
     for (const lesson of lessons) {
       const res = byLink.get(lesson.link)
@@ -532,9 +546,13 @@ describe('what the file builder reads from the knowledge files', () => {
       expect(res?.type, lesson.link).toBe('module')
       expect(res?.record_ids[0], lesson.link).toBe(lesson.id)
     }
-    for (const page of core.records.filter((r) => r.type === 'page' && r.status === 'active')) {
+    for (const page of core.records.filter(
+      (r) => r.type === 'page' && r.status === 'active' && !isOmittedFromAssistant(r)
+    )) {
       expect(byLink.get(page.link)?.record_ids[0], page.link).toBe(page.id)
     }
+    expect(byLink.has('/changelog')).toBe(false)
+    expect(byLink.has('/learn/quiz')).toBe(false)
     // a known-answer test shares an address; it is kept among the records of that address and never names it
     const tests = core.records.filter((r) => r.type === 'kat' && r.status === 'active')
     expect(tests.length).toBeGreaterThan(0)

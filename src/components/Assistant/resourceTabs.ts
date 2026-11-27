@@ -229,10 +229,26 @@ export function tabOf(row: Pick<AssistantRow, 'tag' | 'kind'>): ResourceTabKey {
 
 const STRUCTURAL_PREFIX = /\bIndex: \d+ List: \w+\s*/
 const STEP_NAME = /\bstep_\d+_\w+/
+const OMITTED_ROW_TAGS = new Set(['PAGE:changelog', 'PAGE:quiz', 'LM:quiz'])
+const OMITTED_ROW_PATH = /^\/(?:changelog|learn\/quiz)(?:$|[/?#])/
 
-/** Internal labels that leaked into a record's text are not shown: a row is cleaned or left out. */
+/** Internal labels, release notes, changelog pages and standalone quizzes are left out of answer cards. */
 function cleanRow(row: AssistantRow): AssistantRow | null {
-  const isKat = row.tag.startsWith('KAT:') || row.kind.trim().toLowerCase() === 'known-answer test'
+  const kindLow = row.kind.trim().toLowerCase()
+  if (
+    OMITTED_ROW_TAGS.has(row.tag) ||
+    row.tag.startsWith('CHG:') ||
+    row.tag.startsWith('QZ:') ||
+    row.tag.startsWith('QC:') ||
+    kindLow === 'release note' ||
+    kindLow === 'changelog release' ||
+    kindLow === 'quiz question' ||
+    kindLow === 'quiz category' ||
+    OMITTED_ROW_PATH.test(row.link ?? '')
+  ) {
+    return null
+  }
+  const isKat = row.tag.startsWith('KAT:') || kindLow === 'known-answer test'
   if (isKat && (STEP_NAME.test(row.title) || STEP_NAME.test(row.extract))) return null
   if (STRUCTURAL_PREFIX.test(row.extract)) {
     const extract = row.extract.replace(STRUCTURAL_PREFIX, '').trim()

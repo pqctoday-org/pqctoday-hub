@@ -352,6 +352,35 @@ describe('buildResourceTabs', () => {
     expect(stripped.extract).toBe('Compare the listed options.')
   })
 
+  it('omits release notes, the changelog page and standalone quizzes from built tabs', () => {
+    const answer = answerWith([
+      {
+        name: 'Data pages',
+        rows: [
+          row('CHG:4.25.0', 'Changelog release', { link: '/changelog#v4.25.0' }),
+          row('PAGE:changelog', 'Page', { link: '/changelog' }),
+          row('CMP:CNSA-2', 'Compliance framework', { link: '/compliance?framework=CNSA-2' }),
+        ],
+      },
+      {
+        name: 'Learn',
+        rows: [
+          row('QC:tls-basics', 'Quiz category', { link: '/learn/quiz?category=tls-basics' }),
+          row('QZ:q1', 'Quiz question', { link: '/learn/quiz?category=tls-basics' }),
+          row('LM-008', 'Module', { link: '/learn/tls-basics' }),
+        ],
+      },
+    ])
+    const { tabs, total } = buildResourceTabs(answer)
+    expect(total).toBe(2)
+    expect(tabs.flatMap((t) => t.rows.map((r) => r.tag))).toEqual([
+      'CMP:CNSA-2',
+      'LM-008',
+      'LM-008',
+      'CMP:CNSA-2',
+    ])
+  })
+
   it("puts a name answer's record first, so it is in Top 5", () => {
     const { tabs, rankOf } = buildResourceTabs(nameCardMlKem as RenderableAnswer)
     expect(rankOf['ALG:ML-KEM']).toBe(1)

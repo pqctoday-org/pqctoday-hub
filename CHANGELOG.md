@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.228.3] - 2026-11-27
+
+The Assistant now omits release notes and standalone quizzes so answers stay focused on lessons, tools, standards and data records, recovers single-letter typos, declines off-topic questions cleanly, and reaches all top-level pages of the Hub.
+
+### Changed
+
+- **Answers focus on lessons, tools, standards and data records instead of release notes or quizzes** [view:/] [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: Release notes and standalone practice quizzes no longer appear in Assistant answers, where their broad wording pushed lessons and reference records down. Asking for a quiz on a subject now leads straight to the lesson that teaches it, where the lesson's own quiz tab lives.
+- **Off-topic questions say the Hub does not cover them** [view:/] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: A question about a subject outside post-quantum cryptography and this platform now receives a clear notice with no unrelated rows, instead of falling back to loosely matched entries.
+
+### Fixed
+
+- **Single-letter typos and parameter comparisons still find the right subject** [view:/] [view:/algorithms] [view:/migrate] [view:/playground] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: Common one-letter misspellings such as "crypto agilitty", "opensl", "handhsake", "cloudflaer" and "playgrond" now match the intended term, product, tool or page, and questions such as "should I pick Kyber 768 or 1024" or "ML-DSA vs Falcon" find both parameter sets or algorithm families.
+- **Questions about the Hub reach every top-level page, with cleaner summaries** [view:/] [view:/about] [view:/explore] [view:/revisions] [view:/terms] [view:/sponsor] [view:/editorial-independence] [view:/business/tools] [view:/simulation] [view:/navigate] [view:/migrate] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: Asking about About, Explore, Content Revisions, Terms, Sponsor, Editorial Independence, Business Tools, the Quantum Simulation or the 3D knowledge graph now opens that page first. Vendor and industry-standard cards show their category, headquarters or readiness summary instead of a single status word, and template placeholders no longer appear in excerpts.
+
 ## [4.228.2] - 2026-11-27
 
 The Assistant's answer card shows the best resource of every kind among its first rows, reads more kinds of question for what they ask, and shows the sentence that matched your question. Questions asked in the Assistant are now recorded as scrubbed usage events.
