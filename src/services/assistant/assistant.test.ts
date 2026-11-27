@@ -296,6 +296,7 @@ describe('lessons under their own name, plain matches, and questions nothing is 
       'Which products use MAYO-3?',
       'Please tell me all the products that have MAYO-3 built in.',
       'List the products with MAYO-3 support.',
+      'Which products on the site are listed as implementing MAYO-3?',
     ]) {
       const a = held(await answer(q))
       expect(a.intent, q).toBe('products')

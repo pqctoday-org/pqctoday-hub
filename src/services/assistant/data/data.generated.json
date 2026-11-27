@@ -1945,6 +1945,10 @@
     {
      "rx": "\\b(?:list|show|name|give me|got)\\b.{0,40}\\bproducts?\\b",
      "w": 3
+    },
+    {
+     "rx": "\\bproducts?\\b.{0,30}\\bon (?:the|this|your) (?:site|hub|website|platform)\\b|\\bon (?:the|this|your) (?:site|hub|website|platform)\\b.{0,30}\\bproducts?\\b",
+     "w": 3
     }
    ],
    "risk": [
