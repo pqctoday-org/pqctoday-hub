@@ -78,10 +78,12 @@ export function decodeCodes(text: string): string {
     return Object.prototype.hasOwnProperty.call(CODES, c) ? CODES[c] : m
   })
 }
+/** A line of a record's text that only places the record in the Hub's own lists ("Index: 0", "List: workshop_steps", "Paths: developer", "Module: tls-basics"): never shown. */
+export const STRUCTURE = /^(?:Index: [0-9]+|List: [a-z0-9_]+|Paths: [a-z0-9_,; -]+|Module: [a-z0-9]+(?:-[a-z0-9]+)*)$/
 const extractOf = (raw: string, limit = 240): string => {
   const HEADER = /^(?:Module|Component|Term|Reference|Title|Learning Module|Document|Section|Category):\s*/i
   const text = decodeCodes(raw)
-  const lines = String(text || '').split(/\r?\n/).map((l) => l.trim()).filter(Boolean)
+  const lines = String(text || '').split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !STRUCTURE.test(l))
   const body = lines.filter((l) => !HEADER.test(l))
   const out = (body.length ? body : lines.map((l) => l.replace(HEADER, ''))).join(' ').replace(/\s+/g, ' ').trim()
   if (out.length > limit) { const cut = out.slice(0, limit); const i = cut.lastIndexOf(' '); return (i >= 0 ? cut.slice(0, i) : cut) + '…' }

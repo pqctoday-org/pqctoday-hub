@@ -477,6 +477,24 @@ describe('what the file builder reads from the knowledge files', () => {
     )
   })
 
+  it('shows no line that only places a record in the Hub lists, and no test step name in place of a page', () => {
+    const structure = /\b(?:Index: \d+|List: [a-z_]+)\b|\bstep_\d+_\w+/
+    const res = built.catalogue.resources
+    expect(res.filter((r) => structure.test(r.extract)).map((r) => r.link)).toEqual([])
+    // a workshop step with no words of its own is not offered (its lesson is); every step offered has words
+    const steps = res.filter((r) => r.type === 'step')
+    expect(steps.length).toBeGreaterThan(300)
+    expect(steps.filter((r) => !r.extract).map((r) => r.link)).toEqual([])
+    expect(
+      extractOf('Index: 0\nList: workshop_steps\nModule: tls-basics\nRun the handshake.')
+    ).toBe('Run the handshake.')
+    expect(extractOf('Index: 1\nList: workshop_steps\nModule: 5g-security')).toBe('')
+    expect(extractOf('Module: TLS Basics')).toBe('TLS Basics')
+    expect(extractOf('List: the three algorithms NIST selected')).toBe(
+      'List: the three algorithms NIST selected'
+    )
+  })
+
   it('groups links as the Hub pages do, and keeps an extract to one short line', () => {
     expect(groupOf('/learn/pqc-101')).toBe('Learn')
     expect(groupOf('/learn?glossary=ML-KEM', 'term')).toBe('References')

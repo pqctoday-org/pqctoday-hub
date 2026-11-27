@@ -2,7 +2,13 @@
 import { normName } from '@/services/knowledge/knowledgeReader'
 import type { KnowledgeCore, KnowledgeRecord } from '@/services/knowledge/knowledgeTypes'
 import type { KnowledgeTextEntry, KnowledgeTextFile } from '@/services/knowledge/knowledgeText'
-import { decodeCodes, type Catalogue, type Passage, type Resource } from './engine/answerer'
+import {
+  decodeCodes,
+  STRUCTURE,
+  type Catalogue,
+  type Passage,
+  type Resource,
+} from './engine/answerer'
 import type { Model, Rec } from './engine/strict'
 
 /**
@@ -84,12 +90,18 @@ export function groupOf(link: string, type = ''): string {
   return 'Data pages'
 }
 
-/** The Hub's own words of a record, one line, at most `limit` characters, cut at a word. */
+/** The passages of a known-answer test are searched; they never stand for the words of the page the test runs on. */
+const TEST_SOURCE = 'known-answer test'
+
+/**
+ * The Hub's own words of a record, one line, at most `limit` characters, cut at a word. Lines that only place the
+ * record in the Hub's lists ("Index: 0", "List: workshop_steps") are left out.
+ */
 export function extractOf(text: string, limit = 240): string {
   const lines = decodeCodes(text)
     .split(/\r?\n/)
     .map((l) => l.trim())
-    .filter(Boolean)
+    .filter((l) => l && !STRUCTURE.test(l))
   const body = lines.filter((l) => !HEADER.test(l))
   const out = (body.length ? body : lines.map((l) => l.replace(HEADER, '')))
     .join(' ')
@@ -225,7 +237,8 @@ export function buildEngineInput(core: KnowledgeCore, text: KnowledgeTextFile): 
       })
     } else {
       cur.record_ids.push(r.id)
-      if (!cur.extract) cur.extract = extract
+      // a test that runs on the page never lends it its step name
+      if (!cur.extract && r.type !== 'kat') cur.extract = extract
     }
   }
 
@@ -248,7 +261,7 @@ export function buildEngineInput(core: KnowledgeCore, text: KnowledgeTextFile): 
       resources.set(r.link, res)
     }
     res.passages.push(passages.length)
-    if (!res.extract) res.extract = extractOf(content)
+    if (!res.extract && source !== TEST_SOURCE) res.extract = extractOf(content)
     passages.push({ link: r.link, title, text: content, source })
   }
   for (const [id, entry] of Object.entries(entries)) {
@@ -312,6 +325,11 @@ export function buildEngineInput(core: KnowledgeCore, text: KnowledgeTextFile): 
         first: [...r.parts],
         rest: [...(r.more ?? [])],
       }
+  }
+
+  // a workshop step the Hub holds no words on (its text was only its place in the lesson) is not offered: its lesson is
+  for (const [link, r] of resources) {
+    if (r.type === 'step' && !r.extract) resources.delete(link)
   }
 
   const catalogue: Catalogue = {
