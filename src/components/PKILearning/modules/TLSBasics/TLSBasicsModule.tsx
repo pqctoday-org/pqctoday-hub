@@ -47,6 +47,18 @@ import manifest from './manifest'
 import { useWorkshopStepAnchor } from '../../common/useWorkshopStepAnchor'
 
 const MODULE_ID = 'tls-basics'
+/** The Workshop step that holds the downgrade scenario (the last one in the manifest). */
+const DOWNGRADE_STEP_INDEX = (manifest.workshopSteps ?? []).findIndex((s) => s.id === 'downgrade')
+
+/** Open the Workshop and bring the downgrade scenario on screen (the Workshop shows every step on one page). */
+function openDowngradeScenario(goToWorkshop: (step?: number) => void) {
+  goToWorkshop(DOWNGRADE_STEP_INDEX)
+  window.setTimeout(() => {
+    document
+      .querySelector('[data-workshop-step="downgrade"]')
+      ?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
+  }, 100)
+}
 
 export const TLSBasicsModule: React.FC = () => {
   useWorkshopStepAnchor(manifest.workshopSteps)
@@ -285,17 +297,23 @@ export const TLSBasicsModule: React.FC = () => {
       title="TLS 1.3 Basics"
       description="Learn about TLS 1.3, configure handshake parameters, and explore PQC migration trade-offs."
       learn={(api) => <TLSIntroduction onNavigateToSimulate={() => api.goToWorkshop()} />}
-      visual={
-        <div className="space-y-6">
-          <TLSDowngradeScenario />
-          <details className="glass-panel p-4 space-y-4">
-            <summary className="font-semibold cursor-pointer">
-              Visual reference: TLS handshake sizes and path budget
-            </summary>
-            <ModuleVisualTab moduleId={MODULE_ID} />
-          </details>
+      visual={(api) => (
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            The quantum downgrade attack scenario is now the last step of the Workshop.{' '}
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-sm text-primary"
+              onClick={() => openDowngradeScenario(api.goToWorkshop)}
+            >
+              Open the downgrade attack scenario
+            </Button>
+          </p>
+          <ModuleVisualTab moduleId={MODULE_ID} />
         </div>
-      }
+      )}
       exercises={(api) => (
         <>
           <TLSExercises onNavigateToSimulate={() => api.goToWorkshop()} />
@@ -445,6 +463,11 @@ export const TLSBasicsModule: React.FC = () => {
             {/* Comparison Table */}
             <div className="mt-6" data-workshop-step="comparison">
               <TLSComparisonTable />
+            </div>
+
+            {/* Quantum downgrade attack: normal, attacked and defended connections */}
+            <div className="mt-6" data-workshop-step="downgrade">
+              <TLSDowngradeScenario />
             </div>
 
             {/* Complete Module — shown after a successful simulation */}

@@ -217,3 +217,43 @@ export function resolveReorderedStepRedirect(
   params.set('sv', rule.version)
   return `/learn/${moduleId}?${params.toString()}${hash}`
 }
+
+/**
+ * Tab names a module no longer has, and where a link that still uses one should land.
+ *
+ * `step` is a workshop step index; `stepId` is the step's manifest id, kept so a test can
+ * check the index still points at that step.
+ */
+interface RenamedTab {
+  tab: string
+  step: number
+  stepId: string
+}
+
+export const RENAMED_MODULE_TABS: ReadonlyMap<string, ReadonlyMap<string, RenamedTab>> = new Map([
+  // 2026-11-26 (4.229.0): TLS Basics shows the standard six tabs in the standard order. Its
+  // old "Downgrade Attack" tab is now the last Workshop step.
+  [
+    'tls-basics',
+    new Map([['downgrade-attack', { tab: 'workshop', step: 4, stepId: 'downgrade' }]]),
+  ],
+])
+
+/**
+ * Target URL (`/learn/<id>[?query][#hash]`) for a link that names a tab the module no longer
+ * has, or null when the link needs no change. Other query params and the hash are kept.
+ */
+export function resolveRenamedTabRedirect(
+  moduleId: string,
+  search: string,
+  hash = ''
+): string | null {
+  const rules = RENAMED_MODULE_TABS.get(moduleId)
+  if (!rules) return null
+  const params = new URLSearchParams(search)
+  const rule = rules.get(params.get('tab') ?? '')
+  if (!rule) return null
+  params.set('tab', rule.tab)
+  params.set('step', String(rule.step))
+  return `/learn/${moduleId}?${params.toString()}${hash}`
+}

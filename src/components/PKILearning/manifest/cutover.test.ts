@@ -337,6 +337,7 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
       'custody-governance': 1,
       'ai-crypto-attacks': 5,
       'pqc-algorithms': 3,
+      'tls-basics': 5,
     }))
   it('LEARN_SECTIONS', () => {
     const cbom = golden.LEARN_SECTIONS['cbom']
@@ -528,6 +529,11 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
         { id: 'ml-kem-round-trip', label: 'ML-KEM Round Trip' },
         { id: 'ml-dsa-sign-verify', label: 'ML-DSA Sign and Verify' },
         { id: 'size-comparator', label: 'Size Comparator' },
+      ],
+      // 2026-11-26: the downgrade scenario became the last step (earlier step numbers unchanged).
+      'tls-basics': [
+        ...golden.WORKSHOP_STEPS['tls-basics'],
+        { id: 'downgrade', label: 'Quantum Downgrade Attack' },
       ],
     }
     expect(buildWorkshopSteps(MANIFESTS)).toEqual(expected)
