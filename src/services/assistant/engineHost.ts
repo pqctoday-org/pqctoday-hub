@@ -177,6 +177,7 @@ function toGroups(raw: Raw[], loaded: Loaded): AssistantGroup[] {
       name: g.name as AssistantGroupName,
       rows: (g.rows as Raw[]).map((r) => toRow(r, loaded)),
       more: (g.more as Raw[]).map((r) => toRow(r, loaded)),
+      ...(g.late === true ? { late: true as const } : {}),
     }))
 }
 

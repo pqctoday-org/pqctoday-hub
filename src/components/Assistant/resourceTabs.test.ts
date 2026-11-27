@@ -237,6 +237,31 @@ describe('buildResourceTabs', () => {
     expect(compliance).toEqual(['CMP:CNSA-2', 'CMP:two', 'CMP:three'])
   })
 
+  it('lists the rows of a group marked late after the rows of the other groups, and before any "more" row', () => {
+    const waiting = {
+      ...cnsa,
+      groups: cnsa.groups.map((g) =>
+        g.name === 'Learn' || g.name === 'Tools' ? { ...g, late: true as const } : g
+      ),
+    } as RenderableAnswer
+    const { tabs, rankOf, total } = buildResourceTabs(waiting)
+    // the two groups that take their turn fill the first rows; the first group keeps the first place
+    expect(tabs[0].rows.map((r) => r.tag)).toEqual([
+      'CMP:CNSA-2',
+      'LIB:a',
+      'TL:one',
+      'LIB:b',
+      'TL:two',
+    ])
+    expect(rankOf['GL:cnsa']).toBeLessThan(rankOf['LM-001'])
+    // the late groups then take turns among themselves
+    expect(rankOf['LM-001']).toBeLessThan(rankOf['TOOL:assess'])
+    expect(rankOf['TOOL:assess']).toBeLessThan(rankOf['LM-001/s:a'])
+    expect(rankOf['LM-002']).toBeLessThan(rankOf['CMP:two'])
+    // nothing is added or removed
+    expect(total).toBe(buildResourceTabs(cnsa).total)
+  })
+
   it('builds the concept shape: algorithms, products, certifications, tools, library and glossary', () => {
     const concept = answerWith([
       {

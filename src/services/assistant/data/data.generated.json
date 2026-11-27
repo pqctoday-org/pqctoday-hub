@@ -314,6 +314,7 @@
   "intents": {
    "broad": {},
    "business_tool": {
+    "first_turn": "strong",
     "follow": [
      {
       "dir": "inverse",
@@ -402,6 +403,7 @@
      }
     },
     "filter": true,
+    "first_turn": "strong",
     "prior": {
      "Data pages": {
       "type:event": 1.8,
@@ -479,6 +481,7 @@
    },
    "not_fact": {},
    "people": {
+    "first_turn": "strong",
     "prior": {
      "Data pages": {
       "type:person": 2.0,
@@ -491,6 +494,7 @@
     }
    },
    "planning": {
+    "first_turn": "strong",
     "only": {
      "Tools": [
       "path:/business/tools",
@@ -513,6 +517,7 @@
     }
    },
    "products": {
+    "first_turn": "strong",
     "follow_fields": [
      {
       "field": "products",
@@ -548,6 +553,7 @@
    },
    "rules": {
     "filter": true,
+    "first_turn": "strong",
     "follow": [
      {
       "dir": "forward",
@@ -605,6 +611,7 @@
     }
    },
    "technical_tool": {
+    "first_turn": "strong",
     "follow": [
      {
       "dir": "forward",
@@ -900,6 +907,7 @@
     "milestones"
    ]
   },
+  "strong_title": 0.5,
   "version": 1,
   "whole_lesson": {
    "floor": 1.0,

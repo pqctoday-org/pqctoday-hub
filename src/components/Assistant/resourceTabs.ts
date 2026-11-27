@@ -266,6 +266,9 @@ const EMPTY: ResourceTabs = { tabs: [], total: 0, rankOf: {} }
  * The order of the card: the best row of every group, in the engine's group order, then the second
  * row of every group, then the third; the groups' `more` rows follow in the same way. The best
  * resource of each kind is seen first, whatever group it sits in.
+ *
+ * A group marked `late` waits: the question asks for one kind of resource and that group's best row
+ * is not a strong match, so its rows come after the rows of the other groups.
  */
 function rankedRows(answer: RenderableAnswer, p: PreparedAnswer): AssistantRow[] {
   const groups = answer.groups ?? []
@@ -276,7 +279,8 @@ function rankedRows(answer: RenderableAnswer, p: PreparedAnswer): AssistantRow[]
     return out
   }
   const ranked = [
-    ...byTurns(groups.map((g) => g.rows ?? [])),
+    ...byTurns(groups.filter((g) => !g.late).map((g) => g.rows ?? [])),
+    ...byTurns(groups.filter((g) => g.late).map((g) => g.rows ?? [])),
     ...byTurns(groups.map((g) => g.more ?? [])),
   ]
   return p.nameCard ? [nameCardAsRow(p.nameCard), ...ranked] : ranked

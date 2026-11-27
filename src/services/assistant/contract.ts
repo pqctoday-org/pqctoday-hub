@@ -123,6 +123,11 @@ export interface AssistantGroup {
   rows: AssistantRow[]
   /** The rows after the first three, best first (the drawer joins them across groups under "Show n more records"). */
   more: AssistantRow[]
+  /**
+   * Set when the question asks for one kind of resource and this group's first row is not a strong
+   * match: its rows are listed after the rows of the other groups.
+   */
+  late?: true
 }
 
 /** The evidence of a direct answer (handoff 9.4): which record, which data file revision. */

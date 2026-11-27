@@ -348,7 +348,13 @@ export class Answerer {
   cfg(intent: string): any {
     const row = this.data.finders.intents[intent] ?? {}
     const d = this.data.finders.default
-    return { w: { ...d.w, ...(row.w ?? {}) }, prior: row.prior ?? {}, only: row.only ?? {}, follow: row.follow ?? d.follow, journey: row.journey ?? d.journey, pin: row.pin ?? {}, filter: !!row.filter, field_bonus: row.field_bonus ?? {}, name_types: row.name_types ?? [], follow_fields: row.follow_fields ?? [], lead: row.lead ?? '' }
+    return { w: { ...d.w, ...(row.w ?? {}) }, prior: row.prior ?? {}, only: row.only ?? {}, follow: row.follow ?? d.follow, journey: row.journey ?? d.journey, pin: row.pin ?? {}, filter: !!row.filter, field_bonus: row.field_bonus ?? {}, name_types: row.name_types ?? [], follow_fields: row.follow_fields ?? [], lead: row.lead ?? '', first_turn: row.first_turn ?? '' }
+  }
+  /** True when a group that is not the first comes after the others on the card (`first_turn: strong` of the intent): the question asks for one
+   *  kind of resource and this group's first row is not a strong match (named by the question, or `strong_title` of the question's words in its title). */
+  lateGroup(intent: string, head: Item | undefined): boolean {
+    if (this.cfg(intent).first_turn !== 'strong') return false
+    return !(head && (head.named || (head.title_overlap ?? 0.0) >= (this.data.finders.strong_title as number)))
   }
   contentWords(reading: Reading): string[] {
     const namesToks = new Set(reading.names.flatMap((n) => tokens(n.text)))
@@ -907,7 +913,10 @@ export class Answerer {
       }
       if (!first && shown.length) first = shown[0] // the closest source is read before the page moves anything: the page never changes it
       if (page) [shown, more] = this.orderByPage(g, findReading, items, rows, shown, more, page)
-      outGroups.push({ name: g, rows: shown, more })
+      // a question that asks for one kind of resource: another group takes its turn among the first rows only when its first row is a strong match
+      const head = shown.length ? items[rows.indexOf(shown[0])] : undefined
+      const late = outGroups.length > 0 && this.lateGroup(intent, head)
+      outGroups.push(late ? { name: g, rows: shown, more, late: true } : { name: g, rows: shown, more })
     }
     model.groups = outGroups
     const label = spec.label

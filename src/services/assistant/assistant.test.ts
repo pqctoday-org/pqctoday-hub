@@ -306,6 +306,19 @@ describe('lessons under their own name, plain matches, and questions nothing is 
     }
   })
 
+  it('lets another kind of resource take its turn among the first rows only when it is a strong match, for a question that asks for one kind', async () => {
+    const a = held(await answer('Which HSM vendors support ML-DSA?'))
+    expect(a.intent).toBe('products')
+    expect(a.groups[0].name).toBe('Data pages')
+    expect(a.groups[0].late).toBeUndefined()
+    // a group whose first row is neither named by the question nor titled with its words waits
+    expect(a.groups.filter((g) => g.late).length).toBeGreaterThan(0)
+    // a question that asks for no one kind of resource: every group takes its turn
+    const b = held(await answer('What is a lattice?'))
+    expect(b.intent).toBe('concept')
+    expect(b.groups.some((g) => g.late)).toBe(false)
+  })
+
   it('puts the lesson that is about the question first among the lessons and their parts', async () => {
     const learn = held(await answer('banking')).groups.find((g) => g.name === 'Learn')
     expect(learn?.rows[0]).toMatchObject({
