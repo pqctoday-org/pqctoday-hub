@@ -580,7 +580,7 @@ export function MobileKATValidationView({
 
   return (
     <div className="px-4 pb-4 pt-4">
-      <h1 className="text-[17px] font-extrabold leading-tight text-foreground">Run a live test</h1>
+      <h1 className="page-title">Run a live test</h1>
       <p className="mt-1 text-[11.5px] leading-relaxed text-muted-foreground">
         Pinned test vectors, run live in your browser via WASM — real crypto, not a simulation. Each
         result names its evidence: a public NIST ACVP-Server reference sample or a functional

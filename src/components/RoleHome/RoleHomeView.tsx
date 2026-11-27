@@ -257,10 +257,7 @@ export const RoleHomeView = ({ onSelectPersona, onSkip }: RoleHomeViewProps) => 
       </p>
       {/* Wave A (2026-09-18): h1 — this screen is the whole front door until a
           role is picked, and it rendered no level-one heading. */}
-      <h1
-        id="role-home-heading"
-        className="font-display text-heading text-4xl font-extrabold leading-tight sm:text-[40px]"
-      >
+      <h1 id="role-home-heading" className="page-title">
         Who's asking?
       </h1>
       <p className="mt-4 max-w-[520px] text-muted-foreground">

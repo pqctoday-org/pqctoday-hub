@@ -383,7 +383,7 @@ export function MobileAssessView() {
   if (!track) {
     return (
       <div className="px-4 pb-4 pt-4">
-        <h1 className="text-[17px] font-extrabold leading-tight text-foreground">Assess</h1>
+        <h1 className="page-title">Assess</h1>
         <p className="mb-5 mt-1 text-[11.5px] leading-relaxed text-muted-foreground">
           Choose how much detail you want in your report.
         </p>
@@ -429,7 +429,7 @@ export function MobileAssessView() {
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-status-success/15">
           <Check size={22} className="text-status-success" aria-hidden="true" />
         </div>
-        <h1 className="text-[16px] font-extrabold text-foreground">Assessment complete</h1>
+        <h1 className="page-title">Assessment complete</h1>
         <p className="max-w-xs text-[11.5px] leading-relaxed text-muted-foreground">
           Your answers are saved. Open the educational report to review its modelled score, sourced
           milestones and suggested next steps.
@@ -487,9 +487,7 @@ export function MobileAssessView() {
     }
     return (
       <div className="px-4 pb-4 pt-4">
-        <h1 className="text-[17px] font-extrabold leading-tight text-foreground">
-          Review your answers
-        </h1>
+        <h1 className="page-title">Review your answers</h1>
         <p className="mb-4 mt-1 text-[11.5px] leading-relaxed text-muted-foreground">
           Edit anything before we generate your {track === 'quick' ? 'fast-track' : 'full'} report.{' '}
           {answered} of {requiredTotal} answered.
@@ -600,7 +598,7 @@ export function MobileAssessView() {
   return (
     <div className="px-4 pb-4 pt-4">
       <div className="mb-1">
-        <h1 className="text-[17px] font-extrabold leading-tight text-foreground">Assess</h1>
+        <h1 className="page-title">Assess</h1>
       </div>
       <p className="mb-3 text-[10.5px] font-bold uppercase tracking-wide text-primary">
         {TRACK_INFO[track].label} · Step {flow.stepIdx + 1} of {flow.total}

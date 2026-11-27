@@ -42,6 +42,18 @@ describe('page-title style', () => {
     ['src/components/PKILearning/common/ModuleShell.tsx', /<h1 className="page-title">/],
     ['src/components/PKILearning/modules/Quiz/QuizIntro.tsx', /<h1 className="page-title /],
     ['src/components/NotFound/NotFoundView.tsx', /<h1 className="page-title /],
+    // The phone screens, the persona boards and the role chooser (owner decision, 26 Nov 2026).
+    ['src/components/Mobile/screens/MobileHomeBoard.tsx', /<h1 className="page-title/],
+    ['src/components/Mobile/screens/MobileModuleShell.tsx', /<h1 className="page-title"/],
+    ['src/components/Mobile/screens/MobileAssessView.tsx', /<h1 className="page-title"/],
+    ['src/components/Mobile/screens/MobileTimelineView.tsx', /<h1 className="page-title"/],
+    ['src/components/Mobile/screens/MobileProtocolMatrixView.tsx', /<h1 className="page-title"/],
+    ['src/components/Mobile/screens/MobileKATValidationView.tsx', /<h1 className="page-title"/],
+    ['src/components/Mobile/screens/MobileReportView.tsx', /<h1 className="page-title"/],
+    ['src/components/Algorithms/AlgorithmsView.tsx', /<h1 className="page-title"/],
+    ['src/components/PersonaJourney/PersonaBoardView.tsx', /<h1 className="page-title /],
+    ['src/components/PersonaJourney/CuriousMobileBoard.tsx', /<h1 className="page-title /],
+    ['src/components/RoleHome/RoleHomeView.tsx', /className="page-title"/],
   ]
 
   it.each(PAGES)('%s uses the shared class and sets no title size of its own', (file, heading) => {

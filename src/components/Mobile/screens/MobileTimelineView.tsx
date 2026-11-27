@@ -297,7 +297,7 @@ export function MobileTimelineView({ comparison }: { comparison?: React.ReactNod
       <div className="mb-4 flex items-center gap-2">
         <Globe size={18} className="shrink-0 text-primary" aria-hidden="true" />
         <div>
-          <h1 className="text-[17px] font-extrabold leading-tight text-foreground">
+          <h1 className="page-title">
             {displayCountry
               ? `${displayCountry} PQC timeline`
               : regionScope === 'All'
