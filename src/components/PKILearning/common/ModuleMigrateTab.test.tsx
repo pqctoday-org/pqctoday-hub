@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
 import { ModuleMigrateTab } from './ModuleMigrateTab'
 import { vi, describe, it, expect } from 'vitest'
@@ -36,6 +37,11 @@ const mockProduct = (overrides: Partial<SoftwareItem> = {}): SoftwareItem => ({
 vi.mock('@/data/migrateData', () => ({
   getMigrateItemsForModule: vi.fn((moduleId: string) => {
     if (moduleId === 'empty-module') return []
+    if (moduleId === 'long-list') {
+      return Array.from({ length: 60 }, (_, i) =>
+        mockProduct({ softwareName: `Product ${i + 1}`, productId: `p${i + 1}` })
+      )
+    }
     if (moduleId === 'mixed-support') {
       return [
         mockProduct({ softwareName: 'PqcTool', pqcSupport: 'Yes (ML-DSA)' }),
@@ -110,11 +116,33 @@ describe('ModuleMigrateTab', () => {
     expect(screen.getByText('PartialFIPS')).toBeInTheDocument()
   })
 
-  it('renders PQC badge with correct text', () => {
+  it('renders the support chip with its word, from the six support words', () => {
     renderTab('tls-basics')
-    expect(screen.getByText('PQC')).toBeInTheDocument()
+    expect(screen.getByText('Available')).toBeInTheDocument()
     expect(screen.getByText('Planned')).toBeInTheDocument()
     expect(screen.getByText('Partial')).toBeInTheDocument()
+  })
+
+  it('shows None for a product without PQC support, never an empty chip', () => {
+    renderTab('mixed-support')
+    expect(screen.getByText('None')).toBeInTheDocument()
+  })
+
+  it('lists the products as rows of one list per layer', () => {
+    renderTab('tls-basics')
+    expect(screen.getAllByRole('list').length).toBeGreaterThanOrEqual(3)
+    expect(screen.getAllByRole('listitem')).toHaveLength(3)
+  })
+
+  it('shows 25 rows first and 25 more on request', async () => {
+    renderTab('long-list')
+    expect(screen.getAllByRole('listitem')).toHaveLength(25)
+    expect(screen.getByText('Showing 25 of 60')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Show 25 more' }))
+    expect(screen.getAllByRole('listitem')).toHaveLength(50)
+    await userEvent.click(screen.getByRole('button', { name: 'Show 10 more' }))
+    expect(screen.getAllByRole('listitem')).toHaveLength(60)
+    expect(screen.queryByRole('button', { name: /Show .* more/ })).not.toBeInTheDocument()
   })
 
   it('renders a FIPS badge only for a validated module — FedRAMP and "No" get none', () => {
@@ -140,9 +168,9 @@ describe('ModuleMigrateTab', () => {
     expect(screen.queryByRole('link', { name: /FIPSProduct/ })).not.toBeInTheDocument()
   })
 
-  it('shows View in Migrate links that open the product by id', () => {
+  it('shows Open in Migrate links that open the product by id', () => {
     renderTab('tls-basics')
-    const migrateLinks = screen.getAllByRole('link', { name: /View in Migrate/ })
+    const migrateLinks = screen.getAllByRole('link', { name: /Open in Migrate/ })
     expect(migrateLinks.length).toBeGreaterThanOrEqual(3)
     expect(migrateLinks[0]).toHaveAttribute(
       'href',

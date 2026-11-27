@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { useState } from 'react'
 import { ExternalLink, Package } from 'lucide-react'
 import { Link } from 'react-router'
 import { getMigrateItemsForModule } from '@/data/migrateData'
@@ -9,6 +10,12 @@ import type { SoftwareItem } from '@/types/MigrateTypes'
 import { EmptyState } from '@/components/ui/empty-state'
 import { migrateProductHref } from '@/utils/migrateLinks'
 import { FipsStatusBadge } from '@/components/common/FipsStatusBadge'
+import { StoryRow } from '@/components/storybook'
+import { Button } from '@/components/ui/button'
+import { pqcSupportLevel, pqcSupportToneClass } from './pqcSupportLevel'
+
+/** Rows shown before "Show more": the list grows 25 at a time. */
+const PAGE_SIZE = 25
 
 interface ModuleMigrateTabProps {
   moduleId: string
@@ -16,28 +23,14 @@ interface ModuleMigrateTabProps {
   itemFilter?: (item: SoftwareItem) => boolean
 }
 
-function renderPqcBadge(support: string) {
-  const lower = (support || '').toLowerCase()
-  let badgeClass: string
-  let label: string
-  if (lower.startsWith('yes')) {
-    badgeClass = 'bg-status-success text-status-success'
-    label = 'PQC'
-  } else if (
-    lower.startsWith('partial') ||
-    lower.startsWith('limited') ||
-    lower.startsWith('planned') ||
-    lower.startsWith('in progress')
-  ) {
-    badgeClass = 'bg-status-warning text-status-warning'
-    label = lower.startsWith('planned') || lower.startsWith('in progress') ? 'Planned' : 'Partial'
-  } else {
-    badgeClass = 'bg-muted/50 text-muted-foreground'
-    label = 'No PQC'
-  }
+/** The support chip: the level's word is always shown, colour only repeats it. */
+function SupportChip({ pqcSupport }: { pqcSupport: string }) {
+  const level = pqcSupportLevel(pqcSupport)
   return (
-    <span className={`inline-flex items-center text-xs px-1.5 py-0.5 rounded-full ${badgeClass}`}>
-      {label}
+    <span
+      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-extrabold leading-none ${pqcSupportToneClass(level)}`}
+    >
+      {level}
     </span>
   )
 }
@@ -71,6 +64,7 @@ function groupByLayer(items: SoftwareItem[]): LayerGroup[] {
 }
 
 export function ModuleMigrateTab({ moduleId, itemFilter }: ModuleMigrateTabProps) {
+  const [shown, setShown] = useState(PAGE_SIZE)
   const all = getMigrateItemsForModule(moduleId)
   const items = itemFilter ? all.filter(itemFilter) : all
 
@@ -85,6 +79,17 @@ export function ModuleMigrateTab({ moduleId, itemFilter }: ModuleMigrateTabProps
   }
 
   const layerGroups = groupByLayer(items)
+  // One row per product in each layer it sits in; the list grows 25 rows at a time, in layer order.
+  const rowCount = layerGroups.reduce((sum, group) => sum + group.products.length, 0)
+  const visibleGroups = layerGroups
+    .map((group, index) => {
+      const before = layerGroups
+        .slice(0, index)
+        .reduce((sum, earlier) => sum + earlier.products.length, 0)
+      const room = Math.max(0, shown - before)
+      return { ...group, total: group.products.length, products: group.products.slice(0, room) }
+    })
+    .filter((group) => group.products.length > 0)
   // A module can list products that are here for their certificates and carry no PQC support; the
   // header must not call those "PQC-ready".
   const hasProductWithoutPqc = items.some(
@@ -111,20 +116,20 @@ export function ModuleMigrateTab({ moduleId, itemFilter }: ModuleMigrateTabProps
         .
       </p>
 
-      {layerGroups.map(({ layerId, label, icon: Icon, products }) => (
+      {visibleGroups.map(({ layerId, label, icon: Icon, total, products }) => (
         <div key={layerId}>
           <div className="flex items-center gap-2 mb-3">
             <Icon size={18} className="text-primary" />
             <h3 className="text-sm font-semibold text-foreground">{label}</h3>
             <span className="text-xs px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">
-              {products.length}
+              {total}
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <ul className="space-y-2">
             {products.map((product) => (
-              <div key={`${layerId}-${product.softwareName}`} className="glass-panel p-4">
-                <div className="flex items-start justify-between gap-2 mb-1.5">
+              <StoryRow as="li" key={`${layerId}-${product.softwareName}`} className="space-y-1.5">
+                <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-1.5 min-w-0">
                     {product.repositoryUrl ? (
                       <a
@@ -146,7 +151,7 @@ export function ModuleMigrateTab({ moduleId, itemFilter }: ModuleMigrateTabProps
                     )}
                   </div>
                   <div className="flex items-center gap-1 shrink-0 flex-wrap justify-end">
-                    {renderPqcBadge(product.pqcSupport)}
+                    <SupportChip pqcSupport={product.pqcSupport} />
                     <FipsStatusBadge
                       fipsValidated={product.fipsValidated}
                       productId={product.productId}
@@ -159,26 +164,40 @@ export function ModuleMigrateTab({ moduleId, itemFilter }: ModuleMigrateTabProps
                   </div>
                 </div>
 
-                <p className="text-xs text-muted-foreground line-clamp-2 mb-2">
-                  {product.productBrief}
-                </p>
+                <p className="text-xs text-muted-foreground line-clamp-2">{product.productBrief}</p>
 
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-2">
                   <span className="text-xs px-1.5 py-0.5 rounded border border-border text-muted-foreground bg-muted/30">
                     {product.licenseType}
                   </span>
                   <Link
                     to={migrateProductHref(product.productId)}
-                    className="text-xs text-primary hover:underline"
+                    className="text-xs text-primary-legible hover:underline"
                   >
-                    View in Migrate &rarr;
+                    Open in Migrate &rsaquo;
                   </Link>
                 </div>
-              </div>
+              </StoryRow>
             ))}
-          </div>
+          </ul>
         </div>
       ))}
+
+      {rowCount > shown && (
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-xs text-muted-foreground" role="status">
+            Showing {Math.min(shown, rowCount)} of {rowCount}
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            className="min-h-[44px]"
+            onClick={() => setShown((n) => n + PAGE_SIZE)}
+          >
+            Show {Math.min(PAGE_SIZE, rowCount - shown)} more
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
