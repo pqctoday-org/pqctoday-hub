@@ -200,6 +200,58 @@ describe('the Assistant answers from the Hub knowledge files', () => {
   })
 })
 
+describe('lessons under their own name, plain matches, and questions nothing is recognised in', () => {
+  beforeAll(() => {
+    stubKnowledgeFetch()
+  })
+  afterAll(() => {
+    vi.unstubAllGlobals()
+    forgetAssistant()
+  })
+  const learnRows = (a: Held) => a.groups.find((g) => g.name === 'Learn')?.rows ?? []
+
+  it('offers a lesson as the lesson, and never a known-answer test in its place', async () => {
+    const a = held(await answer('Is there a module on TLS?'))
+    expect(learnRows(a)[0]).toMatchObject({ title: 'TLS Basics', kind: 'Module' })
+    for (const q of ['Is there a module on TLS?', 'What is ML-KEM?', 'What is crypto agility?']) {
+      const rows = allRows(held(await answer(q)))
+      expect(rows.length).toBeGreaterThan(0)
+      expect(
+        rows
+          .filter((r) => r.tag.startsWith('KAT:') || /\bstep_\d+_/.test(r.title))
+          .map((r) => r.title)
+      ).toEqual([])
+    }
+  })
+
+  it('searches a question nothing is recognised in by its own words', async () => {
+    const fiveG = held(await answer('5g'))
+    expect(fiveG.state).toBe('broad')
+    expect(learnRows(fiveG)[0]).toMatchObject({ title: '5G Security', kind: 'Module' })
+    // a request with no topic still gets the introduction
+    const hello = held(await answer('hello'))
+    expect(hello.state).toBe('broad')
+    expect(learnRows(hello)[0].title).toBe('PQC 101')
+    expect(learnRows(hello).map((r) => r.tag)).not.toEqual(learnRows(fiveG).map((r) => r.tag))
+    // words the Hub holds nothing on get the introduction too, never an empty answer
+    const nothing = held(await answer('qwertyzzxx blorp'))
+    expect(nothing.state).toBe('broad')
+    expect(learnRows(nothing)[0].title).toBe('PQC 101')
+  })
+
+  it('does not show a record that holds only one word of a longer question beside the best matches', async () => {
+    const a = held(await answer('is rsa 2048 still ok'))
+    const shown = a.groups.flatMap((g) => g.rows.map((r) => r.title))
+    expect(shown.length).toBeGreaterThan(0)
+    expect(shown).not.toContain('CKR_OK')
+  })
+
+  it('keeps a record that holds the name the question asks about, though it holds no other word of it', async () => {
+    const a = held(await answer('who created sphincs+'))
+    expect(a.groups.flatMap((g) => g.rows.map((r) => r.title))).toContain('SPHINCS+ Team')
+  })
+})
+
 describe('data not loading, then Try again (golden case 9)', () => {
   afterAll(() => {
     vi.unstubAllGlobals()
@@ -349,6 +401,62 @@ describe('what the file builder reads from the knowledge files', () => {
     }
     expect(built.catalogue.curriculum?.stages['1']).toBe('Basics')
     expect(built.catalogue.curriculum?.modules['pqc-101'].stage).toBe(1)
+  })
+
+  it('names every lesson and page address by the lesson or the page, never by a test that runs in it', () => {
+    const byLink = new Map(built.catalogue.resources.map((r) => [r.link, r]))
+    const byId = new Map(core.records.map((r) => [r.id, r]))
+    const lessons = core.records.filter((r) => r.type === 'module' && r.status === 'active')
+    expect(lessons.length).toBeGreaterThan(50)
+    for (const lesson of lessons) {
+      const res = byLink.get(lesson.link)
+      expect(res?.title, lesson.link).toBe(lesson.label)
+      expect(res?.type, lesson.link).toBe('module')
+      expect(res?.record_ids[0], lesson.link).toBe(lesson.id)
+    }
+    for (const page of core.records.filter((r) => r.type === 'page' && r.status === 'active')) {
+      expect(byLink.get(page.link)?.record_ids[0], page.link).toBe(page.id)
+    }
+    // a known-answer test shares an address; it is kept among the records of that address and never names it
+    const tests = core.records.filter((r) => r.type === 'kat' && r.status === 'active')
+    expect(tests.length).toBeGreaterThan(0)
+    for (const t of tests) {
+      const res = byLink.get(t.link)
+      expect(res?.record_ids, t.id).toContain(t.id)
+      expect(byId.get(res?.record_ids[0] ?? '')?.type, t.id).not.toBe('kat')
+    }
+    expect(built.catalogue.resources.some((r) => r.type === 'kat')).toBe(false)
+  })
+
+  it('names a shared address by its lesson whatever the order of the file, and keeps the order of the file otherwise', () => {
+    const rec = (id: string, type: string, label: string, link: string) => ({
+      ...core.records[0],
+      id,
+      type,
+      kind: type,
+      label,
+      link,
+      status: 'active',
+      extract: label,
+    })
+    const small = {
+      ...core,
+      records: [
+        rec('KAT:T-1', 'kat', 'ML-KEM-768: Builder step_1_keygen', '/learn/x'),
+        rec('CHK:a', 'checklistitem', 'First item', '/y'),
+        rec('LM-900', 'module', 'Lesson X', '/learn/x'),
+        rec('CHK:b', 'checklistitem', 'Second item', '/y'),
+        rec('PAGE:y', 'page', 'Page Y', '/y'),
+        rec('CHK:c', 'checklistitem', 'Third item', '/z'),
+        rec('CHK:d', 'checklistitem', 'Fourth item', '/z'),
+      ],
+    } as typeof core
+    const res = buildEngineInput(small, { entries: {} } as never).catalogue.resources
+    expect(res.map((r) => [r.link, r.title, r.type, r.record_ids])).toEqual([
+      ['/learn/x', 'Lesson X', 'module', ['LM-900', 'KAT:T-1']],
+      ['/y', 'Page Y', 'page', ['PAGE:y', 'CHK:a', 'CHK:b']],
+      ['/z', 'Third item', 'checklistitem', ['CHK:c', 'CHK:d']],
+    ])
   })
 
   it('groups links as the Hub pages do, and keeps an extract to one short line', () => {

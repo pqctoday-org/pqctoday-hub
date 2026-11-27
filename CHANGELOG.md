@@ -29,6 +29,16 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.228.1] - 2026-11-26
+
+The Assistant offers lessons under their own names, leaves out resources that share only one word with your question, and answers a short question with resources on its subject.
+
+### Fixed
+
+- **Lessons appear in Assistant answers under their own name** [view:/] [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: When a lesson also holds a validation test, the Assistant listed the lesson under that test's name, and the answer card then left it out. The lesson is now offered by name. For example, "Is there a module on TLS?" shows "TLS Basics" first.
+- **Fewer unrelated resources in answers** [view:/] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: The Assistant no longer adds a resource to an answer because it shares a single word with your question. A resource found by its words must share at least two words with the question, or the name you asked about.
+- **A short question gets resources on its subject** [view:/] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: A question of one or two words that the Hub teaches, such as "5g" or "iot", is now answered with that subject (the "5G Security" lesson, the "IoT & Embedded Device PQC" lesson) instead of the general introduction. A greeting such as "hello" still gets the introduction.
+
 ## [4.228.0] - 2026-11-26
 
 The Assistant gives one clear card per answer, remembers what you already asked and suggests what to ask next, and now points from a person, event, patent or product to the lesson that teaches it. Eleven lessons gain a new sourced section, and several catalogue and Library records are corrected.

@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:e556827f-c003-4357-90cf-08d3d5b87fb6",
+  "serialNumber": "urn:uuid:c54cb0fa-0ec7-4951-b124-e1904e173da0",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-25T00:00:00.000Z",
+    "timestamp": "2026-11-26T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -14294,7 +14294,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Web & Application Security"
+          "value": "CDN & Edge Security"
         },
         {
           "name": "pqctoday:layer",
@@ -15723,7 +15723,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Web & Application Security"
+          "value": "CDN & Edge Security"
         },
         {
           "name": "pqctoday:layer",
@@ -15811,7 +15811,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Web & Application Security"
+          "value": "CDN & Edge Security"
         },
         {
           "name": "pqctoday:layer",
@@ -16825,7 +16825,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Web & Application Security"
+          "value": "Web Browsers"
         },
         {
           "name": "pqctoday:layer",
@@ -16873,7 +16873,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Web & Application Security"
+          "value": "Web Browsers"
         },
         {
           "name": "pqctoday:layer",
@@ -16914,7 +16914,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Web & Application Security"
+          "value": "Web Browsers"
         },
         {
           "name": "pqctoday:layer",
@@ -17262,7 +17262,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Web & Application Security"
+          "value": "CDN & Edge Security"
         },
         {
           "name": "pqctoday:layer",
@@ -35573,7 +35573,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Network Security"
+          "value": "Network Security Software"
         },
         {
           "name": "pqctoday:layer",
@@ -35616,7 +35616,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Hardware Security Chips"
+          "value": "Hardware Security & Semiconductors"
         },
         {
           "name": "pqctoday:layer",

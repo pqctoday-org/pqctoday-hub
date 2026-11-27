@@ -61,6 +61,13 @@ export const FAMILY_FILE_PREFIX: Record<string, string> = {
   role_board_variants: 'role_board_variants',
 }
 
+/**
+ * Which record names an address that several records share: lower comes first. A page is what its address opens, then a
+ * lesson; a known-answer test comes last. Every other kind keeps the order of the file.
+ */
+const ADDRESS_OWNER_RANK: Record<string, number> = { page: 0, module: 1, kat: 3 }
+const ADDRESS_OWNER_DEFAULT = 2
+
 /** Families whose records of one label may be the same thing under two ids (their one value is then not a clash). */
 const SAME_LABEL_SAME_THING = ['standard_row']
 
@@ -182,9 +189,25 @@ export function buildEngineInput(core: KnowledgeCore, text: KnowledgeTextFile): 
   }
 
   // ---------------------------------------------------------------- resources: one per address
+  // An address several records share is one resource, named by the record the address opens: the page, else the lesson,
+  // else the first record of the file. A known-answer test shares its lesson's address and never names it, whatever
+  // the order of the file ("/learn/tls-basics" is the lesson TLS Basics, not the first test that runs in it).
   const resources = new Map<string, Resource>()
+  const rankOf = (r: KnowledgeRecord) => ADDRESS_OWNER_RANK[r.type] ?? ADDRESS_OWNER_DEFAULT
+  const owner = new Map<string, KnowledgeRecord>()
   for (const r of core.records) {
     if (!r.link || !ACTIVE(r)) continue
+    const cur = owner.get(r.link)
+    if (!cur || rankOf(r) < rankOf(cur)) owner.set(r.link, r)
+  }
+  const sharing = new Map<string, KnowledgeRecord[]>()
+  for (const r of core.records) {
+    if (!r.link || !ACTIVE(r)) continue
+    const list = sharing.get(r.link)
+    if (!list) sharing.set(r.link, r === owner.get(r.link) ? [r] : [owner.get(r.link)!, r])
+    else if (r !== owner.get(r.link)) list.push(r)
+  }
+  for (const r of [...sharing.values()].flat()) {
     const cur = resources.get(r.link)
     const extract = extractOf(definitionOf(r, entries[r.id]?.full))
     if (!cur) {
