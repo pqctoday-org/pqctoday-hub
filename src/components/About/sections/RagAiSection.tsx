@@ -25,7 +25,7 @@ export function RagAiSection() {
         <div className="flex-1">
           <h2 className="text-xl font-semibold font-display text-heading">PQC Assistant</h2>
           <p className="text-xs text-muted-foreground">
-            Answers from the Hub&apos;s own records · no language model
+            Answers from the Hub&apos;s own records · stays in your browser
           </p>
         </div>
         <ChevronDown
@@ -61,8 +61,8 @@ export function RagAiSection() {
                 closest records instead of guessing.
               </p>
               <p className="text-muted-foreground mt-3">
-                There is no language model behind it, so there is nothing to download and no API key
-                to enter.
+                It answers only from the Hub&apos;s own records, so nothing leaves your browser and
+                no account or outside service is needed.
               </p>
               <div className="mt-4 flex items-start gap-3 p-3 rounded-lg bg-status-warning/10 border border-status-warning/30">
                 <ShieldAlert className="text-status-warning mt-0.5 shrink-0" size={16} />

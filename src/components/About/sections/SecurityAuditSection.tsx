@@ -53,8 +53,8 @@ export function SecurityAuditSection() {
                 that every component avoids HTML insertion.
               </li>
               <li>
-                The site asks for no API key and stores none. Public build-time identifiers are
-                distinct from secret credentials.
+                The site asks for no secret credentials and stores none. Public identifiers set when
+                the site is built are not secrets.
               </li>
             </ul>
           </div>

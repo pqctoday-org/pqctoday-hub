@@ -386,7 +386,7 @@ export function TermsView() {
           </p>
           <p>
             The Platform&apos;s <strong>PQC Assistant</strong> answers from the Platform&apos;s own
-            records, on your device. It uses no language model and asks for no API key, and your
+            records, on your device. It works entirely in your browser without an account, and your
             questions are not sent to any outside service.
           </p>
           <p>
