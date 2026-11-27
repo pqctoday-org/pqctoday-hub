@@ -6,6 +6,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { Button } from '@/components/ui/button'
 import { ExportableArtifact } from '../../../common/executive'
 import { scopedArtifactInputs, useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
+import { formatDateStamp } from '@/lib/format'
 
 const MODULE_ID = 'pqc-grc'
 /** This workshop step saves under the `risk-register` document type, which the
@@ -123,7 +124,7 @@ export const ExceptionRegisterTriage: React.FC = () => {
 
   const exportMarkdown = useMemo(() => {
     let md = '# PQC GRC — Exception Register Triage\n\n'
-    md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+    md += `Generated: ${formatDateStamp(new Date())}\n\n`
     md += 'Fictional sample exercise; selections are not an operational suppression list.\n\n'
     md += `Answered: ${ENTRIES.filter((e) => choices[e.id] !== null).length} of ${ENTRIES.length}.\n\n`
     md +=

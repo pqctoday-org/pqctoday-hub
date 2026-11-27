@@ -83,6 +83,7 @@ import {
 import { bytesToHex } from '@noble/hashes/utils.js'
 import { sha256 } from '@noble/hashes/sha2.js'
 import { clampStep } from '@/utils/clampStep'
+import { formatSessionTime } from '@/lib/format'
 
 const TEE_LIVE_OPERATIONS = [
   'C_GenerateKeyPair',
@@ -365,7 +366,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
     const overallStartedAt = performance.now()
     setLogEntries([{ status: 'pending', message: overallLabel }])
 
-    const now = () => new Date().toLocaleTimeString()
+    const now = () => formatSessionTime(new Date())
     const addResult = (r: ProvisioningResult) => {
       setLiveResults((prev) => [...prev, r])
       setCompletedSteps((prev) => new Set([...prev, r.step - 1]))

@@ -67,6 +67,7 @@ import {
   type LogEntry,
 } from '@/components/PKILearning/common/WorkshopOperationLog'
 import { clampStep } from '@/utils/clampStep'
+import { formatSessionTime } from '@/lib/format'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -320,7 +321,7 @@ const fmtKcv = (kcv: Uint8Array | null | undefined): string =>
         .join(' ')
     : '—'
 
-const ts = () => new Date().toLocaleTimeString()
+const ts = () => formatSessionTime(new Date())
 
 /** Outcome of comparing the DEK before wrapping with the DEK recovered after unwrapping. */
 export interface DekComparison {

@@ -54,6 +54,7 @@ import {
   hsm_getKeysRemaining,
 } from '@/wasm/softhsm/pqc'
 import { hsm_extractKeyValue } from '@/wasm/softhsm'
+import { formatSessionTime } from '@/lib/format'
 
 type XMSSHash = 'SHA-256' | 'SHAKE-128' | 'SHAKE256'
 type XMSSHeight = 10 | 16 | 20
@@ -321,14 +322,14 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp, in
         family: 'xmss',
         role: 'private',
         label: `XMSS Key (${selected.name})`,
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        generatedAt: formatSessionTime(new Date()),
       })
       hsm.registerKey(M!, hSession, {
         handle: pubHandle,
         family: 'xmss',
         role: 'public',
         label: `XMSS Pubkey (${selected.name})`,
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        generatedAt: formatSessionTime(new Date()),
         rawBytes: pubBytes,
         paramSet: ckpParam,
       })

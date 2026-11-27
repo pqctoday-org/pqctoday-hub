@@ -19,6 +19,7 @@ import { ENTERPRISE_SCENARIO, ROTATION_POLICIES } from '../data/kmsConstants'
 import { KMS_PROVIDERS, KMS_STATUS_LABELS, getKmsPqcStatus } from '../data/kmsProviderData'
 import { Button } from '@/components/ui/button'
 import { migrateDomainHref } from '@/utils/migrateLinks'
+import { formatBytes as formatBytesShared } from '@/lib/format'
 
 type MigrationPhase = 'inventory' | 'hybrid' | 'full-pqc'
 
@@ -569,8 +570,4 @@ export const KmsRotationPlanner: React.FC = () => {
   )
 }
 
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KiB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MiB`
-}
+const formatBytes = (bytes: number): string => formatBytesShared(bytes, { kib: true })

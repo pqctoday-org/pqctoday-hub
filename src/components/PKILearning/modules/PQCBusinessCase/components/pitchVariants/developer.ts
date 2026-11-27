@@ -14,6 +14,7 @@ import {
   buildRiskOverviewDefault,
   buildTimelineDefault,
 } from './sectionDefaults'
+import { formatDateStamp } from '@/lib/format'
 
 export function buildDeveloperVariant(data: ExecutiveModuleData): PitchVariant {
   const sections: ArtifactSection[] = [
@@ -138,11 +139,7 @@ export function buildDeveloperVariant(data: ExecutiveModuleData): PitchVariant {
   ]
 
   const renderPreview = (formData: FormData, d: ExecutiveModuleData): string => {
-    const dateStr = new Date().toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
+    const dateStr = formatDateStamp(new Date())
     const get = (sid: string, fid: string) => (formData[sid]?.[fid] as string) || '_Not specified_'
 
     let md = '# PQC Migration - Technical Proposal\n\n'

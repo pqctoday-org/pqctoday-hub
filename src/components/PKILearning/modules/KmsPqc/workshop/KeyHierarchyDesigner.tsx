@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react'
 import { KeyRound, HardDrive, Network, Info } from 'lucide-react'
 import { KEY_HIERARCHY_LEVELS, KEY_SIZE_COMPARISONS } from '../data/kmsConstants'
 import { Button } from '@/components/ui/button'
+import { formatBytes as formatBytesShared } from '@/lib/format'
 
 type AlgorithmMode = 'classical' | 'hybrid' | 'pqc'
 
@@ -406,8 +407,4 @@ export const KeyHierarchyDesigner: React.FC = () => {
   )
 }
 
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KiB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MiB`
-}
+const formatBytes = (bytes: number): string => formatBytesShared(bytes, { kib: true })

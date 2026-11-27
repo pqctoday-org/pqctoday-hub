@@ -19,6 +19,7 @@ import {
   ESTIMATED_CRQC_YEAR,
 } from '../data/sensitivityConstants'
 import { COMPLIANCE_MANDATES, getEarliestDeadline } from '../data/industryComplianceData'
+import { formatDateStamp } from '@/lib/format'
 
 interface PQCMigrationPriorityMapProps {
   assets: DataAsset[]
@@ -236,7 +237,7 @@ export const PQCMigrationPriorityMap: React.FC<PQCMigrationPriorityMapProps> = (
   const handleExport = () => {
     const lines = [
       '# PQC Migration Priority Map',
-      `Generated: ${new Date().toLocaleDateString()}`,
+      `Generated: ${formatDateStamp(new Date())}`,
       '',
       `Illustrative quantum-threat year assumption: ${crqcYear}`,
       `Scoring weights (%): sensitivity ${weights.sensitivity}, retention ${weights.retention}, compliance ${weights.compliance}, confidentiality window ${weights.hndlWindow}`,

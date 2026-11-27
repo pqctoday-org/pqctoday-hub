@@ -10,6 +10,7 @@ import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { hsm_generateMLDSAKeyPair, hsm_extractKeyValue, hsm_getMechanismList } from '@/wasm/softhsm'
 import { Button } from '@/components/ui/button'
+import { formatSessionTime } from '@/lib/format'
 
 const PKCS11_LIVE_OPERATIONS = [
   'C_Initialize',
@@ -105,14 +106,14 @@ export const ProviderPatternWorkshop: React.FC = () => {
         family: 'ml-dsa',
         role: 'public',
         label: 'ML-DSA-65 Provider Root (Pub)',
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        generatedAt: formatSessionTime(new Date()),
       })
       hsm.registerKey(M, hSession, {
         handle: privHandle,
         family: 'ml-dsa',
         role: 'private',
         label: 'ML-DSA-65 Provider Root (Priv)',
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        generatedAt: formatSessionTime(new Date()),
       })
 
       addLine(

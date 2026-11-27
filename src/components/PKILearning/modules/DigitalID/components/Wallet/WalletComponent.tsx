@@ -11,6 +11,7 @@ import {
   recordedIsoTime,
   type RecordedTime,
 } from '../../utils/credentialInspection'
+import { formatDateTime, formatSessionTime } from '@/lib/format'
 
 interface WalletComponentProps {
   wallet: WalletInstance
@@ -237,7 +238,7 @@ export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddC
                         </div>
                       </div>
                       <div className="text-right text-xs text-muted-foreground">
-                        <p>Created: {new Date(key.created).toLocaleTimeString()}</p>
+                        <p>Created: {formatSessionTime(new Date(key.created))}</p>
                       </div>
                     </div>
                   ))}
@@ -261,7 +262,7 @@ export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddC
                     <li key={log.id} className="text-sm p-2 border-l-2 pl-4 border-primary">
                       <span className="font-semibold">{log.type}</span>: {log.details}
                       <span className="block text-xs text-muted-foreground">
-                        {new Date(log.timestamp).toLocaleString()}
+                        {formatDateTime(log.timestamp)}
                       </span>
                     </li>
                   ))}

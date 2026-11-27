@@ -70,6 +70,7 @@ import {
 } from '../../../../../wasm/softhsm'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { clampStep } from '@/utils/clampStep'
+import { formatSessionTime } from '@/lib/format'
 
 interface DemoState {
   keyId: string
@@ -234,7 +235,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
             label: 'QKD Imported Master Secret',
             family: 'ml-kem',
             role: 'private',
-            generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+            generatedAt: formatSessionTime(new Date()),
           })
           if (!active()) throw new Error('Sample HSM session changed; repeat import.')
           importOrigin.current = { module: M, session: hSession, engine: hsm.engine, handle }

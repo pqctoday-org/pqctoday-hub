@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { TopicSelector } from './components/TopicSelector'
 import { OTHER_ROLES_SCORE_NOTE } from './roleScope'
 import type { QuizCategory, QuizMode, QuizCategoryMeta } from './types'
+import { formatDataSourceLine } from '@/lib/format'
 
 const SECONDS_PER_QUESTION = 45
 const QUICK_POOL_THRESHOLD_MIN = 15
@@ -122,8 +123,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
         {quizMetadata && (
           <div className="hidden lg:flex items-center justify-center gap-3 text-[10px] md:text-xs text-muted-foreground mt-3 font-mono">
             <p>
-              Data Source: {quizMetadata.filename} • Updated:{' '}
-              {quizMetadata.lastUpdate.toLocaleDateString()}
+              Data source: {formatDataSourceLine(quizMetadata.filename, quizMetadata.lastUpdate)}
             </p>
           </div>
         )}

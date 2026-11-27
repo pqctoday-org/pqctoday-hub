@@ -14,6 +14,7 @@ import {
   type OTSector,
 } from '../data/otProtocolData'
 import { SECTOR_LABEL } from '../data/roadmapData'
+import { formatBytes } from '@/lib/format'
 
 interface ProtocolSecurityAnalyzerProps {
   onComplete: () => void
@@ -81,10 +82,6 @@ const THREAT_META: Record<
     icon: <ShieldOff size={16} className="text-muted-foreground shrink-0 mt-0.5" />,
     border: 'bg-muted/40 border-border',
   },
-}
-
-function formatBytes(bytes: number): string {
-  return bytes >= 1024 ? `${(bytes / 1024).toFixed(1)} KB` : `${bytes} B`
 }
 
 const SECTOR_FILTER: { id: 'all' | OTSector; label: string }[] = [

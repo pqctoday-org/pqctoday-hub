@@ -26,6 +26,7 @@ import { migrateProductHref } from '@/utils/migrateLinks'
 
 import { JURISDICTIONS, type JurisdictionConfig } from '../data/jurisdictions'
 import { FipsStatusBadge } from '@/components/common/FipsStatusBadge'
+import { formatDateStamp } from '@/lib/format'
 
 function getEarliestDeadline(country: CountryData): number | null {
   let earliest: number | null = null
@@ -383,7 +384,7 @@ export const JurisdictionMapper: React.FC<JurisdictionMapperProps> = ({
 
   const exportMarkdown = useMemo(() => {
     let md = '# Jurisdiction Compliance Map\n\n'
-    md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+    md += `Generated: ${formatDateStamp(new Date())}\n\n`
     md += `## Selected Jurisdictions\n\n`
     for (const id of selectedJurisdictions) {
       const jur = JURISDICTIONS.find((j) => j.id === id)

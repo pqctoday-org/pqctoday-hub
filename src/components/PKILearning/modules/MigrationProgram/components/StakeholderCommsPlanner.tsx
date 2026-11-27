@@ -8,6 +8,7 @@ import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBa
 import { useSavedArtifactInputs, useSavedArtifactOutput } from '@/hooks/useSavedArtifactInputs'
 import { findCountryNextMilestone } from '@/components/Report/countryMilestone'
 import type { RoadmapOutput } from '../types'
+import { formatDateStamp } from '@/lib/format'
 
 type CommsFormData = Record<string, Record<string, string | string[]>>
 
@@ -302,7 +303,7 @@ export function renderCommsPreview(
   data: Record<string, Record<string, string | string[]>>
 ): string {
   let md = '# PQC Migration — Stakeholder Communications Plan\n\n'
-  md += `Generated: ${new Date().toLocaleDateString()}\n\n---\n\n`
+  md += `Generated: ${formatDateStamp(new Date())}\n\n---\n\n`
 
   // Stakeholder Map
   md += '## 1. Stakeholder Map\n\n'

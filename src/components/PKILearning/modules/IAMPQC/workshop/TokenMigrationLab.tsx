@@ -35,6 +35,7 @@ import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import type { HsmFamily } from '@/components/Playground/hsm/HsmContext'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { formatSessionTime } from '@/lib/format'
 
 const IAM_KAT_SPECS: KatTestSpec[] = [
   {
@@ -333,14 +334,14 @@ export const TokenMigrationLab: React.FC = () => {
         family,
         role: 'public',
         label: `${labelSuffix} Token Pub`,
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        generatedAt: formatSessionTime(new Date()),
       })
       hsm.registerKey(M, hSession, {
         handle: result.privHandle,
         family,
         role: 'private',
         label: `${labelSuffix} Token Priv`,
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        generatedAt: formatSessionTime(new Date()),
       })
 
       keyCacheRef.current[algo] = result

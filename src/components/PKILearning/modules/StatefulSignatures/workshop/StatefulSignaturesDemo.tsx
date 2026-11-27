@@ -34,6 +34,7 @@ import {
 import { StateManagementVisualizer } from './StateManagementVisualizer'
 import { tamperSampleMessage } from './tamperSampleMessage'
 import { XMSSKeyGenDemo } from './XMSSKeyGenDemo'
+import { formatSessionTime } from '@/lib/format'
 
 function hexToBytes(hex: string): Uint8Array {
   const cleaned = hex.replace(/\s+/g, '')
@@ -188,7 +189,7 @@ export function StatefulSignaturesDemo() {
         family: 'hss',
         role: 'public',
         label: 'HSS Pubkey (RFC 8554 App. F)',
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        generatedAt: formatSessionTime(new Date()),
       })
       const importedPubBytes = hsm_extractKeyValue(M, session, pubHandle)
       const importedPubHex = bytesToHex(importedPubBytes)
@@ -285,7 +286,7 @@ export function StatefulSignaturesDemo() {
         family: 'xmss',
         role: 'private',
         label: 'XMSS Privkey (zero seed)',
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        generatedAt: formatSessionTime(new Date()),
       })
       rows.push({ label: '→ privHandle', hex: `0x${privHandle.toString(16).padStart(8, '0')}` })
       rows.push({ label: '→ pubHandle', hex: `0x${pubHandle.toString(16).padStart(8, '0')}` })

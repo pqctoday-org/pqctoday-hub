@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button'
 import { FileText, KeyRound, Building2, CalendarClock } from 'lucide-react'
 import type { RACIOutput, PolicyOutput } from '../types'
 import type { ExecutiveDocument } from '@/services/storage/types'
+import { formatDateStamp } from '@/lib/format'
 
 export type PolicyType =
   'crypto-algorithm' | 'key-management' | 'vendor-requirements' | 'migration-timeline'
@@ -625,7 +626,7 @@ export function renderPolicyPreview(
   if (jurisdiction) md += `**Jurisdiction:** ${jurisdiction}\n\n`
   if (industry) md += `**Industry:** ${industry}\n\n`
   md += `**Applicable Frameworks:** ${frameworks.length > 0 ? frameworks.join(', ') : 'None selected'}\n\n`
-  md += `Generated: ${new Date().toLocaleDateString()}\n\n---\n\n`
+  md += `Generated: ${formatDateStamp(new Date())}\n\n---\n\n`
 
   const sectionKeys = Object.keys(data).filter((k) => k !== 'general')
   for (const sectionId of sectionKeys) {

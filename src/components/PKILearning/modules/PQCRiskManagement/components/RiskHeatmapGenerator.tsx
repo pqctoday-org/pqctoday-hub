@@ -21,6 +21,7 @@ import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
 import { StandardRef } from '@/components/common/StandardRef'
+import { formatDateStamp } from '@/lib/format'
 
 interface RiskEntry {
   id: string
@@ -672,7 +673,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
     for (const e of riskEntries) entryMap.set(e.id, e)
 
     let md = '# Quantum Risk Treatment Plan\n\n'
-    md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+    md += `Generated: ${formatDateStamp(new Date())}\n\n`
 
     const strategies = ['mitigate', 'accept', 'transfer', 'avoid'] as const
     md +=

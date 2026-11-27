@@ -42,6 +42,7 @@ import { ANCHOR_RELEASES, ANCHOR_SCENARIO } from '../../data/anchorScenario'
 import { AsOf, Callout, FictionalBadge, PlainSource, SourceLink } from './CoreSections'
 import { PqcParameterComparison } from '../PqcParameterComparison'
 import { ModuleAnalysisNote } from '@/components/PKILearning/common/ModuleAnalysisNote'
+import { formatDate } from '@/lib/format'
 
 const Prose = ({ children }: { children: ReactNode }) => (
   <div className="space-y-4 text-sm leading-relaxed text-foreground/85">{children}</div>
@@ -939,11 +940,7 @@ const DeadlineCheck = ({ rows }: { rows: MarketDeadlineRow[] }) => {
   const n = Number.parseInt(months, 10)
   const result =
     row && Number.isFinite(n) && n > 0 ? landingVersusDeadline(new Date(), n, row.year) : undefined
-  const landingLabel = result?.landing.toLocaleDateString('en-GB', {
-    month: 'long',
-    year: 'numeric',
-    timeZone: 'UTC',
-  })
+  const landingLabel = result ? formatDate(result.landing, 'month', { utc: true }) : undefined
   return (
     <div className="space-y-3 rounded-lg border border-border bg-muted/30 p-4">
       <p className="text-sm font-semibold text-foreground">Deadline check for the PQC lane</p>

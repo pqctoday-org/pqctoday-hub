@@ -14,6 +14,7 @@ import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { useThreatsData } from '@/hooks/useThreatsData'
 import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
 import { CNSA_2_0_BY_CLASS, EO_14412, NIST_DEPRECATION } from '@/data/regulatoryTimelines'
+import { formatDateStamp } from '@/lib/format'
 
 interface AlgorithmImpact {
   name: string
@@ -241,7 +242,7 @@ export function buildCrqcScenarioMarkdown({
   md += `**CRQC Planning Year (Scenario):** ${crqcYear}\n`
   md += `**Years Remaining:** ${yearsRemaining}\n`
   md += `**Scenario interval band (worksheet heuristic):** ${urgencyLevel.toUpperCase()}\n`
-  md += `**Generated:** ${new Date().toLocaleDateString()}\n\n`
+  md += `**Generated:** ${formatDateStamp(new Date())}\n\n`
 
   md += '## Algorithm rows modeled as vulnerable in this scenario\n\n'
   md += '| Algorithm | Replacement | Notes |\n'

@@ -38,6 +38,7 @@ import {
   probabilityProvenanceMarkdown,
   restoredProbabilityOrigin,
 } from '@/utils/breachProbabilityOrigin'
+import { formatDateStamp } from '@/lib/format'
 
 function fmtCurrency(n: number): string {
   if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`
@@ -176,7 +177,7 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
   const exportMarkdown = useMemo(() => {
     if (!breachCosts) return ''
     let md = `# PQC Breach Scenario — ${selectedIndustry}\n\n`
-    md += `**Generated:** ${new Date().toLocaleDateString()}\n\n`
+    md += `**Generated:** ${formatDateStamp(new Date())}\n\n`
     md += `| Metric | Value |\n|--------|-------|\n`
     md += `| Classical breach (per event) | ${fmtCurrency(breachCosts.classicalCost)} |\n`
     md += `| Quantum-enabled breach (per event, if CRQC exists) | ${fmtCurrency(breachCosts.quantumCost)} |\n`
@@ -431,7 +432,7 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
               id: `breach-scenario-${Date.now()}`,
               moduleId: 'pqc-business-case',
               type: 'breach-scenario',
-              title: `Breach Scenario — ${selectedIndustry} (${new Date().toLocaleDateString()})`,
+              title: `Breach Scenario — ${selectedIndustry} (${formatDateStamp(new Date())})`,
               data: exportMarkdown,
               inputs: { selectedIndustry, ...modelInputs },
               output: outputPayload ?? undefined,

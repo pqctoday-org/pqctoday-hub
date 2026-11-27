@@ -43,6 +43,7 @@ import { COMPARED_LMS, COMPARED_SIZES, bytesLabel } from '../data/signatureSizes
 import type { KatTestSpec } from '@/utils/katRunner'
 import { PREHASH_OPTIONS as PREHASH_OPTIONS_BASE } from '@/components/Playground/tabs/softhsm/SoftHsmUI'
 import { translateCryptoError } from '@/utils/cryptoErrorHint'
+import { formatBytes as formatBytesShared } from '@/lib/format'
 
 // Known-answer checks: the expected value is fixed in advance by a standard (RFC 8554
 // Appendix F for LMS/HSS, the NIST ACVP SHA-256 sample), not produced by this engine.
@@ -318,8 +319,7 @@ const toHex = (bytes: Uint8Array): string =>
     .join('')
 
 // Exact byte count first (cert engineers compare it with the FIPS 205 tables), then the rounded size.
-const formatBytes = (n: number): string =>
-  n >= 1024 ? `${n.toLocaleString('en-US')} B (${(n / 1024).toFixed(1)} KB)` : `${n} B`
+const formatBytes = (n: number): string => formatBytesShared(n, { kib: true })
 
 interface SLHDSALiveDemoProps {
   /** Which page hosts the demo; picks the intro sentence and the checks shown. Default: standalone. */

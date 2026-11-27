@@ -48,6 +48,7 @@ import { WhyThisMatters } from '@/components/ui/WhyThisMatters'
 
 import { CertificateTlsExercise } from './CertificateTlsExercise'
 import { CERTIFICATE_SECURITY_PROPERTIES } from '../services/certificateSecurityProperties'
+import { formatSessionTime } from '@/lib/format'
 
 const LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_SignInit', 'C_Sign']
 
@@ -156,7 +157,7 @@ export const HybridCertFormats: React.FC = () => {
         family,
         role,
         label,
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        generatedAt: formatSessionTime(new Date()),
       })
     },
     [hsm]

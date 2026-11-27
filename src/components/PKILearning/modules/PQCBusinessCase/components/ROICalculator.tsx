@@ -61,6 +61,7 @@ import {
 } from '@/utils/roiMath'
 
 import { sameEstateProfileEstimate } from './sameEstateComparison'
+import { formatDateStamp } from '@/lib/format'
 
 const REGULATORY_ASSUMPTIONS_NOTE =
   'The selected framework count, editable penalty amount and fixed incident rate are illustrative scenario assumptions, not an enforcement estimate. The penalty is not a sourced average; this calculation does not establish legal liability or that migration prevents penalties. Zero is the starting scenario input when no amount was saved, not a finding of no liability. Enter a positive amount only as an explicit illustrative assumption.'
@@ -415,7 +416,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     md += `**Intended audience:** CFO / CIO / board\n`
     md += `**Industry:** ${data.industry || 'Not specified'}\n`
     if (data.country) md += `**Country:** ${data.country}\n`
-    md += `**Generated:** ${new Date().toLocaleDateString()}\n\n`
+    md += `**Generated:** ${formatDateStamp(new Date())}\n\n`
     md += `## Financial Summary\n\n`
     md += `| Metric | Value |\n|--------|-------|\n`
     md += `| Capital Expenditure | ${formatCurrency(financials.totalMigrationCost)} |\n`
@@ -1278,7 +1279,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
                     id: `roi-model-${Date.now()}`,
                     moduleId: 'pqc-business-case',
                     type: 'roi-model',
-                    title: `PQC ROI Analysis — ${new Date().toLocaleDateString()}`,
+                    title: `PQC ROI Analysis — ${formatDateStamp(new Date())}`,
                     data: exportMarkdown,
                     inputs: assumptions,
                     // Computed totals, distinct from `inputs` (the assumptions) — lets

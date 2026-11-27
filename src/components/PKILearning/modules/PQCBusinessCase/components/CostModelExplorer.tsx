@@ -16,6 +16,7 @@ import {
   percentile,
   programCostFor,
 } from '@/utils/costModelSim'
+import { formatDateStamp } from '@/lib/format'
 
 function formatCurrency(amount: number): string {
   const abs = Math.abs(amount)
@@ -481,7 +482,7 @@ export const CostModelExplorer: React.FC = () => {
             id: `cost-model-comparison-${Date.now()}`,
             moduleId: 'pqc-business-case',
             type: 'cost-model-comparison',
-            title: `Cost Model Comparison — ${new Date().toLocaleDateString()}`,
+            title: `Cost Model Comparison — ${formatDateStamp(new Date())}`,
             data: exportMarkdown,
             inputs,
             createdAt: Date.now(),

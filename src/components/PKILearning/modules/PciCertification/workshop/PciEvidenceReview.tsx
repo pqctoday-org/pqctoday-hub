@@ -46,6 +46,7 @@ import {
 } from '../data/pciData'
 import { PciDeploymentEvidence } from './PciDeploymentEvidence'
 import { PciCite } from '../components/sections/PciSections'
+import { formatDateStamp } from '@/lib/format'
 
 const VERDICTS: Verdict[] = ['supported', 'not-supported', 'needs-more']
 
@@ -55,12 +56,7 @@ const captureDateLabel = (isoDate: string) => {
   if (!Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== isoDate) {
     return 'Not recorded'
   }
-  return new Intl.DateTimeFormat('en-GB', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-    timeZone: 'UTC',
-  }).format(date)
+  return formatDateStamp(isoDate)
 }
 
 const stringConfig = (config: Record<string, unknown> | undefined, key: string) => {

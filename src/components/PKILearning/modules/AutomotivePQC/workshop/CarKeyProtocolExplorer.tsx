@@ -34,6 +34,7 @@ import type {
 } from '../data/carKeyProtocolData'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { formatBytes } from '@/lib/format'
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -106,11 +107,6 @@ const FEASIBILITY_STYLES: Record<
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-function formatBytes(bytes: number): string {
-  if (bytes >= 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${bytes} B`
-}
 
 function pctIncrease(classical: number, pqc: number): string {
   if (classical === 0) return 'N/A'

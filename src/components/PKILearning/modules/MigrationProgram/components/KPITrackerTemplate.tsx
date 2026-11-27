@@ -42,6 +42,7 @@ import {
   reportingOnlyStatus,
   withoutNeverEnteredReportingScores,
 } from '@/components/PKILearning/common/executive/reportingOnlyMeasure'
+import { formatDateStamp } from '@/lib/format'
 
 const MODULE_ID = 'migration-program'
 const SURFACE = 'migration' as const
@@ -114,7 +115,7 @@ export function buildKpiTrackerMarkdown({
 }: KpiTrackerMarkdownInput): string {
   const scores = userScores
   let md = `# PQC Migration KPI Tracker — ${activePersona}\n\n`
-  md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+  md += `Generated: ${formatDateStamp(new Date())}\n\n`
   md +=
     'Scored-value coverage measures available worksheet values, not evidence verification or production readiness. Optional sample notes are learner supplied.\n\n'
 

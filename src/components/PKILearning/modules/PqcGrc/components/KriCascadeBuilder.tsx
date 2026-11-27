@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { ExportableArtifact } from '../../../common/executive'
 import { scopedArtifactInputs, useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { KRIS, KRI_LEVELS, type Kri, type KriLevel, type KriStatus } from '../data/grcData'
+import { formatDateStamp } from '@/lib/format'
 
 const MODULE_ID = 'pqc-grc'
 /** This workshop step saves under the `kpi-dashboard` document type, which the
@@ -104,7 +105,7 @@ export const KriCascadeBuilder: React.FC = () => {
 
   const exportMarkdown = useMemo(() => {
     let md = '# PQC GRC — KRI Cascade Dashboard\n\n'
-    md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+    md += `Generated: ${formatDateStamp(new Date())}\n\n`
     for (const lvl of LEVEL_ORDER) {
       const meta = KRI_LEVELS[lvl]
       md += `## ${meta.label} (${meta.cadence})\n\n`

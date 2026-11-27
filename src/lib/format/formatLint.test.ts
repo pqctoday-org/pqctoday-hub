@@ -68,6 +68,15 @@ describe('format lint: the old notations stay out of rendered text', () => {
   }, 120_000)
 })
 
+describe('format lint: dates are never built by hand', () => {
+  it('the baseline holds no hand-built date or time', () => {
+    const withHandBuilt = Object.entries(loadBaseline())
+      .filter(([, rules]) => (rules.handBuiltDate ?? 0) > 0)
+      .map(([file]) => file)
+    expect(withHandBuilt, 'use formatDate / formatDateTime / formatSessionTime').toEqual([])
+  })
+})
+
 describe('format lint: the scanner itself', () => {
   const scanText = (name: string, code: string): Finding[] => {
     const dir = fs.mkdtempSync(path.join(ROOT, 'node_modules', '.format-lint-'))

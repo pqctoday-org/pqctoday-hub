@@ -13,6 +13,7 @@ import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import { Button } from '@/components/ui/button'
 import { GatewayTlsLegs } from './GatewayTlsLegs'
+import { formatBytes } from '@/lib/format'
 
 const GATEWAY_KAT_SPECS: KatTestSpec[] = [
   {
@@ -41,10 +42,6 @@ const GATEWAY_KAT_SPECS: KatTestSpec[] = [
 ]
 
 type CryptoMode = 'classical' | 'pqc-hybrid'
-
-function formatBytes(bytes: number): string {
-  return `${bytes.toLocaleString('en-US')} B`
-}
 
 const PatternFlow: React.FC<{
   pattern: TerminationPattern

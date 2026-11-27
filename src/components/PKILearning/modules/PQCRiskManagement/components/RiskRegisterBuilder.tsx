@@ -21,6 +21,7 @@ import {
 } from '@/store/useRiskRegisterStore'
 import { scopedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { EducationalGuide } from './RiskHeatmapGenerator'
+import { formatDateStamp } from '@/lib/format'
 
 /** Scope stamp on saved `inputs`: the PQC GRC Exception Register also saves
  *  as `risk-register`, so restores must not pick up its shape. */
@@ -119,7 +120,7 @@ export function buildRiskRegisterMarkdown(
   >[]
 ): string {
   let md = '# Quantum Risk Register\n\n'
-  md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+  md += `Generated: ${formatDateStamp(new Date())}\n\n`
   md += `**Sample risk worksheet.** ${WORKSHEET_SCOPE}\n\n`
   md += `## Starting-rating scope\n\n${AUTOMATIC_RISK_RATING_SCOPE}\n\n`
   md += '---\n\n'

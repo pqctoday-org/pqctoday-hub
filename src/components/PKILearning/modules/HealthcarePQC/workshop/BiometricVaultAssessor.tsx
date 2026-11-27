@@ -21,14 +21,11 @@ import {
   type BiometricType,
 } from '../data/healthcareConstants'
 import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
+import { formatBytes as formatBytesShared } from '@/lib/format'
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
-function formatBytes(bytes: number): string {
-  if (bytes >= 1_000_000) return `${(bytes / 1_000_000).toFixed(1)} MB`
-  if (bytes >= 1_000) return `${(bytes / 1_000).toFixed(1)} KB`
-  return `${bytes} B`
-}
+const formatBytes = (bytes: number): string => formatBytesShared(bytes, { kib: true })
 
 function formatNumber(n: number): string {
   return n.toLocaleString()

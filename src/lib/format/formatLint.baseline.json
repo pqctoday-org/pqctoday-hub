@@ -189,7 +189,6 @@
     "bytes": 4
   },
   "src/components/PKILearning/modules/AutomotivePQC/workshop/CarKeyProtocolExplorer.tsx": {
-    "KB": 1,
     "bytes": 4
   },
   "src/components/PKILearning/modules/AutomotivePQC/workshop/SafetyCryptoAnalyzer.tsx": {
@@ -238,7 +237,6 @@
     "bytes": 5
   },
   "src/components/PKILearning/modules/CodeSigning/workshop/BinarySigning.tsx": {
-    "handBuiltDate": 2,
     "bytes": 5
   },
   "src/components/PKILearning/modules/CodeSigning/workshop/CertChainBuilder.tsx": {
@@ -256,14 +254,7 @@
     "bytes": 9
   },
   "src/components/PKILearning/modules/ComplianceStrategy/components/AuditReadinessChecklist.tsx": {
-    "handBuiltDate": 1,
     "byteCount": 2
-  },
-  "src/components/PKILearning/modules/ComplianceStrategy/components/ComplianceTimelineBuilder.tsx": {
-    "handBuiltDate": 1
-  },
-  "src/components/PKILearning/modules/ComplianceStrategy/components/JurisdictionMapper.tsx": {
-    "handBuiltDate": 1
   },
   "src/components/PKILearning/modules/ComplianceStrategy/content.ts": {
     "byteCount": 1
@@ -286,8 +277,7 @@
   },
   "src/components/PKILearning/modules/ConfidentialComputing/workshop/TEEHSMTrustedChannel.tsx": {
     "bytes": 5,
-    "KB": 2,
-    "handBuiltDate": 1
+    "KB": 2
   },
   "src/components/PKILearning/modules/CryptoAgility/components/CryptoAgilityIntroduction.tsx": {
     "bytes": 1
@@ -316,9 +306,6 @@
   "src/components/PKILearning/modules/CryptoDevAPIs/data/tailoringCodeAnalysisSection.ts": {
     "byteCount": 10
   },
-  "src/components/PKILearning/modules/CryptoDevAPIs/workshop/ProviderPatternWorkshop.tsx": {
-    "handBuiltDate": 2
-  },
   "src/components/PKILearning/modules/CryptoMgmtModernization/components/CryptoApiRefactorAudit.tsx": {
     "KB": 1
   },
@@ -339,11 +326,7 @@
     "bytes": 1
   },
   "src/components/PKILearning/modules/CryptoMgmtModernization/workshop/LibraryCBOMBuilder.tsx": {
-    "byteCount": 3,
-    "handBuiltDate": 1
-  },
-  "src/components/PKILearning/modules/CryptoMgmtModernization/workshop/ManagementToolsAudit.tsx": {
-    "handBuiltDate": 1
+    "byteCount": 3
   },
   "src/components/PKILearning/modules/CryptoMgmtModernization/workshop/NoRegretROIBuilder.tsx": {
     "undefined": 1
@@ -355,8 +338,7 @@
     "byteCount": 1
   },
   "src/components/PKILearning/modules/CryptoProductCertification/components/sections/SharedSections.tsx": {
-    "byteCount": 5,
-    "handBuiltDate": 1
+    "byteCount": 5
   },
   "src/components/PKILearning/modules/CryptoProductCertification/content.ts": {
     "byteCount": 3
@@ -366,9 +348,6 @@
   },
   "src/components/PKILearning/modules/CryptoProductCertification/data/sharedData.ts": {
     "byteCount": 6
-  },
-  "src/components/PKILearning/modules/CryptoProductCertification/workshop/Capstone.tsx": {
-    "handBuiltDate": 1
   },
   "src/components/PKILearning/modules/CustodyGovernance/components/CustodyGovernanceExercises.tsx": {
     "byteCount": 1
@@ -412,9 +391,6 @@
   },
   "src/components/PKILearning/modules/CustodyThreatsControls/workshop/ThresholdSigningWorkshop.tsx": {
     "byteCount": 2
-  },
-  "src/components/PKILearning/modules/DataAssetSensitivity/workshop/PQCMigrationPriorityMap.tsx": {
-    "handBuiltDate": 1
   },
   "src/components/PKILearning/modules/DatabaseEncryptionPQC/components/DatabaseEncryptionIntroduction.tsx": {
     "bytes": 1
@@ -477,12 +453,6 @@
   },
   "src/components/PKILearning/modules/DigitalAssets/utils/cryptoConstants.ts": {
     "bytes": 7
-  },
-  "src/components/PKILearning/modules/DigitalID/components/Wallet/WalletComponent.tsx": {
-    "handBuiltDate": 2
-  },
-  "src/components/PKILearning/modules/DigitalID/hooks/useDigitalIDLogs.ts": {
-    "handBuiltDate": 2
   },
   "src/components/PKILearning/modules/DNSSECPQC/components/DNSSECIntroduction.tsx": {
     "bytes": 2
@@ -553,7 +523,6 @@
     "KB": 4
   },
   "src/components/PKILearning/modules/EMVPaymentPQC/workshop/CardProvisioningVisualizer.tsx": {
-    "KB": 1,
     "bytes": 1
   },
   "src/components/PKILearning/modules/EMVPaymentPQC/workshop/POSCryptoAnalyzer.tsx": {
@@ -664,8 +633,7 @@
   },
   "src/components/PKILearning/modules/Fips1403Certification/components/sections/FipsSections.tsx": {
     "byteCount": 13,
-    "slashDate": 2,
-    "handBuiltDate": 1
+    "slashDate": 2
   },
   "src/components/PKILearning/modules/Fips1403Certification/content.ts": {
     "byteCount": 4
@@ -727,9 +695,6 @@
   "src/components/PKILearning/modules/HealthcarePQC/data/healthcareConstants.ts": {
     "byteCount": 4,
     "KB": 5
-  },
-  "src/components/PKILearning/modules/HealthcarePQC/workshop/BiometricVaultAssessor.tsx": {
-    "KB": 1
   },
   "src/components/PKILearning/modules/HealthcarePQC/workshop/DeviceSafetySimulator.tsx": {
     "byteCount": 1,
@@ -815,15 +780,11 @@
   "src/components/PKILearning/modules/HybridCrypto/workshop/HpkeWorkshop.tsx": {
     "bytes": 5
   },
-  "src/components/PKILearning/modules/HybridCrypto/workshop/HybridCertFormats.tsx": {
-    "handBuiltDate": 1
-  },
   "src/components/PKILearning/modules/HybridCrypto/workshop/HybridEncryptionDemo.tsx": {
     "bytes": 11,
     "undefined": 1
   },
   "src/components/PKILearning/modules/HybridCrypto/workshop/HybridKeyGeneration.tsx": {
-    "KB": 1,
     "bytes": 2
   },
   "src/components/PKILearning/modules/HybridCrypto/workshop/HybridSignatures.tsx": {
@@ -834,7 +795,6 @@
   },
   "src/components/PKILearning/modules/IAMPQC/workshop/TokenMigrationLab.tsx": {
     "bytes": 7,
-    "handBuiltDate": 2,
     "byteCount": 2
   },
   "src/components/PKILearning/modules/IoTPQC/components/IoTPQCExercises.tsx": {
@@ -874,7 +834,6 @@
     "bytes": 1
   },
   "src/components/PKILearning/modules/KmsPqc/workshop/EnvelopeEncryptionDemo.tsx": {
-    "handBuiltDate": 1,
     "bytes": 11
   },
   "src/components/PKILearning/modules/MediaDrmPQC/data/ladderData.ts": {
@@ -890,23 +849,8 @@
     "KB": 3,
     "bytes": 1
   },
-  "src/components/PKILearning/modules/MerkleTreeCerts/data/mtcConstants.ts": {
-    "KB": 1
-  },
   "src/components/PKILearning/modules/MerkleTreeCerts/workshop/CTLogSimulator.tsx": {
     "bytes": 6
-  },
-  "src/components/PKILearning/modules/MigrationProgram/components/DeploymentPlaybook.tsx": {
-    "handBuiltDate": 1
-  },
-  "src/components/PKILearning/modules/MigrationProgram/components/KPITrackerTemplate.tsx": {
-    "handBuiltDate": 1
-  },
-  "src/components/PKILearning/modules/MigrationProgram/components/RoadmapBuilder.tsx": {
-    "handBuiltDate": 1
-  },
-  "src/components/PKILearning/modules/MigrationProgram/components/StakeholderCommsPlanner.tsx": {
-    "handBuiltDate": 1
   },
   "src/components/PKILearning/modules/Module1-Introduction/AlgorithmComparisonTable.tsx": {
     "byteCount": 1,
@@ -960,12 +904,6 @@
   "src/components/PKILearning/modules/OSPQC/workshop/SSHHostKeyMigrator.tsx": {
     "bytes": 2
   },
-  "src/components/PKILearning/modules/OTPQC/workshop/ProtocolSecurityAnalyzer.tsx": {
-    "KB": 1
-  },
-  "src/components/PKILearning/modules/PciCertification/workshop/PciEvidenceReview.tsx": {
-    "handBuiltDate": 1
-  },
   "src/components/PKILearning/modules/PKIEnrollmentProtocols/workshop/CmpInitialReq.tsx": {
     "bytes": 1
   },
@@ -991,7 +929,6 @@
     "bytes": 2
   },
   "src/components/PKILearning/modules/PKIWorkshop/RootCAGenerator.tsx": {
-    "handBuiltDate": 2,
     "bytes": 2
   },
   "src/components/PKILearning/modules/PlatformEngPQC/components/Introduction.tsx": {
@@ -1015,31 +952,13 @@
   "src/components/PKILearning/modules/PQCAlgorithms/workshop/MLKEMRoundTrip.tsx": {
     "bytes": 2
   },
-  "src/components/PKILearning/modules/PQCBusinessCase/components/BreachScenarioSimulator.tsx": {
-    "handBuiltDate": 2
-  },
   "src/components/PKILearning/modules/PQCBusinessCase/components/CostModelExplorer.tsx": {
-    "yrMo": 4,
-    "handBuiltDate": 1
+    "yrMo": 4
   },
   "src/components/PKILearning/modules/PQCBusinessCase/components/CostOfInactionAnalyzer.tsx": {
-    "handBuiltDate": 2,
     "yrMo": 7
   },
-  "src/components/PKILearning/modules/PQCBusinessCase/components/pitchVariants/architect.ts": {
-    "handBuiltDate": 1
-  },
-  "src/components/PKILearning/modules/PQCBusinessCase/components/pitchVariants/developer.ts": {
-    "handBuiltDate": 1
-  },
-  "src/components/PKILearning/modules/PQCBusinessCase/components/pitchVariants/executive.ts": {
-    "handBuiltDate": 1
-  },
-  "src/components/PKILearning/modules/PQCBusinessCase/components/pitchVariants/ops.ts": {
-    "handBuiltDate": 1
-  },
   "src/components/PKILearning/modules/PQCBusinessCase/components/ROICalculator.tsx": {
-    "handBuiltDate": 2,
     "yrMo": 3
   },
   "src/components/PKILearning/modules/PQCCandidates/components/CandidatesExercises.tsx": {
@@ -1053,21 +972,6 @@
   },
   "src/components/PKILearning/modules/PQCCandidates/data/kemHistory.ts": {
     "KB": 1
-  },
-  "src/components/PKILearning/modules/PQCGovernance/components/KPIDashboardBuilder.tsx": {
-    "handBuiltDate": 1
-  },
-  "src/components/PKILearning/modules/PQCGovernance/components/PolicyTemplateGenerator.tsx": {
-    "handBuiltDate": 1
-  },
-  "src/components/PKILearning/modules/PQCGovernance/components/RACIBuilder.tsx": {
-    "handBuiltDate": 1
-  },
-  "src/components/PKILearning/modules/PqcGrc/components/ExceptionRegisterTriage.tsx": {
-    "handBuiltDate": 1
-  },
-  "src/components/PKILearning/modules/PqcGrc/components/KriCascadeBuilder.tsx": {
-    "handBuiltDate": 1
   },
   "src/components/PKILearning/modules/PQCHardwareAcceleration/data/cited.ts": {
     "bytes": 1
@@ -1083,15 +987,6 @@
   },
   "src/components/PKILearning/modules/PqcImplementationSecurity/workshop/FoRejectionLab.tsx": {
     "bytes": 1
-  },
-  "src/components/PKILearning/modules/PQCRiskManagement/components/CRQCScenarioPlanner.tsx": {
-    "handBuiltDate": 1
-  },
-  "src/components/PKILearning/modules/PQCRiskManagement/components/RiskHeatmapGenerator.tsx": {
-    "handBuiltDate": 1
-  },
-  "src/components/PKILearning/modules/PQCRiskManagement/components/RiskRegisterBuilder.tsx": {
-    "handBuiltDate": 1
   },
   "src/components/PKILearning/modules/PQCTestingValidation/components/PQCTestingExercises.tsx": {
     "bytes": 1,
@@ -1114,7 +1009,6 @@
     "undefined": 1
   },
   "src/components/PKILearning/modules/QKD/workshop/HSMKeyDerivationDemo.tsx": {
-    "handBuiltDate": 1,
     "bytes": 4
   },
   "src/components/PKILearning/modules/QKD/workshop/ikev2KeyDerivationSample.ts": {
@@ -1125,9 +1019,6 @@
   },
   "src/components/PKILearning/modules/QKD/workshop/tlsPskImporterSample.ts": {
     "bytes": 2
-  },
-  "src/components/PKILearning/modules/Quiz/QuizIntro.tsx": {
-    "handBuiltDate": 1
   },
   "src/components/PKILearning/modules/ResearchQuantumImpact/content.ts": {
     "byteCount": 2
@@ -1168,7 +1059,6 @@
   },
   "src/components/PKILearning/modules/SecureBootPQC/workshop/FirmwareSigningMigrator.tsx": {
     "KB": 6,
-    "handBuiltDate": 4,
     "bytes": 4
   },
   "src/components/PKILearning/modules/SecureBootPQC/workshop/SecureBootChainAnalyzer.tsx": {
@@ -1178,9 +1068,6 @@
   "src/components/PKILearning/modules/SecureBootPQC/workshop/TPMKeyHierarchyExplorer.tsx": {
     "byteCount": 4,
     "bytes": 1
-  },
-  "src/components/PKILearning/modules/SkillsTeamStructurePqc/components/CryptoChampionBuilder.tsx": {
-    "handBuiltDate": 1
   },
   "src/components/PKILearning/modules/SLHDSAModule/components/SLHDSAExercises.tsx": {
     "bytes": 1
@@ -1210,32 +1097,27 @@
     "KB": 2
   },
   "src/components/PKILearning/modules/StatefulSignatures/data/statefulSigsConstants.ts": {
-    "byteCount": 1,
-    "KB": 1
+    "byteCount": 1
   },
   "src/components/PKILearning/modules/StatefulSignatures/workshop/HssSignatureLayout.tsx": {
     "bytes": 6
   },
   "src/components/PKILearning/modules/StatefulSignatures/workshop/LMSKeyGenDemo.tsx": {
-    "handBuiltDate": 1,
     "bytes": 1
   },
   "src/components/PKILearning/modules/StatefulSignatures/workshop/SLHDSALiveDemo.tsx": {
-    "KB": 2,
-    "bytes": 5
+    "bytes": 5,
+    "KB": 1
   },
   "src/components/PKILearning/modules/StatefulSignatures/workshop/StatefulSignaturesDemo.tsx": {
-    "handBuiltDate": 2,
     "bytes": 5,
     "KB": 1
   },
   "src/components/PKILearning/modules/StatefulSignatures/workshop/StateManagementVisualizer.tsx": {
-    "handBuiltDate": 2,
     "bytes": 4,
     "KB": 2
   },
   "src/components/PKILearning/modules/StatefulSignatures/workshop/XMSSKeyGenDemo.tsx": {
-    "handBuiltDate": 2,
     "bytes": 4,
     "KB": 1
   },
@@ -1274,15 +1156,6 @@
   },
   "src/components/PKILearning/modules/TLSBasics/utils/defaultCertificates.ts": {
     "byteCount": 1
-  },
-  "src/components/PKILearning/modules/VendorRisk/components/ContractClauseGenerator.tsx": {
-    "handBuiltDate": 2
-  },
-  "src/components/PKILearning/modules/VendorRisk/components/SupplyChainRiskMatrix.tsx": {
-    "handBuiltDate": 2
-  },
-  "src/components/PKILearning/modules/VendorRisk/components/VendorScorecardBuilder.tsx": {
-    "handBuiltDate": 1
   },
   "src/components/PKILearning/modules/VerificationClosure/workshop/closureHandoverArtifact.ts": {
     "byteCount": 1

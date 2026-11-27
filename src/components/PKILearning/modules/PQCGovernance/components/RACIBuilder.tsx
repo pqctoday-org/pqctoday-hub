@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { rowsToCsv } from '@/services/export/csvExport'
 import type { RACIOutput } from '../types'
+import { formatDateStamp } from '@/lib/format'
 
 type RACIValue = 'R' | 'A' | 'C' | 'I' | ''
 
@@ -84,7 +85,7 @@ function buildInitialMatrix(): MatrixState {
  *  renders THIS logic — the component's export memo delegates here. */
 export function buildRaciMarkdown(matrix: MatrixState): string {
   let md = '# PQC Migration RACI Matrix\n\n'
-  md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+  md += `Generated: ${formatDateStamp(new Date())}\n\n`
 
   // Header row
   md += '| Activity |'

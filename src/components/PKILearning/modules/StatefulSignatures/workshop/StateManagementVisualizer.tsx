@@ -22,6 +22,7 @@ import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Button } from '@/components/ui/button'
 import { StateReviewGuide } from './StateReviewGuide'
 import type { RollbackProbe } from './stateRollbackProbe'
+import { formatSessionTime } from '@/lib/format'
 
 const LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_SignInit', 'C_Sign']
 
@@ -251,14 +252,14 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
         family: 'hss',
         role: 'private',
         label: `HSS Key (${pkcs11Name})`,
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        generatedAt: formatSessionTime(new Date()),
       })
       hsm.registerKey(M!, hSession, {
         handle: pubHandle,
         family: 'hss',
         role: 'public',
         label: `HSS Pubkey (${pkcs11Name})`,
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        generatedAt: formatSessionTime(new Date()),
         rawBytes: pubBytes,
       })
       return privHandle

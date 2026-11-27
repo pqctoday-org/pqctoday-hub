@@ -14,6 +14,7 @@ import {
   CNSA_MANDATE_LABEL,
   CNSA_PHASE_OUT_LABEL,
 } from '../../PQCRiskManagement/data/cnsaLabels'
+import { formatDateStamp } from '@/lib/format'
 
 const MODULE_ID = 'vendor-risk'
 
@@ -240,7 +241,7 @@ export function renderContractPreview(
   data: Record<string, Record<string, string | string[]>>
 ): string {
   let md = '# PQC VENDOR CONTRACT REQUIREMENTS\n\n'
-  md += `**Document Generated:** ${new Date().toLocaleDateString()}\n`
+  md += `**Document Generated:** ${formatDateStamp(new Date())}\n`
   md += '**Classification:** Draft — For Legal Review\n\n---\n\n'
 
   // PQC Timeline
@@ -449,7 +450,7 @@ export const ContractClauseGenerator: React.FC<ContractClauseGeneratorProps> = (
         id: `contract-clause-${Date.now()}`,
         moduleId: MODULE_ID,
         type: 'contract-clause',
-        title: `PQC Vendor Contract Requirements — ${new Date().toLocaleDateString()}`,
+        title: `PQC Vendor Contract Requirements — ${formatDateStamp(new Date())}`,
         data: md,
         // Persist the raw form so the draft is restorable on remount.
         inputs: data,

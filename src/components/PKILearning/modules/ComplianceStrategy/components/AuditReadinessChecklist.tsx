@@ -12,6 +12,7 @@ import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBa
 import { rowsToSpreadsheetCsv } from '@/services/export/csvExport'
 import type { ArtifactFieldEdit, ArtifactFormData } from '../../../common/executive/ArtifactBuilder'
 import { clearAuditPrefill, editAuditDraft, initializeAuditPrefill } from './auditPrefillOwnership'
+import { formatDateStamp } from '@/lib/format'
 
 interface ChecklistItem {
   value: string
@@ -394,7 +395,7 @@ export function renderAuditPreview(
   let md = '# PQC Audit Planning Topics\n\n'
   md +=
     'Hub-authored educational template. References are related reading, not proof that every field is a source-mandated control.\n\n'
-  md += `Generated: ${new Date().toLocaleDateString()}\n`
+  md += `Generated: ${formatDateStamp(new Date())}\n`
   if (industry) md += `Industry: ${industry}\n`
   if (country) md += `Country: ${country}\n`
   md +=

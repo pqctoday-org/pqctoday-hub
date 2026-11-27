@@ -41,6 +41,7 @@ import { SampleDataBadge } from '@/components/BusinessCenter/widgets/SampleDataB
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { useLiveCmvpStatus } from '@/hooks/useLiveCmvpStatus'
 import { LiveCmvpBadge } from '@/components/BusinessCenter/widgets/LiveCmvpBadge'
+import { formatDateStamp } from '@/lib/format'
 
 type Mode = 'sbom' | 'libs' | 'hsm' | 'files' | 'assessment'
 
@@ -967,7 +968,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
               id: `crypto-cbom-${Date.now()}`,
               moduleId: 'crypto-mgmt-modernization',
               type: 'crypto-cbom',
-              title: `CBOM — ${new Date().toLocaleDateString()}`,
+              title: `CBOM — ${formatDateStamp(new Date())}`,
               data: exportMarkdown,
               inputs: {
                 mode,

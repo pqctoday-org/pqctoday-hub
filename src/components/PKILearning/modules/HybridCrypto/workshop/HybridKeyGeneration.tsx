@@ -18,6 +18,7 @@ import {
   WorkshopOperationLog,
   type LogEntry,
 } from '@/components/PKILearning/common/WorkshopOperationLog'
+import { formatBytes } from '@/lib/format'
 
 // Rows are tagged in the panel by where their expected value comes from. The "round trip"
 // rows only check that the engine accepts its own output; the ML-KEM encapsulation and
@@ -136,11 +137,6 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
   ].filter((col) => col.algorithms.length > 0)
 
   const maxKeySize = Math.max(...algorithms.map((a) => a.publicKeyBytes + a.privateKeyBytes), 1)
-
-  const formatBytes = (bytes: number): string => {
-    if (bytes >= 1024) return `${(bytes / 1024).toFixed(1)} KB`
-    return `${bytes} B`
-  }
 
   const generateAll = async () => {
     setIsGenerating(true)

@@ -40,6 +40,7 @@ import {
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { Button } from '@/components/ui/button'
 import { getCryptoErrorHint } from '@/utils/cryptoErrorHint'
+import { formatSessionTime } from '@/lib/format'
 
 // Import profile documentation
 const profileDocs = import.meta.glob('../../../../data/x509_profiles/*_Overview.md', {
@@ -336,14 +337,14 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
               family: algoFamily,
               role: 'public',
               label: `${algo.name} Root Public`,
-              generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+              generatedAt: formatSessionTime(new Date()),
             })
             hsm.registerKey(M, hSession, {
               handle: handles.privHandle,
               family: algoFamily,
               role: 'private',
               label: `${algo.name} Root Private`,
-              generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+              generatedAt: formatSessionTime(new Date()),
             })
 
             setOutput(

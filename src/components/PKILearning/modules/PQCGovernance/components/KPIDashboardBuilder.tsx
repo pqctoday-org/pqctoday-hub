@@ -42,6 +42,7 @@ import {
   withoutKpiSampleBaseline,
 } from '@/components/PKILearning/common/executive/kpiSampleBaseline'
 import type { PolicyOutput } from '../types'
+import { formatDateStamp } from '@/lib/format'
 
 const SURFACE = 'governance' as const
 
@@ -131,7 +132,7 @@ export function buildKpiDashboardMarkdown(
       ? `**Overall Score: ${overall}/100**\n\n`
       : `**Overall Score: not available — scored-value coverage ${Math.round(coverage * 100)}%**\n\n`
   md += sampleBaselineScoreNote(countedIds, (id) => valueOrigins?.[id])
-  md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+  md += `Generated: ${formatDateStamp(new Date())}\n\n`
   md +=
     'Scored-value coverage measures available worksheet values, not evidence verification or production readiness. Optional sample notes are learner supplied.\n\n'
   md +=

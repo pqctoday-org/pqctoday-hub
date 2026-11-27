@@ -40,6 +40,7 @@ import type { ComplianceGanttRow, UserMilestone, ComplianceDeadline } from './Co
 import type { TimelinePhase, TimelineEvent, EventType } from '@/types/timeline'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { JURISDICTIONS } from '../data/jurisdictions'
+import { formatDateStamp } from '@/lib/format'
 
 // ---------------------------------------------------------------------------
 // Data helpers
@@ -538,7 +539,7 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
   // Export markdown
   const exportMarkdown = useMemo(() => {
     let md = '# Compliance Timeline\n\n'
-    md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+    md += `Generated: ${formatDateStamp(new Date())}\n\n`
     md += `Sample scenario as-of year: ${scenarioAsOfYear ?? 'Unknown'}\n\n`
     md +=
       'Explicitly linked fictional activities only. Year comparisons do not establish applicability, technical results or compliance with an exact dated deadline.\n\n'

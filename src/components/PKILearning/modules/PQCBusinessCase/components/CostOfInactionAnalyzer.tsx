@@ -51,6 +51,7 @@ import {
   BREACH_PROBABILITY_SOURCE_URL,
   type BreachProbabilityOrigin,
 } from '@/utils/breachProbabilityOrigin'
+import { formatDateStamp } from '@/lib/format'
 
 const ORG_SIZE_TIER_OPTIONS: { tier: OrgSizeTier; label: string }[] = [
   { tier: 'smb', label: 'SMB' },
@@ -402,7 +403,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
 
   const exportMarkdown = useMemo(() => {
     let md = `# PQC Cost of Inaction — ${selectedIndustry}\n\n`
-    md += `**Generated:** ${new Date().toLocaleDateString()}\n\n`
+    md += `**Generated:** ${formatDateStamp(new Date())}\n\n`
     md += `| Metric | Value |\n|--------|-------|\n`
     md += `| Migrate now (${inputs.horizonYears}-yr NPV) | ${fmt(nowResult.total)} |\n`
     md += `| Delay ${delayYears}yr (${inputs.horizonYears}-yr NPV) | ${fmt(delayedResult.total)} |\n`
@@ -1217,7 +1218,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             id: `cost-of-inaction-${Date.now()}`,
             moduleId: 'pqc-business-case',
             type: 'cost-of-inaction',
-            title: `Cost of Inaction — ${selectedIndustry} (${new Date().toLocaleDateString()})`,
+            title: `Cost of Inaction — ${selectedIndustry} (${formatDateStamp(new Date())})`,
             data: exportMarkdown,
             inputs: {
               selectedIndustry,

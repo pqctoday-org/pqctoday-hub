@@ -28,6 +28,7 @@ import {
   type CertChainAlgorithm,
   type CardAuthSpec,
 } from '../data/emvConstants'
+import { formatBytes } from '@/lib/format'
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -80,11 +81,6 @@ function sizeBgRank(algo: CertChainAlgorithm): string {
     case 'ml-dsa-44':
       return 'bg-status-error/20 border-status-error/50'
   }
-}
-
-function formatBytes(bytes: number): string {
-  if (bytes >= 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${bytes} B`
 }
 
 // ---------------------------------------------------------------------------

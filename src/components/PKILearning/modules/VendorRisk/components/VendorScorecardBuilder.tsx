@@ -23,6 +23,7 @@ import {
   Users,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { formatDateStamp } from '@/lib/format'
 
 const MODULE_ID = 'vendor-risk'
 
@@ -256,7 +257,7 @@ export function buildScorecardMarkdown(
   const summaryLabel =
     productCount === null ? 'Manual readiness score' : 'Portfolio average (all products)'
   md += `**${summaryLabel}: ${overallLabel(portfolioAverage)}**\n\n`
-  md += `Generated: ${new Date().toLocaleDateString()}\n`
+  md += `Generated: ${formatDateStamp(new Date())}\n`
   if (productCount != null) {
     md += `Products assessed: ${productCount}\n`
   }

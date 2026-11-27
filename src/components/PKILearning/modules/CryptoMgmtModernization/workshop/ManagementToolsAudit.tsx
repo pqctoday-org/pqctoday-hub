@@ -8,6 +8,7 @@ import { ExportableArtifact } from '@/components/PKILearning/common/executive/Ex
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
+import { formatDateStamp } from '@/lib/format'
 
 export type CoverageLevel = 0 | 1 | 2 | 3
 
@@ -651,7 +652,7 @@ export const ManagementToolsAudit: React.FC = () => {
             id: `management-tools-audit-${Date.now()}`,
             moduleId: 'crypto-mgmt-modernization',
             type: 'management-tools-audit',
-            title: `Management Tools Audit — ${new Date().toLocaleDateString()}`,
+            title: `Management Tools Audit — ${formatDateStamp(new Date())}`,
             data: exportMarkdown,
             inputs: {
               levels,

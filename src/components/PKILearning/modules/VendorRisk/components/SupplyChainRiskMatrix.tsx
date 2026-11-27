@@ -58,6 +58,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ExportableArtifact } from '../../../common/executive'
 import { Link } from 'react-router'
+import { formatDateStamp } from '@/lib/format'
 
 // This tool's own simplified asset-class taxonomy for grouping the catalog's
 // SoftwareItem categories into a CBOM view — NOT a taxonomy CSWP.39 itself
@@ -766,7 +767,7 @@ export function buildSupplyChainMarkdown(input: SupplyChainMarkdownInput): strin
   let md = '# Supply Chain PQC Risk Matrix\n\n'
   md +=
     'A zero score means no scored gap or matched threat under these selected catalogue/text rules, not absence of production risk. Evaluate actual inventory, versions, trust, deployment and supplier/testing evidence with your production tools.\n\n'
-  md += `**Generated:** ${new Date().toLocaleDateString()}\n`
+  md += `**Generated:** ${formatDateStamp(new Date())}\n`
   if (industry) md += `**Industry:** ${industry}\n`
   if (country) md += `**Country:** ${country}\n`
   md += `**Products Analyzed:** ${totalProducts}\n\n`
@@ -1612,7 +1613,7 @@ export const SupplyChainRiskMatrix: React.FC<{
           number with no visible caveat. */}
       {softwareMetadata && (
         <p className="text-center text-[11px] text-muted-foreground">
-          Catalog data as of {softwareMetadata.lastUpdate.toLocaleDateString()}
+          Catalog data as of {formatDateStamp(softwareMetadata.lastUpdate)}
         </p>
       )}
 

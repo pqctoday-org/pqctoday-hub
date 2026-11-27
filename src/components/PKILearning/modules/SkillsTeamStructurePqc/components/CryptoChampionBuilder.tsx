@@ -6,6 +6,7 @@ import { ExportableArtifact } from '../../../common/executive'
 import { Button } from '@/components/ui/button'
 import { CHAMPION_PLATFORMS, type ChampionPlatform } from '../data/teamModel'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
+import { formatDateStamp } from '@/lib/format'
 
 /** Whether a champion has completed each of the four readiness commitments
  *  (p. 164): foundations training, quarterly briefings, design-review sign-off,
@@ -69,7 +70,7 @@ export const CryptoChampionBuilder: React.FC = () => {
 
   const exportMarkdown = useMemo(() => {
     let md = '# Crypto Champion Program Roster\n\n'
-    md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+    md += `Generated: ${formatDateStamp(new Date())}\n\n`
     md += '| Platform | Champion | Foundations | Briefings | Sign-off | Upgrades |\n'
     md += '|----------|----------|-------------|-----------|----------|----------|\n'
     for (const p of CHAMPION_PLATFORMS) {

@@ -68,6 +68,7 @@ import {
 import { Callout, FictionalBadge } from '../components/sections/CoreSections'
 import { withEducationNoticeMarkdown } from '@/data/educationNotice'
 import { CapstoneWorkedReference } from './CapstoneWorkedReference'
+import { formatDateStamp } from '@/lib/format'
 
 const PATH_IDS: CertPathId[] = ['fips', 'cc', 'eucc-eidas', 'pci']
 const isPath = (v: unknown): v is CertPathId =>
@@ -866,7 +867,7 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
             id: `certification-plan-${Date.now()}`,
             moduleId: manifest.id,
             type: 'certification-plan',
-            title: `Certification Plan (${s.path.toUpperCase()}) — ${new Date().toLocaleDateString()}`,
+            title: `Certification Plan (${s.path.toUpperCase()}) — ${formatDateStamp(new Date())}`,
             data: markdown,
             inputs: { capstone: s } satisfies { capstone: CapstoneState },
             createdAt: Date.now(),

@@ -44,6 +44,7 @@ import {
   cmvpSecurityPolicyUrl,
   type AreaLevel,
 } from '../../data/fipsData'
+import { formatDate } from '@/lib/format'
 
 // ── Library citations (resolved at import; an unknown id fails the build) ──
 const FIPS_140_3 = getStandard('FIPS-140-3-STANDARD')
@@ -1233,12 +1234,7 @@ function utcDayLabel(iso: string | null): string | null {
   if (!iso) return null
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return null
-  return d.toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-    timeZone: 'UTC',
-  })
+  return formatDate(d, 'day', { relative: false, utc: true })
 }
 
 /**

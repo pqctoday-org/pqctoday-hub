@@ -37,6 +37,7 @@ import {
   type RoadmapMilestone,
 } from './roadmapTracks'
 import type { RoadmapOutput } from '../types'
+import { formatDateStamp } from '@/lib/format'
 
 /** How the timeline data classifies a milestone's force. */
 export type MilestoneStatus =
@@ -105,7 +106,7 @@ export function buildRoadmapMarkdown(
 ): string {
   const labelById = new Map(currentMilestones.map((m) => [m.id, m.label]))
   let md = '# PQC Migration Roadmap (Two-Track)\n\n'
-  md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+  md += `Generated: ${formatDateStamp(new Date())}\n\n`
   md += `_Built on the ${FRAMEWORK_NAME} ${FRAMEWORK_VERSION} — ${FRAMEWORK_AUTHOR} (${FRAMEWORK_LICENSE}). ${FRAMEWORK_URL}_\n\n`
 
   if (selectedDeadlines.length > 0) {

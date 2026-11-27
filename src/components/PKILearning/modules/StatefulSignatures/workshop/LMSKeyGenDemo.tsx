@@ -24,6 +24,7 @@ import { translateCryptoError } from '@/utils/cryptoErrorHint'
 
 import { decodeHssSignature, type DecodedHssSignature } from './hssSignatureDecode'
 import { HssSignatureLayout } from './HssSignatureLayout'
+import { formatSessionTime } from '@/lib/format'
 
 const LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_SignInit', 'C_Sign']
 
@@ -109,7 +110,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
         family: 'hss',
         role: 'private',
         label: `HSS Key (${selected.name})`,
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        generatedAt: formatSessionTime(new Date()),
       })
       setLogEntries([
         {

@@ -49,7 +49,7 @@ for (const width of [1280, 390]) {
       timeout: 30_000,
     })
     await page.getByRole('button', { name: '2. Sign Message' }).click()
-    await expect(page.getByText('7,856 B (7.7 KB)', { exact: true }).last()).toBeVisible({
+    await expect(page.getByText('7,856 B (7.7 KiB)', { exact: true }).last()).toBeVisible({
       timeout: 30_000,
     })
 

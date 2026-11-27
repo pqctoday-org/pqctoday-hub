@@ -364,7 +364,7 @@ describe('FIPS landscape — Hub data contract', () => {
       wrap(<FipsLandscape />)
       expect(
         await screen.findByText(
-          /NIST’s Active FIPS 140-3 list held 2 certificates on 23 October 2026\./
+          /NIST’s Active FIPS 140-3 list held 2 certificates on 23 Oct 2026\./
         )
       ).toBeInTheDocument()
       expect(screen.queryByText(/712/)).not.toBeInTheDocument()
@@ -376,7 +376,7 @@ describe('FIPS landscape — Hub data contract', () => {
         partitions: { fips: { label: 'NIST CMVP', retrievedAt: '2026-10-23T02:05:53+00:00' } },
       })
       wrap(<FipsLandscape />)
-      await screen.findByText(/list held 2 certificates on 23 October 2026/)
+      await screen.findByText(/list held 2 certificates on 23 Oct 2026/)
       const intro = screen.getByText(/Four questions, kept apart/)
       expect(intro.textContent).toContain(
         'except the certificate count, which is read from the site’s own CMVP data'

@@ -18,6 +18,7 @@ import {
   CKM_SHA256,
 } from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import { formatSessionTime } from '@/lib/format'
 
 const CODE_SIGNING_KAT_SPECS: KatTestSpec[] = [
   {
@@ -190,14 +191,14 @@ export const BinarySigning: React.FC = () => {
           family: 'ml-dsa',
           role: 'public',
           label: `${selectedAlgorithm} Public`,
-          generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+          generatedAt: formatSessionTime(new Date()),
         })
         hsm.registerKey(M, hsm.hSessionRef.current, {
           handle: privHandle,
           family: 'ml-dsa',
           role: 'private',
           label: `${selectedAlgorithm} Private`,
-          generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+          generatedAt: formatSessionTime(new Date()),
         })
 
         setKeyPair({

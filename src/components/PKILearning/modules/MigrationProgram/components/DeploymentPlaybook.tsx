@@ -16,6 +16,7 @@ import {
   interpretRetirementPacket,
   retirementPacketMarkdown,
 } from './retirementEvidenceSample'
+import { formatDateStamp } from '@/lib/format'
 
 // Exported (07192026, Batch 3) for the simulation's real-tool doc generator —
 // the sim's sample playbook is the tool's own real checklist content.
@@ -278,7 +279,7 @@ export const DeploymentPlaybook: React.FC<DeploymentPlaybookProps> = ({ roadmapO
         id: `deployment-playbook-${Date.now()}`,
         moduleId: 'migration-program',
         type: 'deployment-playbook',
-        title: `PQC Deployment Playbook — ${new Date().toLocaleDateString()}`,
+        title: `PQC Deployment Playbook — ${formatDateStamp(new Date())}`,
         data: markdown,
         inputs: { checkedItems },
         createdAt: Date.now(),

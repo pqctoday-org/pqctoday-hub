@@ -58,6 +58,7 @@ import {
 } from '@/components/PKILearning/common/WorkshopOperationLog'
 import { translateCryptoError } from '@/utils/cryptoErrorHint'
 import { clampStep } from '@/utils/clampStep'
+import { formatSessionTime } from '@/lib/format'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -713,14 +714,14 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
         family: classicalFamily as HsmFamily,
         role: 'public',
         label: `${classicalLabelSuffix} Public`,
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        generatedAt: formatSessionTime(new Date()),
       })
       hsm.registerKey(M, hSession, {
         handle: classicalKeyRef.current.privHandle,
         family: classicalFamily as HsmFamily,
         role: 'private',
         label: `${classicalLabelSuffix} Private`,
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        generatedAt: formatSessionTime(new Date()),
       })
 
       // --- PQC keygen ---
@@ -756,14 +757,14 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
         family: pqcFamily as HsmFamily,
         role: 'public',
         label: `${pqcLabelSuffix} Public`,
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        generatedAt: formatSessionTime(new Date()),
       })
       hsm.registerKey(M, hSession, {
         handle: pqcKeyRef.current.privHandle,
         family: pqcFamily as HsmFamily,
         role: 'private',
         label: `${pqcLabelSuffix} Private`,
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        generatedAt: formatSessionTime(new Date()),
       })
     } catch (err) {
       setIsSimulationMode(true)
