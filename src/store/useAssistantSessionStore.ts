@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * The running conversation of the drawer: this visit only. Nothing here is persisted or synced,
- * so what a learner typed never leaves the tab. Each answer keeps its own resources. The one thing
- * kept beyond the visit is a count of questions asked (a number in the achievement store, no text).
+ * The running conversation of the drawer: this visit only. Nothing here is persisted or synced.
+ * Each answer keeps its own resources. Two things go beyond the visit: a count of questions asked
+ * (a number in the achievement store, no text), and one usage event per answered question (the
+ * question scrubbed of addresses and key-like strings, and the kind of answer shown).
  */
 import { create } from 'zustand'
 import type { AssistantAnswer, AssistantContext, AssistantRow } from '@/services/assistant/contract'
 import { askAssistant } from '@/components/Assistant/assistantClient'
 import { useAchievementStore } from '@/store/useAchievementStore'
+import { logChatQuestion } from '@/utils/analytics'
 import type { CardNav } from '@/components/Assistant/resourceTabs'
 
 export type AssistantTurn =
@@ -102,6 +104,8 @@ export const useAssistantSessionStore = create<AssistantSessionState>()((set, ge
     set((s) => ({
       turns: s.turns.map((t) => (t.id === id ? { id, question, status: 'done', answer } : t)),
     }))
+    // Recorded once per answered question, scrubbed; the answer itself is built on the device.
+    logChatQuestion(question, answer.state)
   },
 
   retry: async (context) => {

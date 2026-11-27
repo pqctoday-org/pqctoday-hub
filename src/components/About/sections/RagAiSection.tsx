@@ -68,8 +68,10 @@ export function RagAiSection() {
                 <ShieldAlert className="text-status-warning mt-0.5 shrink-0" size={16} />
                 <p className="text-xs text-muted-foreground">
                   <strong className="text-foreground">Data routing notice:</strong> your question is
-                  answered on your device from files the Hub itself serves. It is not sent to Google
-                  or to any other outside service.
+                  answered on your device from files the Hub itself serves. The question is also
+                  recorded in Google Analytics as a usage event, scrubbed of email addresses, web
+                  addresses, IP addresses and long key-like strings and cut to 80 characters, so we
+                  can see what visitors ask. It is sent to no other outside service.
                 </p>
               </div>
             </div>

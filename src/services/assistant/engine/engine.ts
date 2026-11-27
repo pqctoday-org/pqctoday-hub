@@ -183,6 +183,7 @@ export class Engine {
     for (const n of names) {
       if (n.ids.every((i) => TITLED.has(this.names.types[i]))) shape = shape.replace(new RegExp('(?<![a-z0-9])' + escapeRx(n.text.toLowerCase()) + '(?![a-z0-9])', 'g'), ' zzname ')
     }
+    shape = shape.replace(/\s+/g, ' ').trim() // one space between words, so a rule that counts words reads a masked name as one word
     for (const [intent, rows] of Object.entries(this.rules)) {
       for (const r of rows) {
         if (!r.w || !r.re.test(shape)) continue

@@ -110,6 +110,7 @@ describe('ResourceStepper', () => {
   it('Next moves inside the tab', async () => {
     const user = userEvent.setup()
     show()
+    // Top 5 keeps the first group's rows together: the first lesson, then the second lesson
     await user.click(screen.getByRole('button', { name: 'Next resource' }))
     expect(screen.getByRole('heading')).toHaveTextContent('Second lesson')
     expect(footerLabel()).toHaveTextContent('Top 5 · 2 of 4')

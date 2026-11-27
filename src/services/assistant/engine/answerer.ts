@@ -28,6 +28,8 @@ const PLAIN_MIN_WORDS = 2
 /** The reader's confidence when it recognised nothing in the question (no name, no shape): the reading is broad by default, not because the question is. */
 const UNREAD = 0.1
 const INTRODUCTION = 'post-quantum cryptography introduction basics' // what a request with no topic of its own is searched by
+/** A single word that stands in more than this share of the resources' titles is the subject of the whole Hub ("quantum" is in about one title in ten; "security" in one in twenty; "5g" in three in a thousand). */
+const WHOLE_SUBJECT_SHARE = 0.075
 const STOP = new Set('the a an of to in on for and or is are was were be what which who whom how does do did can could would should i me my we our you your it its this that these those with by from about tell show give please there any some as at into if when where why'.split(' '))
 const ASK = new Set('list show find tell explain describe learn lesson lessons module modules section sections tool tools tutorial course page pages information info resource resources material materials guide guides example examples understand know want need looking look use using work works available offer offers provide get give help site hub'.split(' '))
 const GENERIC = ['handshake', 'overview', 'basics', 'fundamentals', 'protocol', 'standard', 'algorithm', 'concept', 'concepts', 'model', 'framework', 'principles']
@@ -65,9 +67,73 @@ const pageOf = (l: string) => l.split('?')[0].split('#')[0].replace(/\/+$/, '') 
 const escRx = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 const cmpStr = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0)
 const cmpTuple = (a: (number | string)[], b: (number | string)[]) => { for (let i = 0; i < a.length; i++) { if (a[i] === b[i]) continue; return a[i] < b[i] ? -1 : 1 } return 0 }
-const extractOf = (text: string, limit = 240): string => {
-  const HEADER = /^(?:Module|Component|Term|Reference|Title|Learning Module|Document|Section|Category):\s*/i
-  const lines = String(text || '').split(/\r?\n/).map((l) => l.trim()).filter(Boolean)
+/** The character codes a page's source writes for punctuation, by name. A code this table does not hold is left as it is. */
+const CODES: Record<string, string> = { quot: '"', amp: '&', apos: "'", lt: '<', gt: '>', nbsp: ' ', thinsp: ' ', shy: '', mdash: '—', ndash: '–', minus: '−', lsquo: '‘', rsquo: '’', ldquo: '“', rdquo: '”', hellip: '…', bull: '•', middot: '·', sect: '§', times: '×', prime: '′', rarr: '→', larr: '←', uarr: '↑', darr: '↓', harr: '↔', ge: '≥', le: '≤', ne: '≠', sup1: '¹', sup2: '²', sup3: '³', alpha: 'α', beta: 'β', deg: '°', plusmn: '±', copy: '©', reg: '®', trade: '™' }
+/** Text with its character codes ("&quot;", "&mdash;", "&#8217;", "&#x2019;") written as the characters a reader sees. One pass: "&amp;quot;" becomes "&quot;". */
+export function decodeCodes(text: string): string {
+  const s = String(text ?? '')
+  if (!s.includes('&')) return s
+  return s.replace(/&(#[0-9]{1,7}|#[xX][0-9a-fA-F]{1,6}|[A-Za-z][A-Za-z0-9]{1,8});/g, (m: string, c: string) => {
+    if (c[0] === '#') {
+      const n = c[1] === 'x' || c[1] === 'X' ? parseInt(c.slice(2), 16) : parseInt(c.slice(1), 10)
+      return n >= 32 && n <= 0x10ffff && !(n >= 0xd800 && n <= 0xdfff) ? String.fromCodePoint(n) : m
+    }
+    return Object.prototype.hasOwnProperty.call(CODES, c) ? CODES[c] : m
+  })
+}
+/** A line of a record's text that only places the record in the Hub's own lists ("Index: 0", "List: workshop_steps", "Paths: developer", "Module: tls-basics"): never shown. */
+export const STRUCTURE = /^(?:Index: [0-9]+|List: [a-z0-9_]+|Paths: [a-z0-9_,; -]+|Module: [a-z0-9]+(?:-[a-z0-9]+)*)$/
+const HEADER = /^(?:Module|Component|Term|Reference|Title|Learning Module|Document|Section|Category):\s*/i
+/** A line that gives one field of a record ("Status: Final"): searched, never shown as a sentence. */
+const FIELD = /^[A-Z][A-Za-z0-9 /&()'-]{0,40}: /
+/** Where one sentence ends and the next begins, in text whose spaces are single. */
+const SENTENCE = /(?<=[.!?]) (?=[A-Z0-9"“(\[])/
+/** The fewest words a sentence must have to open an extract: a heading or a label is not a sentence. */
+const SENTENCE_MIN_WORDS = 5
+/** A sentence ends as one: a table cell, a label or a line cut short is searched, never shown as a sentence. */
+const SENTENCE_END = /[.!?]["”')\]]?$/
+/** A sentence starts as one: the first words of a passage cut from a longer text may not, and are never shown. */
+const SENTENCE_START = /^[A-Z0-9"“‘'(\[]/
+/** A matched sentence replaces a record's own first lines only when it holds at least this share of the question's words, by weight. */
+const MATCH_SHARE = 0.5
+/** The sources of passages whose text is never shown as an extract: a known-answer test, and the passages kept from a document's own text. */
+const NOT_SHOWN = ['known-answer test', 'library']
+/** The sentences of a passage that may be shown, in order: its lines without titles, headings, structure and field lines, cut into sentences that start and end as one. */
+function sentencesOf(text: string): string[] {
+  const out: string[] = []
+  for (const raw of String(text || '').split(/\r?\n/)) {
+    let line = raw.replace(/\s+/g, ' ').trim()
+    if (!line || line[0] === '#' || STRUCTURE.test(line) || HEADER.test(line) || FIELD.test(line)) continue
+    line = line.replace(/^[-*•] /, '').replace(/\*\*/g, '').trim()
+    for (const s of line.split(SENTENCE)) if (SENTENCE_START.test(s) && SENTENCE_END.test(s) && !FIELD.test(s)) out.push(s)
+  }
+  return out
+}
+/**
+ * The part of a passage that says most about the question: it starts at the sentence that holds the most of the question's words by weight
+ * (the first such sentence) and runs on, at most `limit` characters, cut at a word. `weights` gives each word of the question and its
+ * weight, in a fixed order; `held` is the weight that sentence holds. Null when no sentence holds a word of the question.
+ */
+export function matchedExtract(text: string, weights: [string, number][], limit = 240): { text: string; held: number } | null {
+  const sents = sentencesOf(text)
+  let best = -1, held = 0
+  sents.forEach((s, i) => {
+    const toks = new Set(tokens(s))
+    if (toks.size < SENTENCE_MIN_WORDS) return
+    let n = 0
+    for (const [w, x] of weights) if (toks.has(w)) n += x
+    if (n > held) { held = n; best = i }
+  })
+  if (best < 0) return null
+  let out = ''
+  for (let i = best; i < sents.length && Array.from(out).length <= limit; i++) out += (out ? ' ' : '') + sents[i]
+  const chars = Array.from(out)
+  if (chars.length > limit) { const cut = chars.slice(0, limit).join(''); const i = cut.lastIndexOf(' '); out = (i >= 0 ? cut.slice(0, i) : cut) + '…' }
+  return { text: out, held }
+}
+const extractOf = (raw: string, limit = 240): string => {
+  const text = decodeCodes(raw)
+  const lines = String(text || '').split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !STRUCTURE.test(l))
   const body = lines.filter((l) => !HEADER.test(l))
   const out = (body.length ? body : lines.map((l) => l.replace(HEADER, ''))).join(' ').replace(/\s+/g, ' ').trim()
   if (out.length > limit) { const cut = out.slice(0, limit); const i = cut.lastIndexOf(' '); return (i >= 0 ? cut.slice(0, i) : cut) + '…' }
@@ -129,6 +195,8 @@ class Search {
 
 class ResIndex {
   post = new Map<string, [number, number][]>()
+  /** In how many resources' titles each word stands. */
+  inTitles = new Map<string, number>()
   len: number[] = []
   links: string[]
   n: number
@@ -142,6 +210,7 @@ class ResIndex {
     res.forEach((r, i) => {
       const tf = new Map<string, number>()
       for (const w of [...tokens(r.title), ...tokens(r.title), ...tokens(r.title), ...tokens(r.extract)]) tf.set(w, (tf.get(w) ?? 0) + 1)
+      for (const w of new Set(tokens(r.title))) this.inTitles.set(w, (this.inTitles.get(w) ?? 0) + 1)
       let total = 0
       for (const [w, f] of tf) { total += f; const a = this.post.get(w); if (a) a.push([i, f]); else this.post.set(w, [[i, f]]) }
       this.len.push(total)
@@ -149,6 +218,8 @@ class ResIndex {
     this.n = this.links.length
     this.avg = this.len.reduce((a, c) => a + c, 0) / Math.max(1, this.n)
   }
+  /** The share of the resources whose title holds the word. */
+  titleShare(w: string): number { return (this.inTitles.get(w) ?? 0) / Math.max(1, this.n) }
   idf(w: string): number { const n = this.post.get(w)?.length ?? 0; return Math.log(1 + (this.n - n + 0.5) / (n + 0.5)) }
   scores(words: string[]): Map<string, number> {
     const out = new Map<string, number>()
@@ -277,7 +348,13 @@ export class Answerer {
   cfg(intent: string): any {
     const row = this.data.finders.intents[intent] ?? {}
     const d = this.data.finders.default
-    return { w: { ...d.w, ...(row.w ?? {}) }, prior: row.prior ?? {}, only: row.only ?? {}, follow: row.follow ?? d.follow, journey: row.journey ?? d.journey, pin: row.pin ?? {}, filter: !!row.filter, field_bonus: row.field_bonus ?? {}, name_types: row.name_types ?? [], follow_fields: row.follow_fields ?? [] }
+    return { w: { ...d.w, ...(row.w ?? {}) }, prior: row.prior ?? {}, only: row.only ?? {}, follow: row.follow ?? d.follow, journey: row.journey ?? d.journey, pin: row.pin ?? {}, filter: !!row.filter, field_bonus: row.field_bonus ?? {}, name_types: row.name_types ?? [], follow_fields: row.follow_fields ?? [], lead: row.lead ?? '', first_turn: row.first_turn ?? d.first_turn ?? '' }
+  }
+  /** True when a group that is not the first comes after the others on the card (`first_turn: strong`, the default): the first group is the
+   *  answer, and this group's first row is not a strong match (named by the question, or `strong_title` of the question's words in its title). */
+  lateGroup(intent: string, head: Item | undefined): boolean {
+    if (this.cfg(intent).first_turn !== 'strong') return false
+    return !(head && (head.named || (head.title_overlap ?? 0.0) >= (this.data.finders.strong_title as number)))
   }
   contentWords(reading: Reading): string[] {
     const namesToks = new Set(reading.names.flatMap((n) => tokens(n.text)))
@@ -304,7 +381,8 @@ export class Answerer {
       for (const f of cfg.follow_fields) {
         const raw = (this.rec(rid).fields ?? {})[f.field] || []          // an empty string, 0 and null list nothing
         const vals: unknown[] = Array.isArray(raw) ? raw : [raw]
-        const w = f.w / Math.sqrt(Math.max(1, vals.length))          // the more products an algorithm lists, the less each link says (every listed id counts, active or not)
+        // the more records a field lists, the less each link says (every listed id counts, active or not), unless the intent asks for exactly those records (`undivided`)
+        const w = f.undivided ? f.w : f.w / Math.sqrt(Math.max(1, vals.length))
         for (const v of vals) { const t = this.strict.records.get(f.prefix + String(v)); const l = t ? this.linkOfRec.get(t.id) : undefined; if (l && t && isActiveStatus(t.status)) o.set(l, Math.max(o.get(l) ?? 0, w)) }
       }
     }
@@ -333,27 +411,56 @@ export class Answerer {
     const follow = this.followed(reading, cfg)
     const readers = cfg.w.reader ? this.readerLinks(reading.question) : new Map<string, number>()
     const links = new Map<string, number>()
-    for (const h of hits) if (!links.has(h.link)) links.set(h.link, h.score / top)
+    const via = new Map<string, number>()          // the passage each link was found through (its best one)
+    for (const h of hits) if (!links.has(h.link)) { links.set(h.link, h.score / top); via.set(h.link, h.passage) }
     for (const [ln] of [...resScores.entries()].sort((a, b) => b[1] - a[1]).slice(0, extra)) if (!links.has(ln)) links.set(ln, 0)
     for (const ln of [...named.keys(), ...follow.keys(), ...readers.keys(), ...(Object.values(cfg.pin) as string[][]).flat()]) if (!links.has(ln)) links.set(ln, 0)
     // a group the intent restricts to a small set of pages (`only`): every page of that set that shares a word with the question is a
     // candidate, not only those among the best matches of the whole Hub
     for (const ln of this.restricted(intent, cfg)) if ((resScores.get(ln) ?? 0) > 0 && !links.has(ln)) links.set(ln, 0)
+    // a question about the site itself: a page of the site is a candidate when the question holds a word visitors use for it, and
+    // is scored by the share of the question's words that are such words
+    const asked = cfg.w.asked ? this.askedPages(reading.clean) : new Map<string, number>()
+    for (const [ln, share] of asked) if (share > 0 && !links.has(ln)) links.set(ln, 0)
     const pool = new Map<string, Item>()
     const sw = [...words].sort()
     const denom = Math.max(1e-9, sw.reduce((a, w) => a + this.res.idf(w), 0))
-    for (const [ln, text] of links) {
+    for (const [ln, found] of links) {
       const r = this.resByLink.get(ln)
       if (!r || !this.statusOk(r) || (ln.startsWith('http') && !named.has(ln))) continue
+      const text = found * this.about(r, via.get(ln), sw, named.has(ln))
       const tw = new Set(tokens(r.title))
       const overlap = words.length ? sw.filter((w) => tw.has(w)).reduce((a, w) => a + this.res.idf(w), 0) / denom : 0
-      pool.set(ln, { link: ln, title: r.title, type: r.type, group: r.group, extract: r.extract, record_ids: r.record_ids, text, res: (resScores.get(ln) ?? 0) / rtop, title_overlap: overlap, named: named.has(ln), follow: follow.get(ln) ?? 0, reader: readers.get(ln) ?? 0 })
+      pool.set(ln, { link: ln, title: r.title, type: r.type, group: r.group, extract: r.extract, record_ids: r.record_ids, text, res: (resScores.get(ln) ?? 0) / rtop, title_overlap: overlap, named: named.has(ln), follow: follow.get(ln) ?? 0, reader: readers.get(ln) ?? 0, passage: via.get(ln) ?? null, asked: asked.get(ln) ?? 0 })
     }
     return pool
   }
+  /** What the text match of a whole lesson is multiplied by (`whole_lesson` in the finder settings): 1 for anything that is not a whole lesson (or is one the question names), else floor + (top - floor) x the share (by rarity) of the question's words that stand in the lesson's title, summary or the subjects the curriculum says it explains. */
+  about(r: Resource, passage: number | null | undefined, sw: string[], named: boolean): number {
+    const wl = this.data.finders.whole_lesson
+    if (!wl || named || !sw.length || typeof passage !== 'number' || !(wl.types ?? []).includes(r.type) || (wl.inner.length > 0 && !wl.inner.includes(this.cat.passages[passage].source))) return 1.0
+    const m = this.cat.curriculum?.modules[r.link.slice('/learn/'.length).split('?')[0].split('#')[0].replace(/^\/+|\/+$/g, '')]
+    const own = new Set([...tokens(r.title), ...tokens(r.extract), ...((m?.explains ?? []) as string[]).flatMap((e) => tokens(e))])
+    const share = sw.filter((w) => own.has(w)).reduce((a, w) => a + this.res.idf(w), 0) / Math.max(1e-9, sw.reduce((a, w) => a + this.res.idf(w), 0))
+    return wl.floor + ((wl.top ?? 1) - wl.floor) * share
+  }
+  /** For each page of the site that has words of its own: the share of the question's words that are among them. */
+  askedPages(clean: string): Map<string, number> {
+    const toks = [...new Set(tokens(clean).filter((t) => !STOP.has(t)))].sort()
+    const out = new Map<string, number>()
+    for (const [ln, pageWords] of Object.entries((this.data.finders.page_words ?? {}) as Record<string, string[]>)) {
+      if (this.resByLink.has(ln)) out.set(ln, toks.filter((t) => pageWords.includes(t)).length / Math.max(1, toks.length))
+    }
+    return out
+  }
+  /** The group order with the group that leads first (the group the finder marked as holding the best row); the others keep their order. */
+  leadFirst(order: string[], groups: Record<string, Item[]>): string[] {
+    const best = order.find((g) => (groups[g] ?? []).length && groups[g][0].leads)
+    return best === undefined ? order : [best, ...order.filter((g) => g !== best)]
+  }
   score(item: Item, cfg: any, filt: Map<string, number> | null): number {
     const w = cfg.w
-    let v = w.text * item.text + w.res * item.res + w.title * item.title_overlap + w.name * (item.named && (!cfg.name_types.length || cfg.name_types.includes(item.type)) ? 1.0 : 0.0) + w.link * item.follow + w.prior * this.prior(item, cfg.prior) + (w.reader ?? 0.0) * (item.reader ?? 0.0)
+    let v = w.text * item.text + w.res * item.res + w.title * item.title_overlap + w.name * (item.named && (!cfg.name_types.length || cfg.name_types.includes(item.type)) ? 1.0 : 0.0) + w.link * item.follow + w.prior * this.prior(item, cfg.prior) + (w.reader ?? 0.0) * (item.reader ?? 0.0) + (w.asked ?? 0.0) * (item.asked ?? 0.0)
     if (filt !== null) v += filt.get(item.link) ?? 0.0
     return v
   }
@@ -406,6 +513,12 @@ export class Answerer {
       })
       out[g] = ranked.slice(0, perGroup + more).map(([ln, sc]) => ({ ...items.get(ln)!, score: round(sc, 4) }))
     }
+    if (cfg0.lead === 'best') {
+      // the group whose first row scores highest leads (read before the plain matches are mixed in: their scores are another scale)
+      let best: string | null = null
+      for (const g of GROUPS) if (out[g].length && (best === null || out[g][0].score > out[best][0].score)) best = g
+      if (best !== null) out[best][0].leads = true
+    }
     if (cfg0.journey && reading.names.length) this.journey(reading, out, perGroup)
     if ((reading.confidence ?? 1.0) < STRONG && !reading.forced) this.withFallback(reading, out, perGroup + more)
     // quizzes follow the lessons and sections; nothing is added or removed
@@ -418,12 +531,14 @@ export class Answerer {
     const plain: Record<string, Item[]> = Object.fromEntries(GROUPS.map((g) => [g, []]))
     // a word of a name the question was read to hold ("sphincs" in "who created sphincs+") is enough on its own
     const nameWords = [...new Set(reading.names.flatMap((n) => tokens(n.text)))]
+    const sw = [...this.contentWords(reading)].sort(); const named = this.namedLinks(reading)
     for (const h of this.search.resources(reading.clean, 80, PLAIN_MIN_WORDS, nameWords)) {
       const r = this.resByLink.get(h.link)
       if (!r || !this.statusOk(r) || r.link.startsWith('http')) continue
-      plain[r.group].push({ link: r.link, title: r.title, type: r.type, group: r.group, extract: r.extract, record_ids: r.record_ids, score: round(h.score, 4), text: 1.0, res: 0.0, title_overlap: 0.0, named: false, follow: 0.0, reader: 0.0 })
+      plain[r.group].push({ link: r.link, title: r.title, type: r.type, group: r.group, extract: r.extract, record_ids: r.record_ids, score: round(h.score * this.about(r, h.passage, sw, named.has(r.link)), 4), text: 1.0, res: 0.0, title_overlap: 0.0, named: false, follow: 0.0, reader: 0.0, passage: h.passage })
     }
     for (const g of GROUPS) {
+      plain[g].sort((x, y) => y.score - x.score)          // a scaled lesson takes its new place; equal scores keep their order
       const certain = reading.intents.includes('compare') ? out[g].filter((x) => x.named).slice(0, size) : []
       const mine = out[g].filter((x) => !certain.includes(x)); const theirs = plain[g]
       const seen = new Set(certain.map((x) => x.link)); const merged: Item[] = [...certain]
@@ -610,7 +725,24 @@ export class Answerer {
     if (d.place.length) parts.push('Place: ' + [...d.place].sort().slice(0, 3).join('; '))
     return parts.join(' · ') || null
   }
-  row(item: Item): Item {
+  /**
+   * What a row shows under its title: the record's own first lines, or, when the row was found through a passage with a sentence that
+   * holds at least half of the question's words (by weight) and more of them than those lines do, that part of the passage.
+   */
+  shownExtract(item: Item, words: string[]): string {
+    const own = String(item.extract ?? '')
+    const p = typeof item.passage === 'number' ? this.cat.passages[item.passage] : undefined
+    if (!p || !words.length || NOT_SHOWN.includes(p.source)) return own
+    const weights: [string, number][] = [...words].sort().map((w) => [w, this.res.idf(w)])
+    const m = matchedExtract(p.text, weights)
+    if (!m) return own
+    const total = weights.reduce((a, [, x]) => a + x, 0)
+    const mine = new Set(tokens(own))
+    let ownHeld = 0
+    for (const [w, x] of weights) if (mine.has(w)) ownHeld += x
+    return m.held >= MATCH_SHARE * total && m.held > ownHeld ? m.text : own
+  }
+  row(item: Item, words: string[] = []): Item {
     const rows = this.data.rows
     const ids: string[] = item.record_ids ?? []
     const rec = ids.length ? this.strict.records.get(ids[0]) ?? null : null
@@ -631,7 +763,7 @@ export class Answerer {
     } else if (item.group === 'Learn' && this.cat.curriculum) dims = this.dimsLine(null, link)
     const action = rows.action_by_type[rtype] || rows.action_by_group[item.group]
     const paid = !!rec && this.paid.has(rec.id)
-    return { kind, tag, title: item.title, source: origin, status, dims, extract: paid ? '' : item.extract, paidReferenceOnly: paid, action, link, group: item.group }
+    return { kind, tag, title: item.title, source: origin, status, dims, extract: paid ? '' : this.shownExtract(item, words), paidReferenceOnly: paid, action, link, group: item.group }
   }
   persona(): Map<string, string[]> {
     if (!this.personaPaths) {
@@ -752,7 +884,9 @@ export class Answerer {
     if (intent === 'broad' || intent === 'not_fact') {
       // a question nothing was recognised in, but which has words of its own ("5g", "quantum"), is searched by those words;
       // only a request with no topic at all ("hello", "tell me something") gets the introduction
-      const ownWords = intent === 'broad' && (reading.confidence ?? 0) <= UNREAD && this.contentWords(reading).length > 0
+      // a single word that stands in the titles of very many records ("quantum") names the subject of the whole Hub, not a topic: it gets the introduction too
+      const own = this.contentWords(reading)
+      const ownWords = intent === 'broad' && (reading.confidence ?? 0) <= UNREAD && own.length > 0 && !(own.length === 1 && this.res.titleShare(own[0]) > WHOLE_SUBJECT_SHARE)
       findReading = { ...reading, intents: [reading.names.length ? 'concept' : 'risk'], intent: reading.names.length ? 'concept' : 'risk', clean: reading.clean && (reading.intent !== 'broad' || ownWords) ? reading.clean : INTRODUCTION }
     }
     let groups = this.find(findReading, PER_GROUP, PER_GROUP)
@@ -761,7 +895,8 @@ export class Answerer {
       findReading = { ...findReading, clean: INTRODUCTION }
       groups = this.find(findReading, PER_GROUP, PER_GROUP)
     }
-    const order = this.groupOrder(intent, role)
+    const order = this.leadFirst(this.groupOrder(intent, role), groups)
+    const words = findReading.clean === reading.clean ? this.contentWords(findReading) : [] // the introduction is shown in its own words
     const d = intent !== 'broad' && intent !== 'not_fact' ? this.direct(question, reading) : null
     model.direct = d ? { value: d.value, evidence_line: d.evidence_line, tag: d.tag, field: d.field, evidence: d.evidence } : null
     if (d && d.members) groups = this.membersFirst(groups, d.members)
@@ -770,7 +905,7 @@ export class Answerer {
     for (const g of order) {
       const items = groups[g] ?? []
       if (!items.length) continue
-      const rows = items.map((x) => this.row(x))
+      const rows = items.map((x) => this.row(x, words))
       let shown = rows.slice(0, PER_GROUP), more = rows.slice(PER_GROUP)
       if (g === 'Learn' && role && ['learning', 'planning'].includes(intent) && shown.length) {
         const pr = this.rolePathRow(role)
@@ -778,7 +913,10 @@ export class Answerer {
       }
       if (!first && shown.length) first = shown[0] // the closest source is read before the page moves anything: the page never changes it
       if (page) [shown, more] = this.orderByPage(g, findReading, items, rows, shown, more, page)
-      outGroups.push({ name: g, rows: shown, more })
+      // a question that asks for one kind of resource: another group takes its turn among the first rows only when its first row is a strong match
+      const head = shown.length ? items[rows.indexOf(shown[0])] : undefined
+      const late = outGroups.length > 0 && this.lateGroup(intent, head)
+      outGroups.push(late ? { name: g, rows: shown, more, late: true } : { name: g, rows: shown, more })
     }
     model.groups = outGroups
     const label = spec.label
@@ -815,10 +953,11 @@ export class Answerer {
     model.note = N.note.name
     const sub = { ...reading, named_ids: e.ids, intents: ['name'], intent: 'name' }
     const groups = this.find(sub, PER_GROUP, PER_GROUP)
+    const words = this.contentWords(sub)
     for (const g of this.groupOrder('name', role)) {
       const items = (groups[g] ?? []).filter((x) => x.link !== e.link)
       if (items.length) {
-        const rows = items.map((x) => this.row(x))
+        const rows = items.map((x) => this.row(x, words))
         let shown = rows.slice(0, PER_GROUP), more = rows.slice(PER_GROUP)
         if (page) [shown, more] = this.orderByPage(g, sub as any, items, rows, shown, more, page)
         model.groups.push({ name: g, rows: shown, more })

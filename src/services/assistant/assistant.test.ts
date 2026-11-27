@@ -12,6 +12,7 @@ import {
 } from './adapter'
 import { directValueFits } from './engineHost'
 import { buildEngineInput, extractOf, FAMILY_FILE_PREFIX, groupOf } from './buildEngine'
+import { decodeCodes, matchedExtract } from './engine/answerer'
 import {
   ASSISTANT_GROUPS,
   ASSISTANT_ROWS_PER_GROUP,
@@ -239,6 +240,123 @@ describe('lessons under their own name, plain matches, and questions nothing is 
     expect(learnRows(nothing)[0].title).toBe('PQC 101')
   })
 
+  it('answers the one word that names the whole subject of the Hub with the introduction', async () => {
+    const quantum = held(await answer('quantum'))
+    expect(quantum.state).toBe('broad')
+    expect(learnRows(quantum)[0].title).toBe('PQC 101')
+    // a single word with a subject of its own keeps that subject
+    const firstLesson: Record<string, RegExp> = {
+      '5g': /5G/,
+      iot: /IoT/,
+      banking: /Financial Services/,
+      satellites: /Aerospace/,
+    }
+    for (const [q, title] of Object.entries(firstLesson)) {
+      const a = held(await answer(q))
+      expect(learnRows(a)[0].title, q).toMatch(title)
+    }
+  })
+
+  it('answers a question about the site itself with the page it asks for', async () => {
+    const firstPage: Record<string, string> = {
+      'is this free': '/faq',
+      'how does this site work': '/faq',
+      'how do I change my role': '/faq',
+      'where is the glossary': '/learn',
+      'can I download my progress': '/learn',
+      'How do I use the Playground?': '/playground',
+    }
+    for (const [q, link] of Object.entries(firstPage)) {
+      const a = held(await answer(q))
+      expect(a.groups[0].rows[0], q).toMatchObject({ link, kind: 'Page' })
+    }
+    // the same words about something else are not a question about the site
+    for (const q of ['What is the latest version of OpenSSL?', 'Is ML-KEM free to use?'])
+      expect(held(await answer(q)).intent, q).not.toBe('site')
+  })
+
+  it("reads a decision about the visitor's own migration as planning", async () => {
+    for (const q of [
+      'should I migrate now or wait',
+      'do we need to migrate yet',
+      'is it too early to migrate',
+      'when should we start the migration',
+    ]) {
+      const a = held(await answer(q))
+      expect(a.intent, q).toBe('planning')
+      expect(a.groups[0].name, q).toBe('Tools')
+      expect(a.groups[0].rows[0].link, q).toBe('/assess')
+    }
+    // a choice between two algorithms is not a migration decision
+    expect(held(await answer('should I use ML-KEM-768 or ML-KEM-1024')).intent).not.toBe('planning')
+  })
+
+  it('answers which products carry an algorithm with the products the Hub lists for it', async () => {
+    for (const q of [
+      'Which products use MAYO-3?',
+      'Please tell me all the products that have MAYO-3 built in.',
+      'List the products with MAYO-3 support.',
+      'Which products on the site are listed as implementing MAYO-3?',
+    ]) {
+      const a = held(await answer(q))
+      expect(a.intent, q).toBe('products')
+      const data = a.groups.find((g) => g.name === 'Data pages')
+      expect(data?.rows[0].kind, q).toBe('Product')
+      expect(data?.rows[0].title, q).toMatch(/MAYO|liboqs|PQClean/)
+    }
+  })
+
+  it('lets another kind of resource take its turn among the first rows only when it is a strong match', async () => {
+    const a = held(await answer('Which HSM vendors support ML-DSA?'))
+    expect(a.intent).toBe('products')
+    expect(a.groups[0].name).toBe('Data pages')
+    expect(a.groups[0].late).toBeUndefined()
+    // a group whose first row is neither named by the question nor titled with its words waits
+    expect(a.groups.filter((g) => g.late).length).toBeGreaterThan(0)
+    // the same holds for every kind of question, and the first group never waits
+    const b = held(await answer('What is a lattice?'))
+    expect(b.intent).toBe('concept')
+    expect(b.groups[0].late).toBeUndefined()
+    expect(b.groups.every((g) => g.late === undefined || g.late === true)).toBe(true)
+  })
+
+  it('puts the lesson that is about the question first among the lessons and their parts', async () => {
+    const learn = held(await answer('banking')).groups.find((g) => g.name === 'Learn')
+    expect(learn?.rows[0]).toMatchObject({
+      kind: 'Module',
+      title: 'Financial Services & Payments PQC',
+    })
+  })
+
+  it('shows the sentence that matched the question when it says more than the first lines of the record', async () => {
+    const a = held(await answer('is aes 256 quantum safe'))
+    const lessons = allRows(a).filter((r) => r.kind === 'Module')
+    expect(lessons.some((r) => /AES-256/.test(r.extract))).toBe(true)
+    for (const q of [
+      'is aes 256 quantum safe',
+      'how big is an ML-DSA signature',
+      'pci dss quantum requirements',
+    ]) {
+      for (const r of allRows(held(await answer(q)))) {
+        expect(Array.from(r.extract).length).toBeLessThanOrEqual(241)
+        expect(r.extract).not.toMatch(/\*\*|^#|\bIndex: \d+/)
+      }
+    }
+  })
+
+  it('reads a quiz request, a "by what year" question and a "do I need to worry" question for what they ask', async () => {
+    const read = async (q: string) => held(await answer(q)).intent
+    expect(await read('quiz on tls')).toBe('learning')
+    expect(await read('By what year do Hong Kong banks need to be fully quantum-safe?')).toBe(
+      'dates'
+    )
+    expect(await read('do I need to worry about symmetric crypto')).toBe('risk')
+    expect(await read('What are the NIST PQC standards?')).toBe('list')
+    const quiz = held(await answer('quiz on tls'))
+    expect(quiz.groups[0].name).toBe('Learn')
+    expect(learnRows(quiz).map((r) => r.title)).toContain('TLS Basics')
+  })
+
   it('does not show a record that holds only one word of a longer question beside the best matches', async () => {
     const a = held(await answer('is rsa 2048 still ok'))
     const shown = a.groups.flatMap((g) => g.rows.map((r) => r.title))
@@ -457,6 +575,76 @@ describe('what the file builder reads from the knowledge files', () => {
       ['/y', 'Page Y', 'page', ['PAGE:y', 'CHK:a', 'CHK:b']],
       ['/z', 'Third item', 'checklistitem', ['CHK:c', 'CHK:d']],
     ])
+  })
+
+  it('shows no character code of the source pages in a title, an extract or a passage', () => {
+    const code =
+      /&(?:#\d+|#x[0-9a-f]+|quot|apos|mdash|ndash|ldquo|rdquo|lsquo|rsquo|bull|rarr|sect|nbsp|times|hellip);/i
+    const shown = [
+      ...built.catalogue.resources.flatMap((r) => [r.title, r.extract]),
+      ...built.catalogue.passages.flatMap((p) => [p.title, p.text]),
+      ...built.model.records.map((r) => r.label),
+    ]
+    expect(shown.length).toBeGreaterThan(10_000)
+    expect(shown.filter((t) => code.test(t)).slice(0, 3)).toEqual([])
+    // the knowledge text itself keeps its codes: they are decoded for the Assistant only
+    expect(readFileSync(join(ROOT, 'public/data/knowledge-text.json'), 'utf8')).toMatch(code)
+    expect(
+      decodeCodes('don&apos;t &quot;x&quot; a &amp; b &mdash; c&nbsp;d &#8217; &#x2019;')
+    ).toBe('don\'t "x" a & b — c d ’ ’')
+    expect(decodeCodes('&amp;quot; R&D; &sup5; &#0;')).toBe('&quot; R&D; &sup5; &#0;')
+    expect(extractOf('Term: X\nA &ldquo;quoted&rdquo; line &mdash; decoded.')).toBe(
+      'A “quoted” line — decoded.'
+    )
+  })
+
+  it('shows no line that only places a record in the Hub lists, and no test step name in place of a page', () => {
+    const structure = /\b(?:Index: \d+|List: [a-z_]+)\b|\bstep_\d+_\w+/
+    const res = built.catalogue.resources
+    expect(res.filter((r) => structure.test(r.extract)).map((r) => r.link)).toEqual([])
+    // a workshop step with no words of its own is not offered (its lesson is); every step offered has words
+    const steps = res.filter((r) => r.type === 'step')
+    expect(steps.length).toBeGreaterThan(300)
+    expect(steps.filter((r) => !r.extract).map((r) => r.link)).toEqual([])
+    expect(
+      extractOf('Index: 0\nList: workshop_steps\nModule: tls-basics\nRun the handshake.')
+    ).toBe('Run the handshake.')
+    expect(extractOf('Index: 1\nList: workshop_steps\nModule: 5g-security')).toBe('')
+    expect(extractOf('Module: TLS Basics')).toBe('TLS Basics')
+    expect(extractOf('List: the three algorithms NIST selected')).toBe(
+      'List: the three algorithms NIST selected'
+    )
+  })
+
+  it('cuts the matched part of a passage at a sentence start and at a word, and never shows a heading, a field or a cut sentence', () => {
+    const text =
+      '## Hybrid key exchange\nStatus: Final\n- **Why hybrid** a short label\n' +
+      'Hybrid key exchange runs a classical and a post-quantum exchange side by side. ' +
+      'The handshake grows by about 2,300 bytes because the ML-KEM-768 key share is larger than an X25519 one. ' +
+      'A middlebox that drops large ClientHello messages breaks the connection, so test the path before the rollout.\n' +
+      'Table cell without an end\n' +
+      'lower-case fragment of a sentence that was cut by the passage boundary and names the handshake bytes.'
+    const w: [string, number][] = [
+      ['bytes', 2],
+      ['handshake', 1.5],
+      ['grows', 1],
+    ]
+    const m = matchedExtract(text, w)
+    expect(m?.held).toBe(4.5)
+    expect(m?.text.startsWith('The handshake grows by about 2,300 bytes')).toBe(true)
+    expect(m?.text).toContain('middlebox')
+    expect(matchedExtract(text, w, 60)?.text).toBe(
+      'The handshake grows by about 2,300 bytes because the…'
+    )
+    const all = matchedExtract(
+      text,
+      ['hybrid', 'handshake', 'status', 'table', 'fragment'].map((x) => [x, 1]),
+      2000
+    )
+    for (const never of ['##', 'Status:', '**', 'Table cell', 'lower-case fragment'])
+      expect(all?.text).not.toContain(never)
+    expect(matchedExtract(text, [['lattice', 1]])).toBeNull()
+    expect(matchedExtract('Label only\nAnother label', w)).toBeNull()
   })
 
   it('groups links as the Hub pages do, and keeps an extract to one short line', () => {

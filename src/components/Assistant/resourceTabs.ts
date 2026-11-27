@@ -262,10 +262,35 @@ export interface ResourceTabs {
 
 const EMPTY: ResourceTabs = { tabs: [], total: 0, rankOf: {} }
 
-/** The engine's order: each group's visible rows, then each group's own `more`, best first. */
+/**
+ * The order of the card: the rows of the first group (the kind of resource the question asks for),
+ * then the best row of every other group, in the engine's group order, then those groups' other
+ * rows by turns; the groups' `more` rows follow by turns. The answer stays together at the top, and
+ * the best resource of each other kind is seen next, whatever group it sits in.
+ *
+ * A group marked `late` waits: its best row is not a strong match for the question, so its rows come
+ * after the rows of the other groups.
+ */
 function rankedRows(answer: RenderableAnswer, p: PreparedAnswer): AssistantRow[] {
   const groups = answer.groups ?? []
-  const ranked = [...groups.flatMap((g) => g.rows ?? []), ...groups.flatMap((g) => g.more ?? [])]
+  const byTurns = (lists: AssistantRow[][]): AssistantRow[] => {
+    const out: AssistantRow[] = []
+    const longest = Math.max(0, ...lists.map((l) => l.length))
+    for (let i = 0; i < longest; i++) for (const l of lists) if (i < l.length) out.push(l[i])
+    return out
+  }
+  const shown = groups.filter((g) => (g.rows ?? []).length > 0)
+  let onTime = shown.filter((g) => !g.late).map((g) => g.rows)
+  let late = shown.filter((g) => g.late).map((g) => g.rows)
+  if (onTime.length === 0) [onTime, late] = [late, []]
+  const [first = [], ...others] = onTime
+  const ranked = [
+    ...first,
+    ...others.map((l) => l[0]),
+    ...byTurns(others.map((l) => l.slice(1))),
+    ...byTurns(late),
+    ...byTurns(groups.map((g) => g.more ?? [])),
+  ]
   return p.nameCard ? [nameCardAsRow(p.nameCard), ...ranked] : ranked
 }
 

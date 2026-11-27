@@ -29,6 +29,24 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.228.2] - 2026-11-27
+
+The Assistant's answer card shows the best resource of every kind among its first rows, reads more kinds of question for what they ask, and shows the sentence that matched your question. Questions asked in the Assistant are now recorded as scrubbed usage events.
+
+### Changed
+
+- **The answer card shows the best resource of every kind among its first rows** [view:/] [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: An answer used to list all the rows of one kind before the next kind, so a fitting lesson or tool could sit below five data pages. The card now starts with the rows of the kind your question asks for, then the best row of each other kind (data pages, references, lessons, tools) that matches your question closely, then the rest. On our own test questions, the resource a question was written for is among the first five rows for about 88 in 100 questions, up from 68.
+- **Questions asked in the Assistant are recorded as usage events** [view:/] [view:/terms] [view:/about] [view:/faq] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: Each question you ask the Assistant is now recorded in Google Analytics as a usage event, with the kind of answer shown. The text is scrubbed of email addresses, web addresses, IP addresses and long key-like strings, and cut to 80 characters. We use it to see what visitors ask and to improve the answers. The answer is still built on your device. The Terms, the About page and the FAQ now say this. Do not type personal or confidential information into the Assistant.
+
+### Fixed
+
+- **A resource shows the sentence that matched your question** [view:/] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: Under each resource, the Assistant now shows the sentence that matched your question instead of the start of the record. Quotation marks and other punctuation appear as characters, not as codes, and list positions and test step names no longer appear.
+- **The lesson about your question comes first** [view:/] [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: A lesson whose title, summary or subjects match your question is now placed ahead of a lesson that only mentions it in one sentence. A question about a migration decision, such as "should I migrate now or wait", opens with the Risk Assessment tool.
+- **More questions are read for what they ask** [view:/] [view:/learn/quiz] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: "quiz on tls" opens with the "TLS Basics" lesson, a "by what year" question is read as a question about dates, and a "do I need to worry about" question as a question about risk.
+- **"Which products support an algorithm" is answered with products** [view:/] [view:/migrate] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: A question such as "Which products support MAYO-3?" now opens with the products the Hub lists for that algorithm, instead of the algorithm's own page.
+- **Questions about the Hub itself get the page they ask for** [view:/] [view:/faq] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: "is this free" opens with the Frequently Asked Questions page.
+- **The single word "quantum" gets the introduction** [view:/] [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: It opens with the "PQC 101" lesson again.
+
 ## [4.228.1] - 2026-11-26
 
 The Assistant offers lessons under their own names, leaves out resources that share only one word with your question, and answers a short question with resources on its subject.
