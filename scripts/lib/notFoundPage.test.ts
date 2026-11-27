@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest'
 import {
   NOT_FOUND_DESCRIPTION,
   NOT_FOUND_LINKS,
+  NOT_FOUND_SEARCH,
   NOT_FOUND_TITLE,
 } from '../../src/seo/notFoundContent'
 import { buildNotFoundPage, STATIC_404_ATTRIBUTE, validateNotFoundPage } from './notFoundPage'
@@ -103,6 +104,16 @@ describe('buildNotFoundPage: the page body', () => {
     expect(links).toEqual(NOT_FOUND_LINKS.map((link) => [link.path, link.label]))
   })
 
+  it('has a search box that works without JavaScript', () => {
+    const form = build().querySelector('#root form[role="search"]')!
+    expect(form.getAttribute('action')).toBe(NOT_FOUND_SEARCH.action)
+    expect(form.getAttribute('method')).toBe('get')
+    const input = form.querySelector('input[type="search"]')!
+    expect(input.getAttribute('name')).toBe(NOT_FOUND_SEARCH.param)
+    expect(form.querySelector(`label[for="${input.id}"]`)?.textContent).toBe(NOT_FOUND_SEARCH.label)
+    expect(form.querySelector('button[type="submit"]')?.textContent).toBe(NOT_FOUND_SEARCH.button)
+  })
+
   it('no longer holds the home page content or its prerender marker', () => {
     const root = build().querySelector('#root')!
     expect(root.textContent).not.toContain('Welcome home')
@@ -191,6 +202,11 @@ describe('validateNotFoundPage: each rule rejects on its own', () => {
       'a heading that does not say not found',
       (h: string) => h.replace('Page not found</h1>', 'Welcome</h1>'),
       '404.html does not say the page was not found',
+    ],
+    [
+      'no search box',
+      (h: string) => h.replace(/<form role="search"[\s\S]*?<\/form>/, ''),
+      '404.html has no search box',
     ],
     [
       'a prerender marker',

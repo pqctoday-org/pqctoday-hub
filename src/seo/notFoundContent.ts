@@ -22,3 +22,14 @@ export const NOT_FOUND_LINKS: ReadonlyArray<{ path: string; label: string }> = [
   { path: '/threats', label: 'Threats' },
   { path: '/about', label: 'About' },
 ]
+
+/**
+ * The search box on the not-found page. It goes to the same address the site's search markup
+ * (the WebSite SearchAction) names, so it is a plain form that works without JavaScript.
+ */
+export const NOT_FOUND_SEARCH = {
+  action: '/library',
+  param: 'q',
+  label: 'Search the reference library',
+  button: 'Search',
+} as const
