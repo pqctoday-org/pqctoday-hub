@@ -21,13 +21,15 @@ export interface SuggestionsProps {
   onAsk: (question: string) => void
   /** Copies the question into the input and focuses it. */
   onEdit: (question: string) => void
+  /** Under an answer: one pill, and the rest behind "More questions (n)". */
+  compact?: boolean
 }
 
 /**
  * Suggested questions as plain buttons: one main question, up to three alternatives, the rest
  * collapsed. The input stays available and is never pre-filled.
  */
-export function Suggestions({ suggestions, onAsk, onEdit }: SuggestionsProps) {
+export function Suggestions({ suggestions, onAsk, onEdit, compact = false }: SuggestionsProps) {
   const [why, setWhy] = useState(false)
   const [moreOpen, setMoreOpen] = useState(false)
   const list = suggestions.slice(0, MAX_SUGGESTIONS)
@@ -35,6 +37,59 @@ export function Suggestions({ suggestions, onAsk, onEdit }: SuggestionsProps) {
   const [main, ...rest] = list
   const alternatives = rest.slice(0, MAX_ALTERNATIVES)
   const more = rest.slice(MAX_ALTERNATIVES)
+  if (compact) {
+    const controls = (
+      <div className="flex flex-wrap items-center gap-1">
+        {main.why && (
+          <StoryButton variant="quiet" aria-expanded={why} onClick={() => setWhy((v) => !v)}>
+            {COPY.why}
+          </StoryButton>
+        )}
+        <StoryButton variant="quiet" onClick={() => onEdit(main.question)}>
+          {COPY.edit}
+        </StoryButton>
+      </div>
+    )
+    return (
+      <div role="group" aria-label="Suggested questions" className="space-y-1.5">
+        <Eyebrow as="p">{COPY.suggestedShort}</Eyebrow>
+        <StoryButton
+          variant="secondary"
+          onClick={() => onAsk(main.question)}
+          className="h-auto w-full justify-start whitespace-normal py-1.5 text-left text-sm"
+        >
+          {main.question}
+        </StoryButton>
+        {rest.length > 0 && (
+          <StoryButton
+            variant="quiet"
+            aria-expanded={moreOpen}
+            onClick={() => setMoreOpen((v) => !v)}
+          >
+            {COPY.moreQuestions(rest.length)}
+          </StoryButton>
+        )}
+        {(moreOpen || rest.length === 0) && controls}
+        {why && main.why && <p className="text-xs text-muted-foreground">{main.why}</p>}
+        {moreOpen && (
+          <ul className="space-y-1.5">
+            {rest.map((s) => (
+              <li key={s.question}>
+                <StoryButton
+                  variant="secondary"
+                  onClick={() => onAsk(s.question)}
+                  className="h-auto w-full justify-start gap-2 whitespace-normal py-1.5 text-left text-xs"
+                >
+                  {s.label && <span className="text-muted-foreground">{s.label}</span>}
+                  <span>{s.question}</span>
+                </StoryButton>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    )
+  }
   return (
     <div role="group" aria-label="Suggested questions" className="space-y-2">
       <Eyebrow as="p">{COPY.suggested}</Eyebrow>

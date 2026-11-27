@@ -24,6 +24,7 @@ import { TAILORING_CODE_ANALYSIS_SECTION } from '../data/tailoringCodeAnalysisSe
 import { STATIC_CODE_ANALYSIS_SECTION } from '../data/staticCodeAnalysisSection'
 import { DYNAMIC_ANALYSIS_SECTION } from '../data/dynamicAnalysisSection'
 import { OPEN_SOURCE_SECURITY_SECTION } from '../data/openSourceSecuritySection'
+import { MIDDLEWARE_PROVIDERS_SECTION } from '../data/middlewareProvidersSection'
 
 // Local CollapsibleSection replaced by the shared anchored LearnSection
 // (2026-07-30).
@@ -646,6 +647,11 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
       <SourcedLearnSection
         section={OPEN_SOURCE_SECURITY_SECTION}
         icon={<Package size={20} className="text-primary" />}
+      />
+
+      <SourcedLearnSection
+        section={MIDDLEWARE_PROVIDERS_SECTION}
+        icon={<Layers size={20} className="text-primary" />}
       />
 
       <VendorCoverageNotice migrateLayer="Libraries" />

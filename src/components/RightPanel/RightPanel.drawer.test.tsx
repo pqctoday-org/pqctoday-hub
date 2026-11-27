@@ -36,13 +36,15 @@ const mount = () =>
   )
 
 describe('drawer on the default path', () => {
-  it('is a region named Assistant beside the page: no tabs, no expand, minimise or close buttons', async () => {
+  it('is a region named Assistant beside the page: no tabs and no expand or minimise buttons, and a visible Close', async () => {
     mount()
     const region = screen.getByRole('region', { name: 'Assistant' })
     expect(region).toHaveAttribute('data-assistant-layout', 'docked')
-    expect(region).toHaveClass('w-[400px]')
+    // the window is 1024 px wide here, so the automatic width is the narrower one
+    expect(region).toHaveStyle({ width: '400px' })
     expect(screen.queryByRole('tab')).toBeNull()
-    expect(screen.queryByRole('button', { name: /expand|shrink|minimi[sz]e|close/i })).toBeNull()
+    expect(screen.queryByRole('button', { name: /expand|shrink|minimi[sz]e/i })).toBeNull()
+    expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument()
     expect(
       await screen.findByText('Ask anything. No sign-up or objective needed.')
     ).toBeInTheDocument()
@@ -55,6 +57,11 @@ describe('drawer on the default path', () => {
       'aria-modal',
       'true'
     )
+    // beside the page the drawer has a visible Close too, and it closes the drawer
+    const user0 = userEvent.setup()
+    await user0.click(screen.getByRole('button', { name: 'Close' }))
+    expect(useRightPanelStore.getState().isOpen).toBe(false)
+    useRightPanelStore.setState({ isOpen: true, activeTab: 'chat' })
     unmount()
 
     layout.value = 'sheet'

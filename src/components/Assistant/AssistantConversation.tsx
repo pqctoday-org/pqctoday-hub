@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
-import { Eyebrow, StoryButton } from '@/components/storybook'
+import { StoryButton } from '@/components/storybook'
 import { useChatStore } from '@/store/useChatStore'
 import { useAssistantSessionStore } from '@/store/useAssistantSessionStore'
 import { useAssistantReturnStore } from '@/store/useAssistantReturnStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
-import { resourceCount } from './answerRules'
 import type { AssistantRow } from '@/services/assistant/contract'
-import { AssistantAnswerView, QuestionBlock } from './AssistantAnswerView'
 import { AssistantInput } from './AssistantInput'
 import { RecordViewer } from './RecordViewer'
+import { ResponseCard } from './ResponseCard'
+import { buildResourceTabs } from './resourceTabs'
 import { isGlossaryTag, termLessonsFor, type TermLesson } from '@/services/assistant/termLessons'
 import { useGlossaryDrawerStore } from '@/store/useGlossaryDrawerStore'
 import { Suggestions } from './Suggestions'
-import { suggestionsFor } from './suggestionSource'
+import { useRememberAsked, useSuggestions } from './useSuggestions'
 import { COPY } from './copy'
 import { describeCurrentPage } from './returnTarget'
 import { useAssistantContext } from './useAssistantContext'
@@ -37,6 +37,10 @@ export function AssistantConversation() {
   const setDraft = useAssistantSessionStore((s) => s.setDraft)
   const ask = useAssistantSessionStore((s) => s.ask)
   const retry = useAssistantSessionStore((s) => s.retry)
+  const openTurnId = useAssistantSessionStore((s) => s.openTurnId)
+  const setOpenTurn = useAssistantSessionStore((s) => s.setOpenTurn)
+  const cardNav = useAssistantSessionStore((s) => s.cardNav)
+  const setCardNav = useAssistantSessionStore((s) => s.setCardNav)
 
   const pendingQuestion = useChatStore((s) => s.pendingQuestion)
   const setPendingQuestion = useChatStore((s) => s.setPendingQuestion)
@@ -44,7 +48,8 @@ export function AssistantConversation() {
 
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
-  const latestRef = useRef<HTMLDivElement>(null)
+  const cardRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const spacerRef = useRef<HTMLDivElement>(null)
   const openerTag = useRef<string | null>(null)
   const opened = useAssistantSessionStore((s) => s.viewer)
   const setOpened = useAssistantSessionStore((s) => s.setViewer)
@@ -81,16 +86,59 @@ export function AssistantConversation() {
 
   const latest = turns[turns.length - 1]
   const latestDone = latest?.status === 'done' ? latest : null
+  // One card is open; a missing or removed one falls back to the newest.
+  const openId = turns.some((t) => t.id === openTurnId) ? openTurnId : (latest?.id ?? null)
   // A polite live region: the text changes when a new answer is ready, focus does not move.
-  const announcement = latestDone ? COPY.answerReady(resourceCount(latestDone.answer)) : ''
+  const announcement = latestDone
+    ? COPY.answerReady(buildResourceTabs(latestDone.answer).total)
+    : ''
 
-  // Bring the newest question to the top of the list, so its answer reads from the first line;
-  // announce the answer politely without moving focus.
+  // Bring the open card to the top of the list, so its answer reads from the first line. It runs
+  // when the open card changes and again when the newest answer arrives (the loading line is too
+  // short to scroll that far). A spacer below the last card lets a short card still reach the top.
+  const viewerOpen = Boolean(opened)
   useEffect(() => {
     const list = listRef.current
-    const latestEl = latestRef.current
-    if (list && latestEl) list.scrollTop = latestEl.offsetTop
-  }, [turns.length])
+    const card = openId ? cardRefs.current[openId] : null
+    const spacer = spacerRef.current
+    if (!list || !card) return
+    // Where the list should be scrolled to: the open card's top. On the phone, with a record pinned
+    // above, the list is short, so the card is scrolled to its resource instead, which is what the
+    // learner just acted on.
+    const target = () => {
+      const panel = viewerOpen && sheet ? card.querySelector('[role="tabpanel"]') : null
+      if (!panel) return card.offsetTop
+      const lead = panel.getBoundingClientRect().top - card.getBoundingClientRect().top
+      return card.offsetTop + Math.max(0, lead - 8)
+    }
+    const place = () => {
+      if (spacer) {
+        // The content ends where the (empty) spacer starts, plus the list's own bottom padding.
+        spacer.style.height = '0px'
+        const contentEnd =
+          spacer.offsetTop + parseFloat(getComputedStyle(list).paddingBottom || '0')
+        // Only for a card with controls in it: a scrolling list with nothing to focus fails the keyboard rule.
+        const room = card.querySelector('button, a[href]')
+          ? Math.max(0, target() + list.clientHeight - contentEnd)
+          : 0
+        spacer.style.height = `${room}px`
+      }
+      list.scrollTop = target()
+    }
+    place()
+    // The card can still settle for a frame or two (fonts, the loading line giving way to the answer):
+    // check again until the card's top is where it should be, for at most ten frames.
+    let frames = 0
+    let handle = 0
+    const settle = () => {
+      if (Math.abs(list.scrollTop - target()) > 1 && frames++ < 10) {
+        place()
+        handle = requestAnimationFrame(settle)
+      }
+    }
+    handle = requestAnimationFrame(settle)
+    return () => cancelAnimationFrame(handle)
+  }, [openId, latest?.status, viewerOpen, sheet])
 
   // A failure notice sits at the end of the list: show it.
   useEffect(() => {
@@ -122,9 +170,7 @@ export function AssistantConversation() {
     // Back to the row action that opened it.
     requestAnimationFrame(() => {
       const target = tag
-        ? document.querySelector<HTMLElement>(
-            `[data-tag="${CSS.escape(tag)}"] button, [data-tag="${CSS.escape(tag)}"] a`
-          )
+        ? document.querySelector<HTMLElement>(`[data-tag="${CSS.escape(tag)}"] [data-row-action]`)
         : null
       ;(target ?? inputRef.current)?.focus()
     })
@@ -164,7 +210,8 @@ export function AssistantConversation() {
     [openPage, setOpened]
   )
 
-  const suggestions = suggestionsFor(turns.map((t) => t.question))
+  const suggestions = useSuggestions()
+  useRememberAsked()
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -196,32 +243,37 @@ export function AssistantConversation() {
 
       <div
         ref={listRef}
-        className="relative min-h-0 flex-1 space-y-5 overflow-y-auto px-3 py-4 md:px-4 max-md:overscroll-y-contain"
+        data-testid="assistant-list"
+        // `overflow-anchor: none`: the list is scrolled to the open card on purpose; the browser must not move it again when a card above changes size.
+        className="relative min-h-0 flex-1 space-y-5 overflow-y-auto px-3 py-4 [overflow-anchor:none] md:px-4 max-md:overscroll-y-contain"
         hidden={Boolean(opened) && !sheet}
       >
         {turns.length === 0 && !failedQuestion && (
           <p className="text-sm font-semibold text-foreground">{COPY.first}</p>
         )}
 
-        {turns.map((t, i) => {
-          const isLast = i === turns.length - 1
-          const answer = t.status === 'done' ? t.answer : null
-          return (
-            <div key={t.id} ref={isLast ? latestRef : undefined} className="space-y-2">
-              {!isLast && <Eyebrow as="p">{COPY.earlierAnswer}</Eyebrow>}
-              {answer ? (
-                <AssistantAnswerView answer={answer} onAction={(r) => onAction(r, t.question)} />
-              ) : (
-                <article aria-label={t.question} className="space-y-3">
-                  <QuestionBlock question={t.question} />
-                  <p role="status" className="text-sm text-muted-foreground">
-                    {COPY.loading}
-                  </p>
-                </article>
-              )}
-            </div>
-          )
-        })}
+        {turns.map((t) => (
+          <div
+            key={t.id}
+            ref={(el) => {
+              cardRefs.current[t.id] = el
+            }}
+            className="space-y-3"
+          >
+            <ResponseCard
+              turn={t}
+              open={t.id === openId}
+              onOpen={() => setOpenTurn(t.id)}
+              nav={cardNav[t.id]}
+              onNav={(nav) => setCardNav(t.id, nav)}
+              sheet={sheet}
+              onAction={(r) => onAction(r, t.question)}
+            />
+            {t.id === openId && !failedQuestion && t.status === 'done' && (
+              <Suggestions suggestions={suggestions} onAsk={send} onEdit={edit} compact />
+            )}
+          </div>
+        ))}
 
         {failedQuestion && (
           <div role="alert" className="space-y-2 rounded-2xl border-2 border-ink bg-card p-3">
@@ -231,7 +283,10 @@ export function AssistantConversation() {
           </div>
         )}
 
-        {!failedQuestion && <Suggestions suggestions={suggestions} onAsk={send} onEdit={edit} />}
+        {!failedQuestion && turns.length === 0 && (
+          <Suggestions suggestions={suggestions} onAsk={send} onEdit={edit} />
+        )}
+        <div ref={spacerRef} aria-hidden="true" />
       </div>
 
       <p className="sr-only" role="status" aria-live="polite">

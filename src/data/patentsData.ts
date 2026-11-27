@@ -53,6 +53,10 @@ interface RawPatentRow {
   nist_round_status: string
   pqc_migration_score: string
   pqc_migration_reason: string
+  // Organising columns: the Learn module(s) a patent is named in and its industries. Optional,
+  // because older generations of the file do not carry them.
+  module_ids?: string
+  industries?: string
   // DS-series lifecycle (since patents_09172026.csv): rows outside the
   // Patents page scope are deprecated, never deleted. Optional because
   // the previous generation has no such columns.
@@ -231,6 +235,8 @@ export function transformRow(row: RawPatentRow): PatentItem | null {
     nistRoundStatus: parseJsonField<NistStatus[]>(row.nist_round_status, []),
     priorityYear: parseInt(row.priority_date?.slice(0, 4) ?? '0', 10) || 0,
     filingYear: parseInt(row.filing_date?.slice(0, 4) ?? '0', 10) || 0,
+    moduleIds: splitSemicolon(row.module_ids),
+    industries: splitSemicolon(row.industries),
     // Preserve null for missing/unparseable scores rather than coercing to 0 — an
     // unscored patent is not the same as one genuinely scored at the bottom.
     // parseFloat (not parseInt) because pqc_migration_score is a decimal string ("8.0").

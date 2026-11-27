@@ -14,7 +14,7 @@ import {
   type AssistantRow,
 } from '@/services/assistant/contract'
 
-export const grouped = (label: string) => `Grouped for ${label}: best first, up to 3 per group.`
+export const grouped = (label: string) => `Grouped for ${label}: best first.`
 const NO_DIRECT = 'No direct answer: resources only.'
 
 export function makeRow(
@@ -226,7 +226,7 @@ export const nameCardMlKem: AssistantAnswer = {
   intent: 'name',
   intentLabel: 'a name',
   answerText: 'One Hub record matches that name.',
-  note: 'Matched by name: one Hub record, shown above. Related resources follow, best first, up to 3 per group.',
+  note: 'Matched by name: one Hub record, shown above. Related resources follow, best first.',
   nameCard: {
     kind: 'Algorithm',
     title: 'ML-KEM (FIPS 203)',

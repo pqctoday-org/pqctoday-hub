@@ -11,6 +11,7 @@ const manifest: ModuleManifest = {
     { id: 'methodology', label: 'Risk Methodology' },
     { id: 'stored-data-key-recovery', label: 'Stored Data & Key Recovery' },
     { id: 'cia-quantum-threat', label: 'CIA & the Quantum Threat' },
+    { id: 'cyber-resiliency-goals', label: 'Cyber Resiliency Goals' },
   ],
   workshopSteps: [
     { id: 'asset-inventory', label: 'Asset Inventory' },

@@ -50,6 +50,27 @@ export interface AssistantContext {
   industry?: string | null
   /** A region group or place (for example `EU`, `US`). Accepted now; not yet used to order rows. */
   region?: string | null
+  /**
+   * The page the learner is on: its knowledge tag (a lesson, a section, a record), or its Hub address, which the engine host reads
+   * as a tag. The engine uses it only to move the resources of that page, and those linked to it, earlier in their group.
+   * It never adds or removes a resource and never changes the kind of answer.
+   */
+  page?: string | null
+}
+
+/** The lesson a record belongs to in the Learn tree (its home lesson), read from the knowledge file. */
+export interface AssistantHomeLesson {
+  tag: string
+  title: string
+  /** The Hub address of the lesson. */
+  link: string
+}
+
+/** The link of its kind a record holds, so a question about it can be offered (see `recordLinkOf`). */
+export interface AssistantRecordLink {
+  relation: 'made_by' | 'makes' | 'certifies' | 'publishes'
+  /** What a question calls the record, when that is not its title (a certification by its number). */
+  name?: string
 }
 
 /** One action label per row (handoff 9.7). */
@@ -92,6 +113,8 @@ export interface AssistantRow {
   goLink: string
   /** The group the row belongs to. */
   group: AssistantGroupName
+  /** The lesson the record belongs to, when it has one that is not itself or a part of it. Absent in an answer saved before this. */
+  homeLesson?: AssistantHomeLesson | null
 }
 
 /** A group of rows: up to three shown, the rest behind one control. Empty groups are never returned. */
@@ -136,6 +159,8 @@ export interface AssistantSource {
   title: string
   tag: string
   goLink: string
+  /** The link of its kind the record holds, so a question about it can follow the answer. */
+  recordLink?: AssistantRecordLink | null
 }
 
 /** A link to a lesson or tool beside a name card ("Taught in ...", "Try it in ..."). */
@@ -155,6 +180,8 @@ export interface AssistantNameCard {
   extract: string
   taughtIn: AssistantRelatedLink[]
   tryIn: AssistantRelatedLink[]
+  /** The link of its kind the record holds, so a question about it can follow the answer. */
+  recordLink?: AssistantRecordLink | null
 }
 
 /** One named choice when several records share a name (the "ambiguous follow-up" exception). */

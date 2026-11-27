@@ -63,7 +63,9 @@ describe('what an objective is built on', () => {
     const o = get(make())
     expect(o.builtOn?.origin).toBe('created')
     expect(o.builtOn?.revision).toBe(CURRICULUM_REVISION)
-    expect(CURRICULUM_REVISION).toMatch(/^learn_modules_\d{8}_r\d+\.csv \+ tools_\d{8}_r\d+\.csv$/)
+    expect(CURRICULUM_REVISION).toMatch(
+      /^learn_modules_\d{8}(_r\d+)?\.csv \+ tools_\d{8}(_r\d+)?\.csv$/
+    )
     const lessonSteps = o.steps.filter((s) => s.kind === 'module').map((s) => s.resourceTag)
     expect(Object.keys(o.builtOn!.lessons).sort()).toEqual([...lessonSteps].sort())
     for (const tag of lessonSteps) {

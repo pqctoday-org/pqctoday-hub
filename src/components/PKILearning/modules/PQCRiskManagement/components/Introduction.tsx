@@ -16,6 +16,8 @@ import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { Button } from '@/components/ui/button'
 import { describeIndustryBreachBaseline } from '@/data/roiBaselines'
+import { SourcedSectionPanel } from '@/components/PKILearning/common/SourcedSection'
+import { THREAT_ENVIRONMENT_SECTION } from '../data/threatEnvironmentSection'
 
 interface IntroductionProps {
   onNavigateToWorkshop: () => void
@@ -383,6 +385,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           </div>
         </div>
       </section>
+
+      <SourcedSectionPanel section={THREAT_ENVIRONMENT_SECTION} />
 
       {/* CTA */}
       <div className="text-center">

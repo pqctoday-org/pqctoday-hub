@@ -203,6 +203,7 @@ export class Answerer {
   linkOfRec = new Map<string, string>()
   private raw = new Map<string, Result>()
   private personaPaths: Map<string, string[]> | null = null
+  private near: Map<string, Set<string>> | null = null
   private paid: Set<string>
   private data: any
   private cat: Catalogue
@@ -479,6 +480,22 @@ export class Answerer {
   }
 
   // ------------------------------------------------------------ direct answer
+  /** The strict reader answered a question about the members of one of the relations that get a direct answer (`direct_links`). */
+  private linkedAnswer(res: Result): boolean {
+    return res.kind === 'answer' && (this.data.rules.direct_links.relations as string[]).includes(res.relation) && (res.records ?? []).length > 0
+  }
+  /** The records a link reaches, in the order they are named: by name (A to Z, letter case ignored), then by tag. */
+  private linkedMembers(res: Result): Rec[] {
+    return (res.records as { id: string }[]).map((r) => this.rec(r.id)).sort((a, b) => cmpTuple([String(a.label).toLowerCase(), a.id], [String(b.label).toLowerCase(), b.id]))
+  }
+  /** The records a link reaches, by name (A to Z, letter case ignored, then tag): the first `cap` named, the rest counted. */
+  private linkedText(res: Result): string {
+    const recs = this.linkedMembers(res)
+    const cap: number = this.data.rules.direct_links.cap
+    const names = recs.slice(0, cap).map((r) => String(r.label))
+    if (recs.length > cap) names.push(this.data.notes.links.more.replace('{n}', String(recs.length - cap)))
+    return names.join('; ')
+  }
   direct(question: string, reading: Reading): Result | null {
     let intent = reading.intent
     // "What replaced X?" whose name carries a word that tips the question toward another intent ("... Roadmap-2026", "... pdf ...") is
@@ -486,24 +503,27 @@ export class Answerer {
     const successor = reading.intents.includes('currency') && provenSuccessor(this.answerRaw(question))
     if (successor) intent = 'currency'
     const spec = this.data.intents.intents[intent]
-    if (!spec.direct) return null
-    if (intent === 'source_document') return this.documentAnswer(reading)
     const res = this.answerRaw(question)
+    const linked = this.linkedAnswer(res)
+    if (!spec.direct && !linked) return null
+    if (intent === 'source_document' && !linked) return this.documentAnswer(reading)
     if (res.kind !== 'answer' || res.tier === 2 || res.from_fields) return null
     const rec = this.strict.records.get((res.record ?? {}).id ?? '')
     // A retired record answers one question only: what replaced it, and only when the link is proven (the reader's chain).
     if (!rec || (!isActiveStatus(rec.status) && !successor)) return null
-    if ((res.records ?? []).length > 1) return null
+    if ((res.records ?? []).length > 1 && !linked) return null
     let value = res.value
+    if (linked) value = this.linkedText(res)
     if ((value === null || value === undefined || value === '') && res.values && res.values.length) value = res.values.map(String).join('; ')
     if ((value === null || value === undefined || value === '') && intent === 'people' && String(res.text || '').split(/\s+/).filter(Boolean).length >= 5 && ['person', 'vendor', 'source'].includes(rec.type)) value = res.text
     if ((value === null || value === undefined || value === '') && intent === 'currency' && res.answer) value = res.answer.label || res.answer.key
     if (value === null || value === undefined || value === '') return null
     if (spec.direct_field_rx && res.field && !new RegExp(spec.direct_field_rx.replace(/^\(\?i\)/, ''), spec.direct_field_rx.startsWith('(?i)') ? 'i' : '').test(String(res.field))) return null
-    if (spec.one_of_kind && reading.names.length && reading.names[0].ids.filter((i) => spec.one_of_kind.includes(this.rec(i).type)).length > 1) return null
+    if (spec.one_of_kind && !linked && reading.names.length && reading.names[0].ids.filter((i) => spec.one_of_kind.includes(this.rec(i).type)).length > 1) return null
     for (const n of reading.names.slice(0, 1)) {
-      const twins = n.ids.filter((i) => this.rec(i).family === rec.family && this.rec(i).type === rec.type && isActiveStatus(this.rec(i).status))
-      if (twins.length > 1 && !(res.records && res.records.length > 1)) return null
+      // a link answer is about the record the name reaches in its family: a document and a standard of one Library title are twins
+      const twins = n.ids.filter((i) => this.rec(i).family === rec.family && (linked || this.rec(i).type === rec.type) && isActiveStatus(this.rec(i).status))
+      if (twins.length > 1 && (linked || !(res.records && res.records.length > 1))) return null
     }
     let ev = this.evidence(rec, res)
     if (ev === null) return null
@@ -513,7 +533,10 @@ export class Answerer {
       const { text, proof } = this.successorText(rec, res)
       return { value: text, field: res.field ?? null, evidence: ev, tag: this.tagOf(shown.id), record_id: shown.id, evidence_line: this.fmt(this.data.notes.successor.evidence, ev).replace('{proof}', () => proof) }
     }
-    return { value: plainValue(String(value)), field: res.field ?? null, evidence: ev, tag: this.tagOf(shown.id), record_id: shown.id, evidence_line: this.fmt(this.data.notes.evidence, ev) }
+    const out: Result = { value: plainValue(String(value)), field: res.field ?? null, evidence: ev, tag: this.tagOf(shown.id), record_id: shown.id, evidence_line: this.fmt(this.data.notes.evidence, ev) }
+    // the records the answer names, which the resources then lead with
+    if (linked) out.members = this.linkedMembers(res).map((r) => r.id)
+    return out
   }
   /** The sentence "X was replaced by Y" and the proof line, from the reader's chain and the passages it cited. */
   private successorText(rec: Rec, res: Result): { text: string; proof: string } {
@@ -653,7 +676,52 @@ export class Answerer {
     return out
   }
   groupOrder(intent: string, role: string | null): string[] { return this.engine.groupOrder(intent, role) }
-  ask(question: string, role: string | null = null, forceIntent: string | null = null): Item {
+  /** Every record joined to `id` by a link of the model, in either direction. */
+  private neighbours(id: string): Set<string> {
+    if (!this.near) {
+      const near = new Map<string, Set<string>>()
+      const add = (a: string, b: string) => { const s = near.get(a); if (s) s.add(b); else near.set(a, new Set([b])) }
+      for (const e of this.model.links) { add(e.from, e.to); add(e.to, e.from) }
+      this.near = near
+    }
+    return this.near.get(id) ?? new Set<string>()
+  }
+  /** The records a part belongs to by its tag: `LM-008/s:intro` belongs to `LM-008`. */
+  private ancestors(id: string): Set<string> {
+    const parts = id.split('/')
+    const out = new Set<string>()
+    for (let i = 1; i < parts.length; i++) out.add(parts.slice(0, i).join('/'))
+    return out
+  }
+  /** 0 when the item is the page itself, 1 when it is directly linked to it (a link of the model, or a lesson and its sections), else 2. */
+  pageRank(item: Item, page: string): number {
+    const ids: string[] = item.record_ids ?? []
+    const own = this.linkOfRec.get(page)
+    if (ids.includes(page) || (own && this.linkKey(String(item.link)) === this.linkKey(own))) return 0
+    const near = this.neighbours(page)
+    const up = this.ancestors(page)
+    for (const i of ids) if (near.has(i) || up.has(i) || this.ancestors(i).has(page)) return 1
+    return 2
+  }
+  /**
+   * Moves the rows that belong to the page earlier within their group: the page itself first, then what is linked to it. The rows are the
+   * ones already chosen for the answer and the split between shown and more keeps its sizes, so nothing is added or removed and the answer
+   * type is untouched. A row the intent pins (its first places) stays ahead, and quizzes stay after the lessons.
+   */
+  orderByPage(group: string, reading: Reading & { question: string }, items: Item[], rows: Item[], shown: Item[], more: Item[], page: string): [Item[], Item[]] {
+    const rank = new Map<Item, number>()
+    rows.forEach((r, i) => rank.set(r, this.pageRank(items[i], page)))
+    const lead = reading.intents.filter((i) => !['name', 'broad', 'not_fact'].includes(i))[0] ?? reading.intents[0]
+    const pinned = new Set<string>(((this.cfg(lead).pin[group] ?? []) as string[]))
+    const after: string[] = group === 'Learn' ? (this.data.finders.learn_after as string[]) : []
+    const key = (r: Item): number[] =>
+      pinned.has(r.link) ? [0, 0, 0] : [1, after.length && after.some((p) => String(r.link).startsWith(p)) ? 1 : 0, rank.get(r) ?? 2] // the pinned rows keep their own order, ahead of everything the page moves
+    const both = [...shown, ...more].map((r, i) => ({ r, i, k: key(r) }))
+    both.sort((a, b) => a.k[0] - b.k[0] || a.k[1] - b.k[1] || a.k[2] - b.k[2] || a.i - b.i)
+    const sorted = both.map((x) => x.r)
+    return [sorted.slice(0, shown.length), sorted.slice(shown.length)]
+  }
+  ask(question: string, role: string | null = null, forceIntent: string | null = null, page: string | null = null): Item {
     let reading: Reading & { question: string; forced?: boolean } = this.engine.read(question) as any
     if (forceIntent) reading = { ...reading, intent: forceIntent, intents: [forceIntent], forced: true }
     if (reading.intent === 'name' && reading.name_match) {
@@ -665,14 +733,16 @@ export class Answerer {
     const spec = this.data.intents.intents[intent]
     const N = this.data.notes
     const model: Item = { question, intent, intents: reading.intents, role, answerText: N.answer_text.default, note: '', direct: null, source: null, nameCard: null, choices: null, groups: [], reading: { names: reading.names.map((n) => n.text), scores: reading.scores, filters: reading.filters } }
-    if (intent === 'name') return this.nameAnswer(model, reading, role)
+    if (intent === 'name') return this.nameAnswer(model, reading, role, page)
     let findReading = reading
     if (intent === 'broad' || intent === 'not_fact') findReading = { ...reading, intents: [reading.names.length ? 'concept' : 'risk'], intent: reading.names.length ? 'concept' : 'risk', clean: reading.clean && reading.intent !== 'broad' ? reading.clean : 'post-quantum cryptography introduction basics' }
-    const groups = this.find(findReading, PER_GROUP, PER_GROUP)
+    let groups = this.find(findReading, PER_GROUP, PER_GROUP)
     const order = this.groupOrder(intent, role)
     const d = intent !== 'broad' && intent !== 'not_fact' ? this.direct(question, reading) : null
     model.direct = d ? { value: d.value, evidence_line: d.evidence_line, tag: d.tag, field: d.field, evidence: d.evidence } : null
+    if (d && d.members) groups = this.membersFirst(groups, d.members)
     const outGroups: Item[] = []
+    let first: Item | null = null
     for (const g of order) {
       const items = groups[g] ?? []
       if (!items.length) continue
@@ -682,10 +752,11 @@ export class Answerer {
         const pr = this.rolePathRow(role)
         if (pr) { shown = [...shown.slice(0, 1), pr, ...shown.slice(1, PER_GROUP - 1)]; more = rows.length > PER_GROUP - 1 ? rows.slice(PER_GROUP - 1, PER_GROUP - 1 + PER_GROUP) : more }
       }
+      if (!first && shown.length) first = shown[0] // the closest source is read before the page moves anything: the page never changes it
+      if (page) [shown, more] = this.orderByPage(g, findReading, items, rows, shown, more, page)
       outGroups.push({ name: g, rows: shown, more })
     }
     model.groups = outGroups
-    const first = outGroups.find((g) => g.rows.length)?.rows[0] ?? null
     const label = spec.label
     if (intent === 'broad') model.note = N.note.broad
     else if (intent === 'not_fact') model.note = N.note.not_fact
@@ -693,7 +764,24 @@ export class Answerer {
     else { model.note = N.note.no_direct.replace('{label}', label); if (first) model.source = { label: N.source_line.no_direct, kind: first.kind, title: first.title, tag: first.tag } }
     return model
   }
-  nameAnswer(model: Item, reading: Reading & { question: string }, role: string | null): Item {
+  /** The records a link answer names lead their group (in the order they are named), so the rest of them are the card's resources. The group keeps its size: the records that were not named make room. */
+  private membersFirst(groups: Record<string, Item[]>, members: string[]): Record<string, Item[]> {
+    const lead: Record<string, Item[]> = {}
+    for (const id of members) {
+      const link = this.rec(id).link
+      const item = link ? this.resByLink.get(link) : undefined
+      if (item && item.group in groups && !(lead[item.group] ?? []).some((x) => x.link === item.link)) (lead[item.group] ??= []).push(item as unknown as Item)
+    }
+    const out: Record<string, Item[]> = Object.fromEntries(Object.entries(groups).map(([g, items]) => [g, [...items]]))
+    const size = PER_GROUP * 2
+    for (const [g, first] of Object.entries(lead)) {
+      const head = first.slice(0, size)
+      const have = new Set(head.map((x) => x.link))
+      out[g] = [...head, ...out[g].filter((x) => !have.has(x.link))].slice(0, size)
+    }
+    return out
+  }
+  nameAnswer(model: Item, reading: Reading & { question: string }, role: string | null, page: string | null = null): Item {
     const N = this.data.notes
     const ents = this.entities(reading.name_match!)
     if (ents.length > 1) { model.answerText = N.answer_text.name_several; model.choices = ents.map((e) => ({ kind: e.kind, title: e.title, tag: e.tag })); model.note = ''; return model }
@@ -705,7 +793,12 @@ export class Answerer {
     const groups = this.find(sub, PER_GROUP, PER_GROUP)
     for (const g of this.groupOrder('name', role)) {
       const items = (groups[g] ?? []).filter((x) => x.link !== e.link)
-      if (items.length) { const rows = items.map((x) => this.row(x)); model.groups.push({ name: g, rows: rows.slice(0, PER_GROUP), more: rows.slice(PER_GROUP) }) }
+      if (items.length) {
+        const rows = items.map((x) => this.row(x))
+        let shown = rows.slice(0, PER_GROUP), more = rows.slice(PER_GROUP)
+        if (page) [shown, more] = this.orderByPage(g, sub as any, items, rows, shown, more, page)
+        model.groups.push({ name: g, rows: shown, more })
+      }
     }
     return model
   }

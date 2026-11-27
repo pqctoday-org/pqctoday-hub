@@ -9,8 +9,9 @@ import { useWorkshopStore, isWorkshopPinning } from '@/store/useWorkshopStore'
 import { useEmbedState } from '@/embed/EmbedProvider'
 import { AssistantConversation } from '../Assistant/AssistantConversation'
 import { COPY } from '../Assistant/copy'
-import { useAssistantLayout } from '../Assistant/useAssistantLayout'
+import { useAssistantDrawerWidth, useAssistantLayout } from '../Assistant/useAssistantLayout'
 import { usePageModal } from '../Assistant/usePageModal'
+import { AssistantResizeHandle } from './AssistantResizeHandle'
 import { PanelHeader } from './PanelHeader'
 
 const BookmarksPanel = React.lazy(() =>
@@ -47,6 +48,7 @@ export const RightPanel: React.FC = () => {
   const belowLg = useIsBelowLgViewport()
   const layout = useAssistantLayout()
   const sheet = layout === 'sheet'
+  const drawerWidth = useAssistantDrawerWidth()
   // A dialog the page opens (a record's detail drawer, say) is the learner's focus: while one is
   // open the docked drawer steps behind it, so the record is fully visible and usable. The drawer
   // comes back, with its answer, when the dialog closes or "Back to your answer" is used.
@@ -123,11 +125,13 @@ export const RightPanel: React.FC = () => {
                 ? COPY.workshopTitle
                 : COPY.bookmarksTitle
 
+  // The chat and the other drawer views share the learner's width; the workshop keeps its own.
   const widthClass = sheet
     ? 'w-full'
     : activeTab === 'workshop'
       ? 'sm:w-[40vw] sm:min-w-[360px]'
-      : 'w-[400px]'
+      : ''
+  const widthStyle = !sheet && activeTab !== 'workshop' ? { width: drawerWidth } : undefined
 
   return (
     <AnimatePresence>
@@ -143,12 +147,15 @@ export const RightPanel: React.FC = () => {
             aria-modal={isDialog ? (modeless ? false : sheet || undefined) : undefined}
             aria-label={title}
             data-assistant-layout={layout}
+            style={widthStyle}
             onClick={(e) => e.stopPropagation()}
           >
+            {!sheet && activeTab !== 'workshop' && <AssistantResizeHandle />}
             <PanelHeader
               title={title}
               activeTab={activeTab}
-              onClose={sheet && !workshopActive ? close : undefined}
+              onClose={workshopActive ? undefined : close}
+              docked={!sheet}
             />
             <div className="flex min-h-0 flex-1 flex-col">
               {activeTab === 'chat' && <AssistantConversation />}

@@ -170,7 +170,7 @@ describe('the drawer header objective area', () => {
     const user = userEvent.setup()
     const original = window.matchMedia
     window.matchMedia = ((query: string) => ({
-      matches: query === '(max-width: 639px)',
+      matches: query === '(max-width: 1023px)',
       media: query,
       addEventListener: () => {},
       removeEventListener: () => {},

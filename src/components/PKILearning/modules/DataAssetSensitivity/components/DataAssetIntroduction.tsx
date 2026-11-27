@@ -12,6 +12,7 @@ import {
   FlaskConical,
   ChevronRight,
   ArrowRight,
+  ShieldCheck,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -24,6 +25,7 @@ import {
 import { SourcedSectionBody } from '@/components/PKILearning/common/SourcedSection'
 import { STORED_DATA_SECTION } from '../data/storedDataSection'
 import { CIA_PRINCIPLES_SECTION } from '../data/ciaPrinciplesSection'
+import { CYBER_RESILIENCY_SECTION } from '../data/cyberResiliencySection'
 
 interface DataAssetIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -542,6 +544,15 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
           title={CIA_PRINCIPLES_SECTION.title}
         >
           <SourcedSectionBody section={CIA_PRINCIPLES_SECTION} />
+        </CollapsibleSection>
+      </div>
+
+      <div data-section-id="cyber-resiliency-goals" className="scroll-mt-20">
+        <CollapsibleSection
+          icon={<ShieldCheck size={24} className="text-primary" />}
+          title={CYBER_RESILIENCY_SECTION.title}
+        >
+          <SourcedSectionBody section={CYBER_RESILIENCY_SECTION} />
         </CollapsibleSection>
       </div>
 

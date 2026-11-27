@@ -20,9 +20,20 @@ import { STATIC_DISCOVERY_SECTION } from '../modules/PQCTestingValidation/data/s
 import { SYSTEM_LIFE_CYCLES_SECTION } from '../modules/AutomotivePQC/data/systemLifeCyclesSection'
 import { TERMINATION_POINT_SECTION } from '../modules/WebGatewayPQC/data/terminationPointSection'
 import { AIR_GAPPED_VAULT_SECTION } from '../modules/DigitalAssets/data/airGappedVaultSection'
+import { COMSEC_POLICY_SECTION } from '../modules/GovernmentDefensePQC/data/comsecPolicySection'
+import { SYSTEM_DESIGN_STANDARDS_SECTION } from '../modules/ArchQuantumImpact/data/systemDesignStandardsSection'
+import { MIDDLEWARE_PROVIDERS_SECTION } from '../modules/CryptoDevAPIs/data/middlewareProvidersSection'
+import { SYSTEMS_ENGINEERING_PRACTICE_SECTION } from '../modules/CryptoMgmtModernization/data/systemsEngineeringPracticeSection'
+import { CYBER_RESILIENCY_SECTION } from '../modules/DataAssetSensitivity/data/cyberResiliencySection'
+import { INTEGRATION_DELIVERY_SECTION } from '../modules/PlatformEngPQC/data/integrationDeliverySection'
+import { COLLABORATION_SECTION } from '../modules/MigrationProgram/data/collaborationSection'
+import { ADVERSARY_REPORTING_SECTION } from '../modules/SocImplementationPqc/data/adversaryReportingSection'
+import { VPN_ADMINISTRATION_SECTION } from '../modules/OpsQuantumImpact/data/vpnAdministrationSection'
+import { HARDWARE_MAINTENANCE_SECTION } from '../modules/HsmPqc/data/hardwareMaintenanceSection'
+import { THREAT_ENVIRONMENT_SECTION } from '../modules/PQCRiskManagement/data/threatEnvironmentSection'
 
 /**
- * The sourced sections that answer a NICE Framework knowledge or skill statement.
+ * The sourced sections that answer a NICE Framework knowledge, skill or task statement.
  *
  * Each section records the statement it answers (`nice`); the statement id and its
  * wording must be the official NICE Framework Components v2.2.0 ones. Every sentence
@@ -44,6 +55,17 @@ const SECTIONS: { moduleId: string; section: SourcedSectionData }[] = [
   { moduleId: 'automotive-pqc', section: SYSTEM_LIFE_CYCLES_SECTION },
   { moduleId: 'web-gateway-pqc', section: TERMINATION_POINT_SECTION },
   { moduleId: 'digital-assets', section: AIR_GAPPED_VAULT_SECTION },
+  { moduleId: 'government-defense-pqc', section: COMSEC_POLICY_SECTION },
+  { moduleId: 'arch-quantum-impact', section: SYSTEM_DESIGN_STANDARDS_SECTION },
+  { moduleId: 'crypto-dev-apis', section: MIDDLEWARE_PROVIDERS_SECTION },
+  { moduleId: 'crypto-mgmt-modernization', section: SYSTEMS_ENGINEERING_PRACTICE_SECTION },
+  { moduleId: 'data-asset-sensitivity', section: CYBER_RESILIENCY_SECTION },
+  { moduleId: 'platform-eng-pqc', section: INTEGRATION_DELIVERY_SECTION },
+  { moduleId: 'migration-program', section: COLLABORATION_SECTION },
+  { moduleId: 'soc-implementation-pqc', section: ADVERSARY_REPORTING_SECTION },
+  { moduleId: 'ops-quantum-impact', section: VPN_ADMINISTRATION_SECTION },
+  { moduleId: 'hsm-pqc', section: HARDWARE_MAINTENANCE_SECTION },
+  { moduleId: 'pqc-risk-management', section: THREAT_ENVIRONMENT_SECTION },
 ]
 
 interface CprtElement {
@@ -65,13 +87,13 @@ const official = new Map<string, CprtElement>(
 
 describe('NICE-gap sourced sections', () => {
   it.each(SECTIONS.map((s) => [s.section.id, s] as const))(
-    '%s records a real NICE v2.2.0 knowledge or skill statement, word for word',
+    '%s records a real NICE v2.2.0 knowledge, skill or task statement, word for word',
     (_id, { section }) => {
       expect(section.nice?.length ?? 0).toBeGreaterThan(0)
       for (const n of section.nice ?? []) {
         const el = official.get(n.id)
         expect(el, `${n.id} is not in the vendored NICE Framework Components`).toBeDefined()
-        expect(['knowledge', 'skill']).toContain(el?.element_type)
+        expect(['knowledge', 'skill', 'task']).toContain(el?.element_type)
         expect(n.statement).toBe(el?.text)
       }
     }

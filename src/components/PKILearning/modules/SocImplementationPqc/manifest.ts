@@ -9,6 +9,7 @@ const manifest: ModuleManifest = {
     { id: 'why-it-matters', label: 'Why It Matters' },
     { id: 'what-to-learn', label: 'Detection & CTI Skills' },
     { id: 'how-to-act', label: 'How to Act' },
+    { id: 'adversary-capability-reporting', label: 'Reporting Adversarial Capabilities' },
   ],
   workshopSteps: [
     { id: 'why-it-matters', label: 'Why It Matters' },

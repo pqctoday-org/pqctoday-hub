@@ -8,6 +8,7 @@ import { create } from 'zustand'
 import type { AssistantAnswer, AssistantContext, AssistantRow } from '@/services/assistant/contract'
 import { askAssistant } from '@/components/Assistant/assistantClient'
 import { useAchievementStore } from '@/store/useAchievementStore'
+import type { CardNav } from '@/components/Assistant/resourceTabs'
 
 export type AssistantTurn =
   | { id: string; question: string; status: 'loading' }
@@ -27,6 +28,12 @@ export interface AssistantViewer {
 
 interface AssistantSessionState {
   turns: AssistantTurn[]
+  /** The one answer card that is open; the others fold to one line. Null until a question is asked. */
+  openTurnId: string | null
+  setOpenTurn: (id: string) => void
+  /** Each card's own tab and position, for this visit. A card without an entry opens on "Top 5", first resource. */
+  cardNav: Record<string, CardNav>
+  setCardNav: (id: string, nav: CardNav) => void
   /**
    * What is open in place in the drawer. Kept here, not in the view, so the drawer can show another
    * view (the Glossary, say) and come back to the answer and the record as they were.
@@ -49,6 +56,10 @@ let latestRequest = 0
 
 export const useAssistantSessionStore = create<AssistantSessionState>()((set, get) => ({
   turns: [],
+  openTurnId: null,
+  setOpenTurn: (id) => set({ openTurnId: id }),
+  cardNav: {},
+  setCardNav: (id, nav) => set((s) => ({ cardNav: { ...s.cardNav, [id]: nav } })),
   viewer: null,
   setViewer: (viewer) => set({ viewer }),
   draft: '',
@@ -69,6 +80,7 @@ export const useAssistantSessionStore = create<AssistantSessionState>()((set, ge
     const request = ++latestRequest
     set((s) => ({
       turns: [...s.turns, { id, question, status: 'loading' }],
+      openTurnId: id,
       draft: '',
       failedQuestion: null,
     }))
@@ -76,10 +88,15 @@ export const useAssistantSessionStore = create<AssistantSessionState>()((set, ge
     if (answer.state === 'data-not-loaded') {
       // Data did not load: no answer and no resources; the question goes back in the box, unless
       // a newer question has been asked since (its own outcome then decides what the box holds).
-      set((s) => ({
-        turns: s.turns.filter((t) => t.id !== id),
-        ...(request === latestRequest ? { draft: question, failedQuestion: question } : {}),
-      }))
+      set((s) => {
+        const turns = s.turns.filter((t) => t.id !== id)
+        return {
+          turns,
+          // The card that opened for this question is gone: the newest remaining card opens instead.
+          ...(s.openTurnId === id ? { openTurnId: turns[turns.length - 1]?.id ?? null } : {}),
+          ...(request === latestRequest ? { draft: question, failedQuestion: question } : {}),
+        }
+      })
       return
     }
     set((s) => ({
@@ -93,5 +110,13 @@ export const useAssistantSessionStore = create<AssistantSessionState>()((set, ge
     await get().ask(held, context)
   },
 
-  reset: () => set({ turns: [], viewer: null, draft: '', failedQuestion: null }),
+  reset: () =>
+    set({
+      turns: [],
+      openTurnId: null,
+      cardNav: {},
+      viewer: null,
+      draft: '',
+      failedQuestion: null,
+    }),
 }))

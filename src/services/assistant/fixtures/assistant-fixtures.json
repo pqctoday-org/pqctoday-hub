@@ -42,7 +42,7 @@
         "intent": "name",
         "nameCardTag": "ALG:ML-KEM",
         "answerText": "One Hub record matches that name.",
-        "note": "Matched by name: one Hub record, shown above. Related resources follow, best first, up to 3 per group.",
+        "note": "Matched by name: one Hub record, shown above. Related resources follow, best first.",
         "noSource": true
       }
     },

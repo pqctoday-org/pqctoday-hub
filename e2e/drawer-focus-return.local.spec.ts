@@ -36,7 +36,6 @@ for (const width of [1280, 390]) {
     }
 
     for (const dismiss of ['Escape', 'Close']) {
-      if (dismiss === 'Close' && !phone) continue // the desktop drawer has no Close: the top bar toggles it
       await expect(trigger).toBeVisible()
       await trigger.focus()
       if (phone) await openFromMore(/^Assistant/)
@@ -47,7 +46,8 @@ for (const width of [1280, 390]) {
       if (dismiss === 'Escape') {
         await page.keyboard.press('Escape')
       } else {
-        await assistant.getByRole('button', { name: 'Close', exact: true }).press('Enter')
+        const drawer = phone ? assistant : page.getByRole('region', { name: 'Assistant' })
+        await drawer.getByRole('button', { name: 'Close', exact: true }).press('Enter')
       }
       await expect(phone ? assistant : page.getByRole('region', { name: 'Assistant' })).toBeHidden()
       await expect(trigger).toBeFocused()

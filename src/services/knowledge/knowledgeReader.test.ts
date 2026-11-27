@@ -71,6 +71,13 @@ describe('KnowledgeReader', () => {
     })
   })
 
+  it('finds the record an address opens by the address alone, never by a name', () => {
+    expect(r.recordAt('/learn?stage=1')?.id).toBe('STG:1')
+    expect(r.recordAt('/learn/a?section=intro')?.id).toBe('LM-001/s:intro')
+    expect(r.recordAt('ML-KEM')).toBeUndefined()
+    expect(r.recordAt('/nowhere')).toBeUndefined()
+  })
+
   it('takes a former id as the record it names even when a label also fits', () => {
     expect(r.lookup('old ml-kem')).toMatchObject({
       found: true,

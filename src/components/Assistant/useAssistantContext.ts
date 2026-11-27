@@ -3,8 +3,17 @@ import { useCallback } from 'react'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import type { AssistantContext } from '@/services/assistant/contract'
 
+/** The Hub address of the page the learner is on: its path and query, never the fragment. */
+function currentAddress(): string | null {
+  try {
+    return window.location.pathname + window.location.search
+  } catch {
+    return null
+  }
+}
+
 /**
- * What the engine may use to order its answer: the chosen role, the region and the first industry.
+ * What the engine may use to order its answer: the chosen role, the region, the first industry and the page the learner is on.
  * Never learner text: the question itself goes to the engine as its own argument.
  */
 export function useAssistantContext(): () => AssistantContext {
@@ -16,6 +25,7 @@ export function useAssistantContext(): () => AssistantContext {
       persona: persona ?? null,
       region: region && region !== 'global' ? region : null,
       industry,
+      page: currentAddress(),
     }),
     [persona, region, industry]
   )

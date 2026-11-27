@@ -7,6 +7,7 @@ import AppRoot from './AppRoot'
 import { initGA, logEmbedSession, logEmbedError } from './utils/analytics'
 import { runLegacyChatCleanup } from './utils/legacyChatCleanup'
 import { registerSW } from 'virtual:pwa-register'
+import { installPreloadErrorReload } from './utils/updateReload'
 import type { VendorTheme } from './embed/vendorPolicy'
 
 /**
@@ -111,6 +112,9 @@ if (typeof window !== 'undefined') {
     window.history.replaceState(null, '', newUrl)
   }
 }
+
+// A split file the new release removed: reload once to get the new page.
+installPreloadErrorReload()
 
 // Initialize Google Analytics
 initGA()

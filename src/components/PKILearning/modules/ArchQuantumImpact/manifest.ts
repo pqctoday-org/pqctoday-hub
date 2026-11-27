@@ -9,6 +9,7 @@ const manifest: ModuleManifest = {
     { id: 'why-it-matters', label: 'Why It Matters' },
     { id: 'what-to-learn', label: 'Knowledge & Skills' },
     { id: 'how-to-act', label: 'How to Act' },
+    { id: 'system-design-standards', label: 'System Design Standards' },
   ],
   workshopSteps: [
     { id: 'why-it-matters', label: 'Why It Matters' },

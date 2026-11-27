@@ -53,7 +53,8 @@
     "technicalNote": "Unlike Diffie-Hellman, KEMs work via encapsulation (encrypt a random secret with a public key) and decapsulation (decrypt with the private key).",
     "relatedModule": "/playground",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "module_ids": "pqc-101"
   },
   {
     "id": "5g-aka",
@@ -96,7 +97,8 @@
     "definition": "Secure Shell, a protocol for encrypted remote login and command execution. PQC integration adds ML-KEM hybrid key exchange.",
     "relatedModule": "/migrate?domain=ssh",
     "complexity": "beginner",
-    "category": "protocol"
+    "category": "protocol",
+    "module_ids": "vpn-ssh-pqc"
   },
   {
     "id": "ipsec",
@@ -106,7 +108,8 @@
     "technicalNote": "PQC integration via IKEv2 multiple key exchange (RFC 9370) adds ML-KEM alongside classical DH.",
     "relatedModule": "/migrate?domain=vpn",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "module_ids": "vpn-ssh-pqc"
   },
   {
     "id": "ikev2",
@@ -115,7 +118,8 @@
     "definition": "Internet Key Exchange version 2, the protocol used to establish security associations in IPsec VPNs. PQC migration adds ML-KEM key exchange.",
     "relatedModule": "/library?ref=RFC 9370",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "module_ids": "vpn-ssh-pqc"
   },
   {
     "id": "emv",
@@ -136,7 +140,8 @@
     "definition": "Secure/Multipurpose Internet Mail Extensions, a standard for email encryption and digital signing. PQC integration via ML-KEM and ML-DSA.",
     "relatedModule": "/library?ref=RFC 9882",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "module_ids": "email-signing"
   },
   {
     "id": "cms",
@@ -147,7 +152,8 @@
     "relatedModule": "/library?ref=RFC 9629",
     "complexity": "advanced",
     "category": "protocol",
-    "industries": "Cross-Industry"
+    "industries": "Cross-Industry",
+    "module_ids": "email-signing"
   },
   {
     "id": "openpgp",
@@ -155,7 +161,8 @@
     "definition": "An open standard for email encryption and signing based on PGP. PQC integration adds composite ML-KEM+ECC encryption and ML-DSA+ECC signatures.",
     "relatedModule": "/library?ref=RFC 9580",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "module_ids": "email-signing"
   },
   {
     "id": "signal-protocol",
@@ -181,7 +188,8 @@
     "definition": "Web authentication standards enabling passwordless login using public-key cryptography. Currently relies on quantum-vulnerable ECDSA/EdDSA.",
     "relatedModule": "/migrate?domain=identity",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "module_ids": "iam-pqc"
   },
   {
     "id": "credential-activation",
@@ -218,7 +226,8 @@
     "technicalNote": "PQC migration involves adding ML-KEM hybrid key exchange to the Noise protocol framework used by WireGuard.",
     "relatedModule": "/migrate?domain=vpn",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "module_ids": "vpn-ssh-pqc"
   },
   {
     "id": "dtls",
@@ -257,7 +266,8 @@
     "technicalNote": "PQC migration is challenging due to DNS packet size limits. Larger PQC signatures may require protocol changes or new transport mechanisms.",
     "relatedModule": "/migrate?domain=network",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "module_ids": "dnssec-pqc"
   },
   {
     "id": "acme",
@@ -267,7 +277,8 @@
     "technicalNote": "ACME will need updates to support PQC certificate types as the Web PKI transitions to quantum-safe algorithms.",
     "relatedModule": "/library",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "module_ids": "pki-enrollment-protocols"
   },
   {
     "id": "acvp",
@@ -279,7 +290,8 @@
     "complexity": "intermediate",
     "category": "protocol",
     "industries": "Government & Defense",
-    "place": "US"
+    "place": "US",
+    "module_ids": "acvp-lab-workflow"
   },
   {
     "id": "pq3",
@@ -308,7 +320,8 @@
     "technicalNote": "KMIP 2.1+ includes support for post-quantum key types and algorithms.",
     "relatedModule": "/migrate?domain=kms",
     "complexity": "advanced",
-    "category": "protocol"
+    "category": "protocol",
+    "module_ids": "kms-pqc"
   },
   {
     "id": "cmp",
@@ -317,7 +330,8 @@
     "definition": "Certificate Management Protocol (RFC 4210), used for managing X.509 certificates including enrollment, updates, and revocation. PQC support via RFC 9810.",
     "relatedModule": "/library?ref=RFC 9810",
     "complexity": "advanced",
-    "category": "protocol"
+    "category": "protocol",
+    "module_ids": "pki-enrollment-protocols"
   },
   {
     "id": "jwt",
@@ -453,7 +467,8 @@
     "technicalNote": "HPKE is used in TLS ECH (Encrypted Client Hello), MLS messaging, and several IETF PQC drafts. It can be instantiated with ML-KEM for post-quantum security by substituting the KEM component.",
     "relatedModule": "/library",
     "complexity": "advanced",
-    "category": "protocol"
+    "category": "protocol",
+    "module_ids": "mls-group-messaging"
   },
   {
     "id": "mqtt",

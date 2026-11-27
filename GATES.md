@@ -159,7 +159,8 @@ to 2026-09-29.
 Runs only after CI **succeeds** on main (`workflow_run`), and publishes the
 `dist` artifact that run built — a red main no longer deploys. A manual
 `workflow_dispatch` rebuilds from source. `retain-live-boot-assets` keeps the
-previous release's boot chunks so a cached `index.html` still starts.
+previous release's hashed files (boot chunks and split files, one release back,
+at most 150 MB, listed in `release-assets.json`) so a cached page still loads.
 
 ## GitHub — nightly (`.github/workflows/e2e-nightly.yml`, 07:00 UTC)
 

@@ -10,6 +10,7 @@ import {
   isPhone,
   openDrawer,
   returnControl,
+  reveal,
   seedHub,
 } from './fixtures/assistantDrawer'
 
@@ -72,34 +73,41 @@ const KINDS: readonly {
   },
 ]
 
-/** Where the page's open dialog is topmost: its own centre and its right edge, where the docked drawer sits. */
+/**
+ * Where the page's open dialog is topmost: its own centre and its right edge, where the docked drawer sits. The drawer steps
+ * behind a page dialog one animation frame after the dialog appears (it watches the page for dialogs), so the points are read
+ * until they are all the dialog's, not once the instant it shows.
+ */
 async function expectDialogOnTop(page: Page) {
-  const probe = await page.evaluate(() => {
-    const modals = [
-      ...document.querySelectorAll<HTMLElement>('[aria-modal="true"]:not([data-assistant-layout])'),
-    ]
-    const modal = modals[modals.length - 1]
-    if (!modal) return { found: false, hits: [] as boolean[] }
-    const box = modal.getBoundingClientRect()
-    const points: [number, number][] = [
-      [box.left + box.width / 2, box.top + box.height / 2],
-      [Math.min(box.right, window.innerWidth) - 40, box.top + box.height / 2],
-      [Math.min(box.right, window.innerWidth) - 40, box.top + 120],
-    ]
-    return {
-      found: true,
-      hits: points.map(([x, y]) => {
-        const hit = document.elementFromPoint(x, y)
-        return Boolean(hit) && !hit!.closest('[data-assistant-layout]')
-      }),
-    }
-  })
-  expect(probe.found).toBe(true)
-  expect(probe.hits, 'nothing of the Assistant drawer covers the opened record').toEqual([
-    true,
-    true,
-    true,
-  ])
+  const probe = () =>
+    page.evaluate(() => {
+      const modals = [
+        ...document.querySelectorAll<HTMLElement>(
+          '[aria-modal="true"]:not([data-assistant-layout])'
+        ),
+      ]
+      const modal = modals[modals.length - 1]
+      if (!modal) return { found: false, hits: [] as boolean[] }
+      const box = modal.getBoundingClientRect()
+      const points: [number, number][] = [
+        [box.left + box.width / 2, box.top + box.height / 2],
+        [Math.min(box.right, window.innerWidth) - 40, box.top + box.height / 2],
+        [Math.min(box.right, window.innerWidth) - 40, box.top + 120],
+      ]
+      return {
+        found: true,
+        hits: points.map(([x, y]) => {
+          const hit = document.elementFromPoint(x, y)
+          return Boolean(hit) && !hit!.closest('[data-assistant-layout]')
+        }),
+      }
+    })
+  await expect
+    .poll(probe, {
+      message: 'nothing of the Assistant drawer covers the opened record',
+      timeout: 5_000,
+    })
+    .toEqual({ found: true, hits: [true, true, true] })
 }
 
 for (const [name, viewport] of [
@@ -121,11 +129,13 @@ for (const [name, viewport] of [
         await page.goto('/learn')
         const drawer = await openDrawer(page)
         const answer = await ask(page, drawer, question)
-        const action =
+        // Step through the card until the resource's action is on screen, as a learner does.
+        const action = await reveal(
+          answer,
           typeof open === 'string'
             ? answer.getByRole('button', { name: open, exact: true })
             : answer.getByRole('button', { name: open }).first()
-        await action.scrollIntoViewIfNeeded()
+        )
         await action.click()
         await expect(page).toHaveURL(url)
 
@@ -210,7 +220,9 @@ for (const [name, viewport] of [
       await page.goto('/learn')
       const drawer = await openDrawer(page)
       const answer = await ask(page, drawer, 'FIPS 203')
-      await answer.getByRole('button', { name: /^Library document/ }).click()
+      await (
+        await reveal(answer, answer.getByRole('button', { name: /^Library document/ }))
+      ).click()
       await expect(page).toHaveURL(/\/library\?ref=/)
       await expect(
         page.locator('[aria-modal="true"]:not([data-assistant-layout])').last()

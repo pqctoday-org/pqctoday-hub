@@ -238,7 +238,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     // back deliberately, and the ~10h concern that motivated that trim is now
     // carried by `essentials` (200 min) rather than by the full path, since the
     // capstone unlocks on essentials, not on the whole recommendedPath.
-    estimatedMinutes: 1275,
+    estimatedMinutes: 1300,
     // 2026-09-07 Executive/GRC split: Essentials narrowed to the five modules a
     // busy sponsor needs to fund and govern a program (§4 of the split plan).
     // `quantum-threats` and `compliance-strategy` stay in the full path as
@@ -252,7 +252,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'pqc-governance',
       'vendor-risk',
     ],
-    essentialsMinutes: 165,
+    essentialsMinutes: 170,
     quizDescription:
       'Test your knowledge on quantum threats, risk management, data asset classification, business cases, governance, compliance strategy, cryptographic management modernization, migration planning, vendor risk, and identity & access management.',
     quizCategories: [
@@ -399,7 +399,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1391,
+    estimatedMinutes: 1416,
     essentials: [
       'pqc-101',
       'pqc-risk-management',
@@ -411,7 +411,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'vendor-risk',
       'verification-closure',
     ],
-    essentialsMinutes: 330,
+    essentialsMinutes: 340,
     quizDescription:
       'Test your knowledge on quantum risk fundamentals, risk management, data asset classification, GRC program design, compliance strategy, standards bodies, governance, team structure, cryptographic inventory (registry, SBOM, CBOM), vendor risk and assurance, cryptographic product certification, crypto agility, migration programs, and verification & closure.',
     quizCategories: [
@@ -613,7 +613,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2534,
+    estimatedMinutes: 2551,
     essentials: [
       'pqc-101',
       'dev-quantum-impact',
@@ -624,7 +624,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'crypto-dev-apis',
       'code-signing',
     ],
-    essentialsMinutes: 364,
+    essentialsMinutes: 369,
     quizDescription:
       'Test your knowledge on quantum threats, TLS, VPN/SSH, DNSSEC, MLS group messaging, PKI enrollment, cryptographic APIs, hybrid cryptography, crypto agility, PQC testing & validation, protocol integration, cryptographic management modernization, SLH-DSA, and stateful hash signatures.',
     quizCategories: [
@@ -871,7 +871,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 3224,
+    estimatedMinutes: 3251,
     essentials: [
       'pqc-101',
       'arch-quantum-impact',
@@ -883,7 +883,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'hsm-pqc',
       'pki-workshop',
     ],
-    essentialsMinutes: 416,
+    essentialsMinutes: 431,
     quizDescription:
       'Test your knowledge on cryptographic foundations, architecture strategy (crypto agility, crypto management modernization, hybrid crypto, QKD), infrastructure protocols (TLS, network security, DNSSEC, MLS group messaging, KMS, HSMs, stateful signatures, SLH-DSA, PKI, Merkle tree certs), PQC testing & validation, identity and credentials, API security, code signing, and IoT/OT security.',
     quizCategories: [
@@ -1183,7 +1183,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     // comment's claim was wrong (the persona test only sums a persona's own
     // path). The true current whole-catalogue sum is ~3285 min (excl. quiz);
     // researcher's path omits 13 real modules not part of its curriculum.
-    estimatedMinutes: 3717,
+    estimatedMinutes: 3759,
     essentials: [
       'pqc-101',
       'research-quantum-impact',
@@ -1285,7 +1285,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1129,
+    estimatedMinutes: 1134,
     // pqc-testing-validation is on the full path but not an essential: it is network and
     // operations testing, and only its TVLA and FIPS 140-3 / ACVP parts serve this role
     // (its own certification-engineer learn path carries just those).
@@ -1491,7 +1491,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2619,
+    estimatedMinutes: 2651,
     essentials: [
       'pqc-101',
       'ops-quantum-impact',
@@ -1503,7 +1503,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'kms-pqc',
       'hsm-pqc',
     ],
-    essentialsMinutes: 388,
+    essentialsMinutes: 403,
     quizDescription:
       'Test your knowledge on TLS operations, VPN/SSH, hybrid cryptography, web gateways, PQC testing & validation, PKI certificate management, KMS and HSM operations, stateful hash signatures, crypto management modernization, standards bodies, DNSSEC, code signing, and infrastructure migration planning.',
     quizCategories: [
@@ -1654,7 +1654,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1128,
+    estimatedMinutes: 1143,
     // Curious journey review (owner decision C2, 16 Oct 2026): a beginner's
     // must-do set is the idea, the threat and one real handshake — about 1½
     // hours. Candidates, risk and compliance stay on the full path as the

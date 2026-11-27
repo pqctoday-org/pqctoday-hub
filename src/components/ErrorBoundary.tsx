@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { Component, type ErrorInfo, type ReactNode } from 'react'
-import { Button } from '@/components/ui/button'
+import { StickerCard, StoryButton } from '@/components/storybook'
+import {
+  isNetworkFetchError,
+  isStaleBuildError,
+  OFFLINE_MESSAGE,
+  reloadOnceForUpdate,
+  reloadPage,
+  UPDATED_MESSAGE,
+} from '@/utils/updateReload'
 
 interface Props {
   children?: ReactNode
@@ -24,44 +32,59 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Uncaught error:', error, errorInfo)
-  }
-
-  private isChunkLoadError(error: Error | null): boolean {
-    if (!error) return false
-    const msg = error.message.toLowerCase()
-    return (
-      msg.includes('dynamically imported module') ||
-      msg.includes('failed to fetch') ||
-      msg.includes('loading chunk') ||
-      msg.includes('loading css chunk')
-    )
+    // A split file the new release removed: fetch the new page once. If that
+    // does not help (second failure), the message below stays on screen.
+    if (isStaleBuildError(error)) reloadOnceForUpdate(error)
   }
 
   public render() {
-    if (this.state.hasError) {
+    if (!this.state.hasError) return this.props.children
+    if (this.props.fallback) return this.props.fallback
+
+    const { error } = this.state
+
+    if (isStaleBuildError(error)) {
+      const offline = typeof navigator !== 'undefined' && navigator.onLine === false
       return (
-        this.props.fallback || (
-          <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-md">
-            <h2 className="text-destructive text-lg font-semibold">Something went wrong</h2>
-            <p className="text-destructive mt-2">{this.state.error?.message || 'Unknown error'}</p>
-            <Button
-              variant="ghost"
-              className="mt-4 px-4 py-2 bg-destructive/20 text-destructive rounded hover:bg-destructive/30"
-              onClick={() => {
-                if (this.isChunkLoadError(this.state.error)) {
-                  window.location.reload()
-                } else {
-                  this.setState({ hasError: false, error: null })
-                }
-              }}
-            >
-              Try again
-            </Button>
-          </div>
-        )
+        <StickerCard
+          as="section"
+          role="alert"
+          tone="highlight"
+          padding="roomy"
+          className="mx-4 my-8 max-w-xl sm:mx-auto"
+        >
+          <h2 className="text-lg font-extrabold text-heading">
+            {offline ? 'You are offline' : 'A new version is ready'}
+          </h2>
+          <p className="mt-2 text-foreground">{offline ? OFFLINE_MESSAGE : UPDATED_MESSAGE}</p>
+          <StoryButton className="mt-5" onClick={reloadPage}>
+            Reload
+          </StoryButton>
+        </StickerCard>
       )
     }
 
-    return this.props.children
+    return (
+      <StickerCard
+        as="section"
+        role="alert"
+        padding="roomy"
+        className="mx-4 my-8 max-w-xl border-destructive sm:mx-auto"
+      >
+        <h2 className="text-lg font-extrabold text-heading">Something went wrong</h2>
+        <p className="mt-2 text-foreground">{error?.message || 'Unknown error'}</p>
+        <StoryButton
+          variant="secondary"
+          className="mt-5"
+          onClick={() => {
+            // A failed network request is retried with a fresh page load, as before.
+            if (isNetworkFetchError(error)) reloadPage()
+            else this.setState({ hasError: false, error: null })
+          }}
+        >
+          Try again
+        </StoryButton>
+      </StickerCard>
+    )
   }
 }

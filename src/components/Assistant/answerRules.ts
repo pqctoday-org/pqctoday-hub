@@ -153,6 +153,12 @@ export function sourceLineText(s: AssistantSource): string {
   return `${s.label}: ${s.kind}: ${s.title} (${s.tag})`
 }
 
+/** The shortened source line: "From: <kind>: <title> (<tag>)" or "Closest: ...". */
+export function shortSourceLine(s: AssistantSource): string {
+  const label = s.label === 'Closest source' ? COPY.sourceClosest : COPY.sourceFrom
+  return `${label}: ${s.kind}: ${s.title} (${s.tag})`
+}
+
 /** Every row tag in an answer, for a saved answer (tags only, never the rows' text). */
 export function rowTagsOf(answer: RenderableAnswer): string[] {
   const tags = new Set<string>()

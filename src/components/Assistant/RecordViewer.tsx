@@ -7,6 +7,7 @@ import { isGlossaryTag, type TermLesson } from '@/services/assistant/termLessons
 import { isReferenceSaved, saveReference } from '@/services/assistant/drawerSaves'
 import { CopyLinkButton } from './AnswerRowItem'
 import { COPY } from './copy'
+import { HomeLessonLink } from './HomeLessonLink'
 
 export interface RecordViewerProps {
   row: AssistantRow
@@ -70,7 +71,10 @@ export function RecordViewer({
     <section
       aria-label={row.title}
       className={
-        pinned ? 'sticky top-0 z-10 px-3 pt-3 md:px-4' : 'flex-1 overflow-y-auto px-3 py-3 md:px-4'
+        pinned
+          ? // On a phone the pinned card takes at most 40 percent of the sheet and scrolls inside.
+            'sticky top-0 z-10 max-h-[40dvh] shrink-0 overflow-y-auto overscroll-contain px-3 pb-2 pt-3 md:px-4'
+          : 'flex-1 overflow-y-auto px-3 py-3 md:px-4'
       }
     >
       <StickerCard padding="default" className="space-y-3">
@@ -93,6 +97,12 @@ export function RecordViewer({
         </div>
         <h2 className="text-base font-bold text-heading">{row.title}</h2>
         <p className="text-xs text-muted-foreground">{from.join(' · ')}</p>
+        {/* A glossary term that already has its "Open the lesson" button shows its home lesson only when that is another lesson. */}
+        <HomeLessonLink
+          row={row}
+          onOpen={onOpenPage}
+          hideLesson={lesson ? lesson.tag.split('/')[0] : undefined}
+        />
         {row.paidReferenceOnly ? (
           <p className="text-sm text-foreground/90">{COPY.paidReference}</p>
         ) : (
@@ -124,7 +134,11 @@ export function RecordViewer({
               {term ? (
                 <>
                   {lesson && (
-                    <StoryButton variant="secondary" onClick={() => onOpenLesson?.(lesson)}>
+                    <StoryButton
+                      variant="secondary"
+                      onClick={() => onOpenLesson?.(lesson)}
+                      className="h-auto max-w-full whitespace-normal py-2 text-left"
+                    >
                       Open the lesson: {lesson.lessonTitle}
                     </StoryButton>
                   )}

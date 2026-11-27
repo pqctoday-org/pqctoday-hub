@@ -67,4 +67,22 @@ describe('lazyWithRetry — reload-loop prevention', () => {
 
     expect(sessionStorage.getItem(RELOAD_KEY)).toBeNull()
   })
+  it('does not reload when the preload-error listener or the boundary already did', async () => {
+    vi.doMock('react', async (orig) => {
+      const actual = await orig<typeof import('react')>()
+      return { ...actual, lazy: (fn: () => Promise<unknown>) => fn }
+    })
+    const { lazyWithRetry } = await import('./lazyWithRetry')
+    sessionStorage.setItem(
+      'hub-update-reload',
+      JSON.stringify({ url: '', build: '', at: Date.now() })
+    )
+
+    const alwaysFails = () => Promise.reject(new Error('chunk load failed'))
+    const load = lazyWithRetry(alwaysFails as never) as unknown as () => Promise<unknown>
+    const p = load().catch(() => 'rejected')
+    await vi.runAllTimersAsync()
+    await p
+    expect(reloadCalls).toBe(0)
+  })
 })

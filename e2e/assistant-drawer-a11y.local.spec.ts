@@ -110,12 +110,23 @@ for (const theme of ['light', 'dark'] as const) {
         await scan(page, 'save refused')
         await page.evaluate(() => Object.assign(window, { __refuse: false }))
 
-        const more = concept.getByRole('button', { name: /^Show \d+ more/ })
-        if (await more.count()) {
-          await more.click()
-          await expect(concept.getByRole('button', { name: 'Show fewer records' })).toBeVisible()
-          await scan(page, 'resources with every record shown')
+        // The card at another tab and at its last resource, and an earlier answer folded to one line.
+        await concept.getByRole('tab', { name: /^Learn, / }).click()
+        await scan(page, 'resources, another tab')
+        const next = concept.getByRole('button', { name: /^(Next resource|No more resources)/ })
+        for (let i = 0; i < 40 && (await next.getAttribute('aria-disabled')) !== 'true'; i++) {
+          await next.click()
         }
+        await expect(next).toHaveAccessibleName('No more resources')
+        await scan(page, 'resources, last resource')
+        await concept.getByRole('tab', { name: /^Top 5, / }).focus()
+        await scan(page, 'resources, tab with its tooltip')
+        await expect(
+          drawer
+            .getByRole('article', { name: FACT })
+            .getByRole('button', { name: /^Earlier answer/ })
+        ).toBeVisible()
+        await scan(page, 'an earlier answer folded')
 
         for (const [state, question] of [
           ['name card', 'ML-KEM'],
@@ -128,12 +139,13 @@ for (const theme of ['light', 'dark'] as const) {
         }
 
         // The record viewer: a record read inside the drawer.
-        const readable = drawer
-          .getByRole('article', { name: CONCEPT })
-          .last()
+        // The newer answers folded it: open it again.
+        await concept.getByRole('button', { name: /^Earlier answer/ }).click()
+        await concept.getByRole('tab', { name: /^Glossary, / }).click()
+        await concept
           .getByRole('button', { name: /^Read here:/ })
           .first()
-        await readable.click()
+          .click()
         // A wide screen shows "Back to your answer"; a phone pins the record with "Close".
         const leave = isPhone(page)
           ? drawer
