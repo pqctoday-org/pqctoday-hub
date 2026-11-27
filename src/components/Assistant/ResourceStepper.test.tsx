@@ -110,8 +110,9 @@ describe('ResourceStepper', () => {
   it('Next moves inside the tab', async () => {
     const user = userEvent.setup()
     show()
+    // Top 5 holds the best row of each group first: the first lesson, then the framework
     await user.click(screen.getByRole('button', { name: 'Next resource' }))
-    expect(screen.getByRole('heading')).toHaveTextContent('Second lesson')
+    expect(screen.getByRole('heading')).toHaveTextContent('A framework')
     expect(footerLabel()).toHaveTextContent('Top 5 · 2 of 4')
   })
 

@@ -184,7 +184,8 @@ describe('the resource shown', () => {
   it('shows a paid standard with no quote, says the Hub links to it, and opens the publisher in a new tab', async () => {
     const user = userEvent.setup()
     show(conceptMlKem as RenderableAnswer)
-    await next(user)
+    // the documents of the answer, in their own tab: the paid standard is the second
+    await user.click(screen.getByRole('tab', { name: /^Library, / }))
     await next(user)
     expect(
       screen.getByText('The Hub links to this standard and does not quote it.')

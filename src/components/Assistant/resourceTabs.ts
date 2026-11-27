@@ -262,10 +262,23 @@ export interface ResourceTabs {
 
 const EMPTY: ResourceTabs = { tabs: [], total: 0, rankOf: {} }
 
-/** The engine's order: each group's visible rows, then each group's own `more`, best first. */
+/**
+ * The order of the card: the best row of every group, in the engine's group order, then the second
+ * row of every group, then the third; the groups' `more` rows follow in the same way. The best
+ * resource of each kind is seen first, whatever group it sits in.
+ */
 function rankedRows(answer: RenderableAnswer, p: PreparedAnswer): AssistantRow[] {
   const groups = answer.groups ?? []
-  const ranked = [...groups.flatMap((g) => g.rows ?? []), ...groups.flatMap((g) => g.more ?? [])]
+  const byTurns = (lists: AssistantRow[][]): AssistantRow[] => {
+    const out: AssistantRow[] = []
+    const longest = Math.max(0, ...lists.map((l) => l.length))
+    for (let i = 0; i < longest; i++) for (const l of lists) if (i < l.length) out.push(l[i])
+    return out
+  }
+  const ranked = [
+    ...byTurns(groups.map((g) => g.rows ?? [])),
+    ...byTurns(groups.map((g) => g.more ?? [])),
+  ]
   return p.nameCard ? [nameCardAsRow(p.nameCard), ...ranked] : ranked
 }
 

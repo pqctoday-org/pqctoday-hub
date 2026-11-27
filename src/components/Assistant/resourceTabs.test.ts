@@ -216,12 +216,16 @@ describe('buildResourceTabs', () => {
     expect(total).toBe(16)
   })
 
-  it('keeps the engine order: Top 5 is the first five of the rank, and each tab keeps the rank order', () => {
+  it('shows the best row of every group first: Top 5 is the first five of the rank, and each tab keeps the rank order', () => {
     const { tabs, rankOf } = buildResourceTabs(cnsa)
     const top = tabs[0].rows.map((r) => r.tag)
-    expect(top).toEqual(['CMP:CNSA-2', 'TL:one', 'TL:two', 'LIB:a', 'LIB:b'])
+    // the first row of each of the four groups, in the engine's group order, then the second row of the first group
+    expect(top).toEqual(['CMP:CNSA-2', 'LIB:a', 'LM-001', 'TOOL:assess', 'TL:one'])
     expect(rankOf['CMP:CNSA-2']).toBe(1)
-    expect(rankOf['LM-001']).toBeGreaterThan(rankOf['LIB:b'])
+    expect(rankOf['LM-001']).toBeLessThan(rankOf['TL:one'])
+    expect(rankOf['LIB:b']).toBeLessThan(rankOf['TL:two'])
+    // every group's visible rows come before any group's "more" rows
+    expect(rankOf['LM-002']).toBeLessThan(rankOf['CMP:two'])
     for (const tab of tabs) {
       const ranks = tab.rows.map((r) => rankOf[r.tag])
       expect(ranks).toEqual([...ranks].sort((a, b) => a - b))
