@@ -21,6 +21,12 @@ export const buttonVariants = cva(
         // paired foreground token is measured against it.
         secondary:
           'rounded-full font-bold border-2 border-ink bg-chip text-chip-foreground hover:bg-chip/90 max-md:min-h-[44px] [&.h-auto]:rounded-2xl [&.h-auto]:whitespace-normal',
+        // UX grammar roles (handoff 2.2). Secondary is `outline` above. These two are used with
+        // size `role` or `dense`: 44 px (36 px dense), labels wrap, one primary per area.
+        primary:
+          'rounded-full font-bold border-2 border-ink bg-primary text-primary-foreground shadow-[0_4px_0_hsl(var(--edge))] hover:bg-primary/90 active:translate-y-[3px] active:shadow-none',
+        quiet:
+          'rounded-full font-bold border-2 border-transparent bg-transparent text-primary-legible underline underline-offset-4 hover:text-heading',
         ghost: 'rounded-lg hover:bg-muted/20 hover:text-foreground',
         link: 'rounded-lg text-primary underline-offset-4 hover:underline',
         // Kept as a name for the many call sites that ask for the call-to-action look;
@@ -33,6 +39,9 @@ export const buttonVariants = cva(
         sm: 'h-10 px-3',
         lg: 'h-11 px-8',
         icon: 'h-11 w-11 touch-manipulation',
+        // UX grammar sizes: the label wraps and the button grows, never clips.
+        role: 'h-auto min-h-[44px] px-6 py-2 whitespace-normal text-center',
+        dense: 'h-auto min-h-[36px] px-4 py-1.5 whitespace-normal text-center',
         tile: 'h-auto min-h-[88px] w-full px-4 py-3 flex-col items-start justify-start text-left whitespace-normal gap-1 rounded-2xl!',
       },
     },

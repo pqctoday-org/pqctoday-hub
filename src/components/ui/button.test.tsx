@@ -82,3 +82,23 @@ describe('Button', () => {
     expect(onClick).not.toHaveBeenCalled()
   })
 })
+
+describe('Button grammar roles', () => {
+  it('has the primary and quiet variants and the role and dense sizes', () => {
+    render(
+      <>
+        <Button variant="primary" size="role">
+          p
+        </Button>
+        <Button variant="quiet" size="dense">
+          q
+        </Button>
+      </>
+    )
+    const [p, q] = screen.getAllByRole('button')
+    expect(p.className).toContain('bg-primary')
+    expect(p.className).toContain('min-h-[44px]')
+    expect(q.className).toContain('underline')
+    expect(q.className).toContain('min-h-[36px]')
+  })
+})
