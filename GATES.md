@@ -92,6 +92,8 @@ outside this repository on each PR head before merge. (`gate:cacp` was removed f
 
 `test` (matrix ×3) ≈ 8 min each: `vitest run --shard=N/3` — the unit suite.
 
+The format lint is part of the unit suite (`src/lib/format/formatLint.test.ts`, UX grammar section 2.4). It reads every source file, and fails on text a reader can see that uses an old notation (`32 bytes`, `32B`, `KB`, `[48ms]`, `-$1`, `3yr`, `11/26/2026`, `NaN`, `undefined`), or on a date or time built by hand (`toLocaleDateString`, `Intl.DateTimeFormat` and the like). Use the functions in `src/lib/format/` instead. Older lesson text that still has an old notation is counted per file in `formatLint.baseline.json`; a count may only go down. To lower it after rewriting a sentence: `FORMAT_LINT_WRITE_BASELINE=1 npx vitest run src/lib/format/formatLint.test.ts`.
+
 **Page-load budget — report-only.** `e2e/perf-budget.spec.ts` (nightly full suite, `chromium` project) loads `/`, `/learn`, `/migrate`, `/library`, `/threats` and `/report` from the build and prints each page's downloaded JavaScript (decoded KB), DOMContentLoaded, load and LCP, marking a page `OVER` when it passes its budget. It never fails on a budget: runner timing varies. `PERF_BUDGET_ENFORCE=1` makes an over-budget page fail (use on a quiet machine). Production builds also ship only the newest dated library and threats enrichment file (`scripts/lib/newestEnrichmentOnly.ts`, checked at build time; the build log prints one line per family).
 
 `gate-cacp` — **removed 2026-09-27** (owner decision). It gated every hub PR on pqctoday-hsm's state. `npm run gate:cacp` stays available to run by hand.
