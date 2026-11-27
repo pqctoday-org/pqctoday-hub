@@ -565,15 +565,30 @@
     }
    },
    "site": {
+    "lead": "best",
     "only": {
      "Data pages": [
-      "type:page"
+      "type:page",
+      "type:release"
      ]
     },
     "prior": {
      "Data pages": {
+      "type:page": 2.0,
+      "type:release": 2.0
+     },
+     "Learn": {
+      "type:page": 2.0
+     },
+     "References": {
+      "type:page": 2.0
+     },
+     "Tools": {
       "type:page": 2.0
      }
+    },
+    "w": {
+     "asked": 3.0
     }
    },
    "source_document": {
@@ -616,6 +631,274 @@
   "learn_after": [
    "/learn/quiz?category="
   ],
+  "page_words": {
+   "/about": [
+    "about",
+    "free",
+    "cost",
+    "costs",
+    "price",
+    "pricing",
+    "pay",
+    "paid",
+    "payment",
+    "fee",
+    "fees",
+    "charge",
+    "subscription",
+    "paywall",
+    "open",
+    "source",
+    "license",
+    "licence",
+    "licensed",
+    "made",
+    "makes",
+    "built",
+    "created",
+    "runs",
+    "owns",
+    "owner",
+    "behind",
+    "author",
+    "authors",
+    "maintainer",
+    "team",
+    "contact",
+    "mission",
+    "purpose",
+    "site",
+    "website",
+    "work",
+    "works",
+    "project"
+   ],
+   "/algorithms": [
+    "algorithms",
+    "explorer"
+   ],
+   "/assess": [
+    "assessment",
+    "assess",
+    "readiness",
+    "questionnaire"
+   ],
+   "/business": [
+    "business",
+    "command",
+    "center",
+    "centre",
+    "executive",
+    "kpi"
+   ],
+   "/business/tools": [
+    "calculators",
+    "calculator",
+    "templates",
+    "template",
+    "toolkit"
+   ],
+   "/changelog": [
+    "changelog",
+    "release",
+    "releases",
+    "released",
+    "version",
+    "versions",
+    "new",
+    "news",
+    "latest",
+    "newest",
+    "recent",
+    "recently",
+    "updated",
+    "update",
+    "updates",
+    "changes",
+    "changed",
+    "added",
+    "notes"
+   ],
+   "/compliance": [
+    "compliance",
+    "regulations",
+    "frameworks",
+    "mandates"
+   ],
+   "/editorial-independence": [
+    "editorial",
+    "independence",
+    "independent",
+    "neutral",
+    "neutrality",
+    "bias",
+    "biased",
+    "influence",
+    "conflict",
+    "disclosure"
+   ],
+   "/explore": [
+    "explore",
+    "browse",
+    "overview",
+    "everything",
+    "sitemap",
+    "sections",
+    "features",
+    "start",
+    "started",
+    "begin",
+    "tour",
+    "menu",
+    "navigation",
+    "landed"
+   ],
+   "/faq": [
+    "faq",
+    "faqs",
+    "questions",
+    "answers",
+    "common",
+    "asked",
+    "frequently",
+    "help",
+    "role",
+    "roles",
+    "persona",
+    "free",
+    "cost",
+    "price",
+    "pay",
+    "paid",
+    "open",
+    "source",
+    "site",
+    "website",
+    "work",
+    "works"
+   ],
+   "/leaders": [
+    "leaders",
+    "community",
+    "people",
+    "experts"
+   ],
+   "/learn": [
+    "learn",
+    "learning",
+    "lessons",
+    "lesson",
+    "modules",
+    "module",
+    "courses",
+    "course",
+    "tracks",
+    "progress",
+    "save",
+    "saved",
+    "restore",
+    "backup",
+    "download",
+    "glossary"
+   ],
+   "/library": [
+    "library",
+    "documents",
+    "standards",
+    "papers",
+    "references"
+   ],
+   "/migrate": [
+    "workbench",
+    "products",
+    "catalog",
+    "catalogue",
+    "vendors"
+   ],
+   "/navigate": [
+    "navigate",
+    "graph",
+    "map"
+   ],
+   "/openssl": [
+    "openssl",
+    "studio",
+    "commands",
+    "terminal"
+   ],
+   "/patents": [
+    "patents",
+    "patent"
+   ],
+   "/playground": [
+    "playground",
+    "try",
+    "hands",
+    "sandbox",
+    "experiment"
+   ],
+   "/report": [
+    "report",
+    "results"
+   ],
+   "/revisions": [
+    "revisions",
+    "revision",
+    "corrections",
+    "correction",
+    "corrected",
+    "audit",
+    "trail",
+    "log",
+    "reviewed",
+    "errors",
+    "mistakes"
+   ],
+   "/simulation": [
+    "simulation",
+    "simulate",
+    "simulator"
+   ],
+   "/sponsor": [
+    "sponsor",
+    "sponsors",
+    "sponsorship",
+    "sponsoring",
+    "donate",
+    "donation",
+    "donations",
+    "fund",
+    "funding",
+    "funded",
+    "tiers"
+   ],
+   "/terms": [
+    "terms",
+    "service",
+    "privacy",
+    "cookies",
+    "cookie",
+    "tracking",
+    "tracked",
+    "analytics",
+    "personal",
+    "collect",
+    "collected",
+    "disclaimer",
+    "legal",
+    "gdpr",
+    "sanctions"
+   ],
+   "/threats": [
+    "threats",
+    "threat"
+   ],
+   "/timeline": [
+    "timeline",
+    "deadlines",
+    "milestones"
+   ]
+  },
   "version": 1
  },
  "intents": {
@@ -1712,6 +1995,30 @@
     {
      "rx": "\\bhow (?:do|can) i (?:use|navigate|get around)\\b",
      "w": 3
+    },
+    {
+     "rx": "^(?:is|are) (?:this|it|that|the (?:site|website|hub|platform|content|course|training)|all (?:this|of this|of it)|everything|pqc today) (?:really |all |completely |totally )?(?:free|open[- ]source|paid)\\b|\\b(?:how much (?:does|is|do) (?:this|it|the (?:site|hub|platform))|do (?:i|we) (?:have|need) to (?:pay|register|sign up|log ?in|create an account)|is there (?:a|any) (?:fee|cost|charge|subscription|paywall|free (?:tier|version|plan)))\\b",
+     "w": 5
+    },
+    {
+     "rx": "\\bhow (?:does|do) (?:this|the|your) (?:site|website|hub|platform|app|assistant|chat)s? work\\b|\\bwho (?:made|makes|built|created|runs|owns|maintains|is behind|wrote) (?:this|the|your) (?:site|website|hub|platform|content)?\\b",
+     "w": 5
+    },
+    {
+     "rx": "\\bwhere (?:is|are|can i (?:find|see|get to)|do i find) (?:the |your |a )?(?:glossary|faq|changelog|library|timeline|playground|quiz(?:zes)?|lessons?|modules?|courses?|settings|assistant|about page|home ?page|dashboard|bookmarks?|release notes|terms|privacy policy)\\b",
+     "w": 5
+    },
+    {
+     "rx": "\\b(?:save|export|download|back ?up|restore|reset|delete|clear|import|keep|lose|sync) (?:my|your|our) (?:progress|bookmarks?|results?|answers|history|scores?|data)\\b|\\b(?:my|your) (?:progress|bookmarks|history) (?:saved|stored|kept|lost|synced)\\b",
+     "w": 5
+    },
+    {
+     "rx": "\\byour (?:[\\w-]+ ){0,3}(?:policy|policies|terms|changelog|faq|glossary|release notes|sponsors?|sponsorship|licen[cs]e|privacy)\\b",
+     "w": 5
+    },
+    {
+     "rx": "\\bwhat(?:'s| is| was|s)? (?:in|new in|changed in) (?:the |your )?(?:latest|last|newest|new|current|most recent) (?:release|version|update)\\b(?! (?:of|for|from) )",
+     "w": 5
     },
     {
      "rx": "\\b(?:email alerts?|notifications?|subscribe|csv export|export (?:the |a )?(?:table|data|csv|list)|print|tracker location|contributor page|side by side|comparison tool|vendor comparison|where is (?:the )?\\w+ ?\\w* guide)\\b",

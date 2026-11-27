@@ -257,6 +257,24 @@ describe('lessons under their own name, plain matches, and questions nothing is 
     }
   })
 
+  it('answers a question about the site itself with the page it asks for', async () => {
+    const firstPage: Record<string, string> = {
+      'is this free': '/faq',
+      'how does this site work': '/faq',
+      'how do I change my role': '/faq',
+      'where is the glossary': '/learn',
+      'can I download my progress': '/learn',
+      'How do I use the Playground?': '/playground',
+    }
+    for (const [q, link] of Object.entries(firstPage)) {
+      const a = held(await answer(q))
+      expect(a.groups[0].rows[0], q).toMatchObject({ link, kind: 'Page' })
+    }
+    // the same words about something else are not a question about the site
+    for (const q of ['What is the latest version of OpenSSL?', 'Is ML-KEM free to use?'])
+      expect(held(await answer(q)).intent, q).not.toBe('site')
+  })
+
   it('shows the sentence that matched the question when it says more than the first lines of the record', async () => {
     const a = held(await answer('is aes 256 quantum safe'))
     const lessons = allRows(a).filter((r) => r.kind === 'Module')

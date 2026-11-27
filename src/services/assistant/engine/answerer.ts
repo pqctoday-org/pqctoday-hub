@@ -348,7 +348,7 @@ export class Answerer {
   cfg(intent: string): any {
     const row = this.data.finders.intents[intent] ?? {}
     const d = this.data.finders.default
-    return { w: { ...d.w, ...(row.w ?? {}) }, prior: row.prior ?? {}, only: row.only ?? {}, follow: row.follow ?? d.follow, journey: row.journey ?? d.journey, pin: row.pin ?? {}, filter: !!row.filter, field_bonus: row.field_bonus ?? {}, name_types: row.name_types ?? [], follow_fields: row.follow_fields ?? [] }
+    return { w: { ...d.w, ...(row.w ?? {}) }, prior: row.prior ?? {}, only: row.only ?? {}, follow: row.follow ?? d.follow, journey: row.journey ?? d.journey, pin: row.pin ?? {}, filter: !!row.filter, field_bonus: row.field_bonus ?? {}, name_types: row.name_types ?? [], follow_fields: row.follow_fields ?? [], lead: row.lead ?? '' }
   }
   contentWords(reading: Reading): string[] {
     const namesToks = new Set(reading.names.flatMap((n) => tokens(n.text)))
@@ -411,6 +411,10 @@ export class Answerer {
     // a group the intent restricts to a small set of pages (`only`): every page of that set that shares a word with the question is a
     // candidate, not only those among the best matches of the whole Hub
     for (const ln of this.restricted(intent, cfg)) if ((resScores.get(ln) ?? 0) > 0 && !links.has(ln)) links.set(ln, 0)
+    // a question about the site itself: a page of the site is a candidate when the question holds a word visitors use for it, and
+    // is scored by the share of the question's words that are such words
+    const asked = cfg.w.asked ? this.askedPages(reading.clean) : new Map<string, number>()
+    for (const [ln, share] of asked) if (share > 0 && !links.has(ln)) links.set(ln, 0)
     const pool = new Map<string, Item>()
     const sw = [...words].sort()
     const denom = Math.max(1e-9, sw.reduce((a, w) => a + this.res.idf(w), 0))
@@ -419,13 +423,27 @@ export class Answerer {
       if (!r || !this.statusOk(r) || (ln.startsWith('http') && !named.has(ln))) continue
       const tw = new Set(tokens(r.title))
       const overlap = words.length ? sw.filter((w) => tw.has(w)).reduce((a, w) => a + this.res.idf(w), 0) / denom : 0
-      pool.set(ln, { link: ln, title: r.title, type: r.type, group: r.group, extract: r.extract, record_ids: r.record_ids, text, res: (resScores.get(ln) ?? 0) / rtop, title_overlap: overlap, named: named.has(ln), follow: follow.get(ln) ?? 0, reader: readers.get(ln) ?? 0, passage: via.get(ln) ?? null })
+      pool.set(ln, { link: ln, title: r.title, type: r.type, group: r.group, extract: r.extract, record_ids: r.record_ids, text, res: (resScores.get(ln) ?? 0) / rtop, title_overlap: overlap, named: named.has(ln), follow: follow.get(ln) ?? 0, reader: readers.get(ln) ?? 0, passage: via.get(ln) ?? null, asked: asked.get(ln) ?? 0 })
     }
     return pool
   }
+  /** For each page of the site that has words of its own: the share of the question's words that are among them. */
+  askedPages(clean: string): Map<string, number> {
+    const toks = [...new Set(tokens(clean).filter((t) => !STOP.has(t)))].sort()
+    const out = new Map<string, number>()
+    for (const [ln, pageWords] of Object.entries((this.data.finders.page_words ?? {}) as Record<string, string[]>)) {
+      if (this.resByLink.has(ln)) out.set(ln, toks.filter((t) => pageWords.includes(t)).length / Math.max(1, toks.length))
+    }
+    return out
+  }
+  /** The group order with the group that leads first (the group the finder marked as holding the best row); the others keep their order. */
+  leadFirst(order: string[], groups: Record<string, Item[]>): string[] {
+    const best = order.find((g) => (groups[g] ?? []).length && groups[g][0].leads)
+    return best === undefined ? order : [best, ...order.filter((g) => g !== best)]
+  }
   score(item: Item, cfg: any, filt: Map<string, number> | null): number {
     const w = cfg.w
-    let v = w.text * item.text + w.res * item.res + w.title * item.title_overlap + w.name * (item.named && (!cfg.name_types.length || cfg.name_types.includes(item.type)) ? 1.0 : 0.0) + w.link * item.follow + w.prior * this.prior(item, cfg.prior) + (w.reader ?? 0.0) * (item.reader ?? 0.0)
+    let v = w.text * item.text + w.res * item.res + w.title * item.title_overlap + w.name * (item.named && (!cfg.name_types.length || cfg.name_types.includes(item.type)) ? 1.0 : 0.0) + w.link * item.follow + w.prior * this.prior(item, cfg.prior) + (w.reader ?? 0.0) * (item.reader ?? 0.0) + (w.asked ?? 0.0) * (item.asked ?? 0.0)
     if (filt !== null) v += filt.get(item.link) ?? 0.0
     return v
   }
@@ -477,6 +495,12 @@ export class Answerer {
         if (idx >= 0) { const [hit] = ranked.splice(idx, 1); ranked.splice(k, 0, [hit[0], hit[1] + 100]) }
       })
       out[g] = ranked.slice(0, perGroup + more).map(([ln, sc]) => ({ ...items.get(ln)!, score: round(sc, 4) }))
+    }
+    if (cfg0.lead === 'best') {
+      // the group whose first row scores highest leads (read before the plain matches are mixed in: their scores are another scale)
+      let best: string | null = null
+      for (const g of GROUPS) if (out[g].length && (best === null || out[g][0].score > out[best][0].score)) best = g
+      if (best !== null) out[best][0].leads = true
     }
     if (cfg0.journey && reading.names.length) this.journey(reading, out, perGroup)
     if ((reading.confidence ?? 1.0) < STRONG && !reading.forced) this.withFallback(reading, out, perGroup + more)
@@ -852,7 +876,7 @@ export class Answerer {
       findReading = { ...findReading, clean: INTRODUCTION }
       groups = this.find(findReading, PER_GROUP, PER_GROUP)
     }
-    const order = this.groupOrder(intent, role)
+    const order = this.leadFirst(this.groupOrder(intent, role), groups)
     const words = findReading.clean === reading.clean ? this.contentWords(findReading) : [] // the introduction is shown in its own words
     const d = intent !== 'broad' && intent !== 'not_fact' ? this.direct(question, reading) : null
     model.direct = d ? { value: d.value, evidence_line: d.evidence_line, tag: d.tag, field: d.field, evidence: d.evidence } : null
