@@ -38,6 +38,7 @@ import { resolveAlgoXrefs } from '@/data/algoProductXrefData'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
 import { StandardSizeBudget } from './StandardSizeBudget'
 import { classifyCnsa20, cnsa20ChipClasses } from './cnsa20'
+import { MissingAwareText } from '@/components/ui/NeedsDataCue'
 
 interface AlgorithmDetailDrawerProps {
   algo: AlgorithmDetail | null
@@ -77,7 +78,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function bytes(algo: AlgorithmDetail, field: AlgorithmSizeField) {
   const text = formatAlgorithmSize(algo, field)
   if (algorithmSizeState(algo, field) !== 'stated') {
-    return <span className="italic text-muted-foreground">{text}</span>
+    return <MissingAwareText text={text} />
   }
   return <span className="font-mono">{text}</span>
 }
@@ -202,10 +203,12 @@ function DrawerPanel({ algo, onClose }: { algo: AlgorithmDetail; onClose: () => 
                     {formatSecurityLevel(algo)}
                   </span>
                 ) : (
-                  <span className="italic text-muted-foreground">{formatSecurityLevel(algo)}</span>
+                  <MissingAwareText text={formatSecurityLevel(algo)} />
                 )}
               </Fact>
-              <Fact label="AES equivalent">{formatAesEquivalent(algo)}</Fact>
+              <Fact label="AES equivalent">
+                <MissingAwareText text={formatAesEquivalent(algo)} />
+              </Fact>
               <Fact label="Standard">
                 <span className="font-mono text-[11.5px]">{algo.fipsStandard || '—'}</span>
               </Fact>
@@ -265,7 +268,7 @@ function DrawerPanel({ algo, onClose }: { algo: AlgorithmDetail; onClose: () => 
                   {stackRamState(algo) === 'stated' ? (
                     <span className="font-mono">{formatStackRam(algo)}</span>
                   ) : (
-                    <span className="italic text-muted-foreground">{formatStackRam(algo)}</span>
+                    <MissingAwareText text={formatStackRam(algo)} />
                   )}
                 </Fact>
                 {algo.optimizationTarget && !isResearchNeeded(algo.optimizationTarget) && (
