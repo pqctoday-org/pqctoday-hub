@@ -43,7 +43,6 @@ describe('page-title style', () => {
     ['src/components/PKILearning/modules/Quiz/QuizIntro.tsx', /<h1 className="page-title /],
     ['src/components/NotFound/NotFoundView.tsx', /<h1 className="page-title /],
     // The phone screens, the persona boards and the role chooser (owner decision, 26 Nov 2026).
-    ['src/components/Mobile/screens/MobileHomeBoard.tsx', /<h1 className="page-title/],
     ['src/components/Mobile/screens/MobileModuleShell.tsx', /<h1 className="page-title"/],
     ['src/components/Mobile/screens/MobileAssessView.tsx', /<h1 className="page-title"/],
     ['src/components/Mobile/screens/MobileTimelineView.tsx', /<h1 className="page-title"/],
@@ -67,7 +66,12 @@ describe('page-title style', () => {
     }
   })
 
-  it('leaves the Home and Sponsor heroes to their own Hero style', () => {
-    expect(read('src/components/Sponsor/SponsorView.tsx')).not.toMatch(/<h1 className="page-title/)
+  // The hero exceptions: the Home and Sponsor heroes keep their own Hero style (owner rule, 26 Nov 2026).
+  // The phone Home board is the Home hero, so both of its titles stay in the hero style.
+  it.each([
+    'src/components/Sponsor/SponsorView.tsx',
+    'src/components/Mobile/screens/MobileHomeBoard.tsx',
+  ])('%s is a hero exception and does not use the page-title class', (file) => {
+    expect(read(file)).not.toMatch(/<h1[^>]*page-title/)
   })
 })
