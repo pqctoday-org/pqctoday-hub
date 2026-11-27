@@ -517,7 +517,8 @@
      {
       "field": "products",
       "prefix": "PRD:",
-      "w": 2.0
+      "undivided": true,
+      "w": 6.0
      }
     ],
     "name_types": [
@@ -1940,6 +1941,10 @@
      ],
      "rx": ".",
      "w": 1
+    },
+    {
+     "rx": "\\b(?:list|show|name|give me|got)\\b.{0,40}\\bproducts?\\b",
+     "w": 3
     }
    ],
    "risk": [

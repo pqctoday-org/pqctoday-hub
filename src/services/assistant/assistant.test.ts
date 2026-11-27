@@ -291,6 +291,20 @@ describe('lessons under their own name, plain matches, and questions nothing is 
     expect(held(await answer('should I use ML-KEM-768 or ML-KEM-1024')).intent).not.toBe('planning')
   })
 
+  it('answers which products carry an algorithm with the products the Hub lists for it', async () => {
+    for (const q of [
+      'Which products use MAYO-3?',
+      'Please tell me all the products that have MAYO-3 built in.',
+      'List the products with MAYO-3 support.',
+    ]) {
+      const a = held(await answer(q))
+      expect(a.intent, q).toBe('products')
+      const data = a.groups.find((g) => g.name === 'Data pages')
+      expect(data?.rows[0].kind, q).toBe('Product')
+      expect(data?.rows[0].title, q).toMatch(/MAYO|liboqs|PQClean/)
+    }
+  })
+
   it('puts the lesson that is about the question first among the lessons and their parts', async () => {
     const learn = held(await answer('banking')).groups.find((g) => g.name === 'Learn')
     expect(learn?.rows[0]).toMatchObject({

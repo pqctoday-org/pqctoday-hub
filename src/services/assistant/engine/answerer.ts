@@ -375,7 +375,8 @@ export class Answerer {
       for (const f of cfg.follow_fields) {
         const raw = (this.rec(rid).fields ?? {})[f.field] || []          // an empty string, 0 and null list nothing
         const vals: unknown[] = Array.isArray(raw) ? raw : [raw]
-        const w = f.w / Math.sqrt(Math.max(1, vals.length))          // the more products an algorithm lists, the less each link says (every listed id counts, active or not)
+        // the more records a field lists, the less each link says (every listed id counts, active or not), unless the intent asks for exactly those records (`undivided`)
+        const w = f.undivided ? f.w : f.w / Math.sqrt(Math.max(1, vals.length))
         for (const v of vals) { const t = this.strict.records.get(f.prefix + String(v)); const l = t ? this.linkOfRec.get(t.id) : undefined; if (l && t && isActiveStatus(t.status)) o.set(l, Math.max(o.get(l) ?? 0, w)) }
       }
     }
