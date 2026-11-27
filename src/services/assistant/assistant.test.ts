@@ -12,7 +12,7 @@ import {
 } from './adapter'
 import { directValueFits } from './engineHost'
 import { buildEngineInput, extractOf, FAMILY_FILE_PREFIX, groupOf } from './buildEngine'
-import { decodeCodes } from './engine/answerer'
+import { decodeCodes, matchedExtract } from './engine/answerer'
 import {
   ASSISTANT_GROUPS,
   ASSISTANT_ROWS_PER_GROUP,
@@ -238,6 +238,22 @@ describe('lessons under their own name, plain matches, and questions nothing is 
     const nothing = held(await answer('qwertyzzxx blorp'))
     expect(nothing.state).toBe('broad')
     expect(learnRows(nothing)[0].title).toBe('PQC 101')
+  })
+
+  it('shows the sentence that matched the question when it says more than the first lines of the record', async () => {
+    const a = held(await answer('is aes 256 quantum safe'))
+    const lessons = allRows(a).filter((r) => r.kind === 'Module')
+    expect(lessons.some((r) => /AES-256/.test(r.extract))).toBe(true)
+    for (const q of [
+      'is aes 256 quantum safe',
+      'how big is an ML-DSA signature',
+      'pci dss quantum requirements',
+    ]) {
+      for (const r of allRows(held(await answer(q)))) {
+        expect(Array.from(r.extract).length).toBeLessThanOrEqual(241)
+        expect(r.extract).not.toMatch(/\*\*|^#|\bIndex: \d+/)
+      }
+    }
   })
 
   it('does not show a record that holds only one word of a longer question beside the best matches', async () => {
@@ -497,6 +513,37 @@ describe('what the file builder reads from the knowledge files', () => {
     expect(extractOf('List: the three algorithms NIST selected')).toBe(
       'List: the three algorithms NIST selected'
     )
+  })
+
+  it('cuts the matched part of a passage at a sentence start and at a word, and never shows a heading, a field or a cut sentence', () => {
+    const text =
+      '## Hybrid key exchange\nStatus: Final\n- **Why hybrid** a short label\n' +
+      'Hybrid key exchange runs a classical and a post-quantum exchange side by side. ' +
+      'The handshake grows by about 2,300 bytes because the ML-KEM-768 key share is larger than an X25519 one. ' +
+      'A middlebox that drops large ClientHello messages breaks the connection, so test the path before the rollout.\n' +
+      'Table cell without an end\n' +
+      'lower-case fragment of a sentence that was cut by the passage boundary and names the handshake bytes.'
+    const w: [string, number][] = [
+      ['bytes', 2],
+      ['handshake', 1.5],
+      ['grows', 1],
+    ]
+    const m = matchedExtract(text, w)
+    expect(m?.held).toBe(4.5)
+    expect(m?.text.startsWith('The handshake grows by about 2,300 bytes')).toBe(true)
+    expect(m?.text).toContain('middlebox')
+    expect(matchedExtract(text, w, 60)?.text).toBe(
+      'The handshake grows by about 2,300 bytes because the…'
+    )
+    const all = matchedExtract(
+      text,
+      ['hybrid', 'handshake', 'status', 'table', 'fragment'].map((x) => [x, 1]),
+      2000
+    )
+    for (const never of ['##', 'Status:', '**', 'Table cell', 'lower-case fragment'])
+      expect(all?.text).not.toContain(never)
+    expect(matchedExtract(text, [['lattice', 1]])).toBeNull()
+    expect(matchedExtract('Label only\nAnother label', w)).toBeNull()
   })
 
   it('groups links as the Hub pages do, and keeps an extract to one short line', () => {

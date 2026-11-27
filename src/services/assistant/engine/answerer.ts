@@ -81,8 +81,55 @@ export function decodeCodes(text: string): string {
 }
 /** A line of a record's text that only places the record in the Hub's own lists ("Index: 0", "List: workshop_steps", "Paths: developer", "Module: tls-basics"): never shown. */
 export const STRUCTURE = /^(?:Index: [0-9]+|List: [a-z0-9_]+|Paths: [a-z0-9_,; -]+|Module: [a-z0-9]+(?:-[a-z0-9]+)*)$/
+const HEADER = /^(?:Module|Component|Term|Reference|Title|Learning Module|Document|Section|Category):\s*/i
+/** A line that gives one field of a record ("Status: Final"): searched, never shown as a sentence. */
+const FIELD = /^[A-Z][A-Za-z0-9 /&()'-]{0,40}: /
+/** Where one sentence ends and the next begins, in text whose spaces are single. */
+const SENTENCE = /(?<=[.!?]) (?=[A-Z0-9"“(\[])/
+/** The fewest words a sentence must have to open an extract: a heading or a label is not a sentence. */
+const SENTENCE_MIN_WORDS = 5
+/** A sentence ends as one: a table cell, a label or a line cut short is searched, never shown as a sentence. */
+const SENTENCE_END = /[.!?]["”')\]]?$/
+/** A sentence starts as one: the first words of a passage cut from a longer text may not, and are never shown. */
+const SENTENCE_START = /^[A-Z0-9"“‘'(\[]/
+/** A matched sentence replaces a record's own first lines only when it holds at least this share of the question's words, by weight. */
+const MATCH_SHARE = 0.5
+/** The sources of passages whose text is never shown as an extract: a known-answer test, and the passages kept from a document's own text. */
+const NOT_SHOWN = ['known-answer test', 'library']
+/** The sentences of a passage that may be shown, in order: its lines without titles, headings, structure and field lines, cut into sentences that start and end as one. */
+function sentencesOf(text: string): string[] {
+  const out: string[] = []
+  for (const raw of String(text || '').split(/\r?\n/)) {
+    let line = raw.replace(/\s+/g, ' ').trim()
+    if (!line || line[0] === '#' || STRUCTURE.test(line) || HEADER.test(line) || FIELD.test(line)) continue
+    line = line.replace(/^[-*•] /, '').replace(/\*\*/g, '').trim()
+    for (const s of line.split(SENTENCE)) if (SENTENCE_START.test(s) && SENTENCE_END.test(s) && !FIELD.test(s)) out.push(s)
+  }
+  return out
+}
+/**
+ * The part of a passage that says most about the question: it starts at the sentence that holds the most of the question's words by weight
+ * (the first such sentence) and runs on, at most `limit` characters, cut at a word. `weights` gives each word of the question and its
+ * weight, in a fixed order; `held` is the weight that sentence holds. Null when no sentence holds a word of the question.
+ */
+export function matchedExtract(text: string, weights: [string, number][], limit = 240): { text: string; held: number } | null {
+  const sents = sentencesOf(text)
+  let best = -1, held = 0
+  sents.forEach((s, i) => {
+    const toks = new Set(tokens(s))
+    if (toks.size < SENTENCE_MIN_WORDS) return
+    let n = 0
+    for (const [w, x] of weights) if (toks.has(w)) n += x
+    if (n > held) { held = n; best = i }
+  })
+  if (best < 0) return null
+  let out = ''
+  for (let i = best; i < sents.length && Array.from(out).length <= limit; i++) out += (out ? ' ' : '') + sents[i]
+  const chars = Array.from(out)
+  if (chars.length > limit) { const cut = chars.slice(0, limit).join(''); const i = cut.lastIndexOf(' '); out = (i >= 0 ? cut.slice(0, i) : cut) + '…' }
+  return { text: out, held }
+}
 const extractOf = (raw: string, limit = 240): string => {
-  const HEADER = /^(?:Module|Component|Term|Reference|Title|Learning Module|Document|Section|Category):\s*/i
   const text = decodeCodes(raw)
   const lines = String(text || '').split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !STRUCTURE.test(l))
   const body = lines.filter((l) => !HEADER.test(l))
@@ -350,7 +397,8 @@ export class Answerer {
     const follow = this.followed(reading, cfg)
     const readers = cfg.w.reader ? this.readerLinks(reading.question) : new Map<string, number>()
     const links = new Map<string, number>()
-    for (const h of hits) if (!links.has(h.link)) links.set(h.link, h.score / top)
+    const via = new Map<string, number>()          // the passage each link was found through (its best one)
+    for (const h of hits) if (!links.has(h.link)) { links.set(h.link, h.score / top); via.set(h.link, h.passage) }
     for (const [ln] of [...resScores.entries()].sort((a, b) => b[1] - a[1]).slice(0, extra)) if (!links.has(ln)) links.set(ln, 0)
     for (const ln of [...named.keys(), ...follow.keys(), ...readers.keys(), ...(Object.values(cfg.pin) as string[][]).flat()]) if (!links.has(ln)) links.set(ln, 0)
     // a group the intent restricts to a small set of pages (`only`): every page of that set that shares a word with the question is a
@@ -364,7 +412,7 @@ export class Answerer {
       if (!r || !this.statusOk(r) || (ln.startsWith('http') && !named.has(ln))) continue
       const tw = new Set(tokens(r.title))
       const overlap = words.length ? sw.filter((w) => tw.has(w)).reduce((a, w) => a + this.res.idf(w), 0) / denom : 0
-      pool.set(ln, { link: ln, title: r.title, type: r.type, group: r.group, extract: r.extract, record_ids: r.record_ids, text, res: (resScores.get(ln) ?? 0) / rtop, title_overlap: overlap, named: named.has(ln), follow: follow.get(ln) ?? 0, reader: readers.get(ln) ?? 0 })
+      pool.set(ln, { link: ln, title: r.title, type: r.type, group: r.group, extract: r.extract, record_ids: r.record_ids, text, res: (resScores.get(ln) ?? 0) / rtop, title_overlap: overlap, named: named.has(ln), follow: follow.get(ln) ?? 0, reader: readers.get(ln) ?? 0, passage: via.get(ln) ?? null })
     }
     return pool
   }
@@ -438,7 +486,7 @@ export class Answerer {
     for (const h of this.search.resources(reading.clean, 80, PLAIN_MIN_WORDS, nameWords)) {
       const r = this.resByLink.get(h.link)
       if (!r || !this.statusOk(r) || r.link.startsWith('http')) continue
-      plain[r.group].push({ link: r.link, title: r.title, type: r.type, group: r.group, extract: r.extract, record_ids: r.record_ids, score: round(h.score, 4), text: 1.0, res: 0.0, title_overlap: 0.0, named: false, follow: 0.0, reader: 0.0 })
+      plain[r.group].push({ link: r.link, title: r.title, type: r.type, group: r.group, extract: r.extract, record_ids: r.record_ids, score: round(h.score, 4), text: 1.0, res: 0.0, title_overlap: 0.0, named: false, follow: 0.0, reader: 0.0, passage: h.passage })
     }
     for (const g of GROUPS) {
       const certain = reading.intents.includes('compare') ? out[g].filter((x) => x.named).slice(0, size) : []
@@ -627,7 +675,24 @@ export class Answerer {
     if (d.place.length) parts.push('Place: ' + [...d.place].sort().slice(0, 3).join('; '))
     return parts.join(' · ') || null
   }
-  row(item: Item): Item {
+  /**
+   * What a row shows under its title: the record's own first lines, or, when the row was found through a passage with a sentence that
+   * holds at least half of the question's words (by weight) and more of them than those lines do, that part of the passage.
+   */
+  shownExtract(item: Item, words: string[]): string {
+    const own = String(item.extract ?? '')
+    const p = typeof item.passage === 'number' ? this.cat.passages[item.passage] : undefined
+    if (!p || !words.length || NOT_SHOWN.includes(p.source)) return own
+    const weights: [string, number][] = [...words].sort().map((w) => [w, this.res.idf(w)])
+    const m = matchedExtract(p.text, weights)
+    if (!m) return own
+    const total = weights.reduce((a, [, x]) => a + x, 0)
+    const mine = new Set(tokens(own))
+    let ownHeld = 0
+    for (const [w, x] of weights) if (mine.has(w)) ownHeld += x
+    return m.held >= MATCH_SHARE * total && m.held > ownHeld ? m.text : own
+  }
+  row(item: Item, words: string[] = []): Item {
     const rows = this.data.rows
     const ids: string[] = item.record_ids ?? []
     const rec = ids.length ? this.strict.records.get(ids[0]) ?? null : null
@@ -648,7 +713,7 @@ export class Answerer {
     } else if (item.group === 'Learn' && this.cat.curriculum) dims = this.dimsLine(null, link)
     const action = rows.action_by_type[rtype] || rows.action_by_group[item.group]
     const paid = !!rec && this.paid.has(rec.id)
-    return { kind, tag, title: item.title, source: origin, status, dims, extract: paid ? '' : item.extract, paidReferenceOnly: paid, action, link, group: item.group }
+    return { kind, tag, title: item.title, source: origin, status, dims, extract: paid ? '' : this.shownExtract(item, words), paidReferenceOnly: paid, action, link, group: item.group }
   }
   persona(): Map<string, string[]> {
     if (!this.personaPaths) {
@@ -779,6 +844,7 @@ export class Answerer {
       groups = this.find(findReading, PER_GROUP, PER_GROUP)
     }
     const order = this.groupOrder(intent, role)
+    const words = findReading.clean === reading.clean ? this.contentWords(findReading) : [] // the introduction is shown in its own words
     const d = intent !== 'broad' && intent !== 'not_fact' ? this.direct(question, reading) : null
     model.direct = d ? { value: d.value, evidence_line: d.evidence_line, tag: d.tag, field: d.field, evidence: d.evidence } : null
     if (d && d.members) groups = this.membersFirst(groups, d.members)
@@ -787,7 +853,7 @@ export class Answerer {
     for (const g of order) {
       const items = groups[g] ?? []
       if (!items.length) continue
-      const rows = items.map((x) => this.row(x))
+      const rows = items.map((x) => this.row(x, words))
       let shown = rows.slice(0, PER_GROUP), more = rows.slice(PER_GROUP)
       if (g === 'Learn' && role && ['learning', 'planning'].includes(intent) && shown.length) {
         const pr = this.rolePathRow(role)
@@ -832,10 +898,11 @@ export class Answerer {
     model.note = N.note.name
     const sub = { ...reading, named_ids: e.ids, intents: ['name'], intent: 'name' }
     const groups = this.find(sub, PER_GROUP, PER_GROUP)
+    const words = this.contentWords(sub)
     for (const g of this.groupOrder('name', role)) {
       const items = (groups[g] ?? []).filter((x) => x.link !== e.link)
       if (items.length) {
-        const rows = items.map((x) => this.row(x))
+        const rows = items.map((x) => this.row(x, words))
         let shown = rows.slice(0, PER_GROUP), more = rows.slice(PER_GROUP)
         if (page) [shown, more] = this.orderByPage(g, sub as any, items, rows, shown, more, page)
         model.groups.push({ name: g, rows: shown, more })
