@@ -29,7 +29,7 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [4.228.2] - 2026-11-26
+## [4.228.2] - 2026-11-27
 
 The Assistant's answer card shows the best resource of every kind among its first rows, reads more kinds of question for what they ask, and shows the sentence that matched your question. Questions asked in the Assistant are now recorded as scrubbed usage events.
 
