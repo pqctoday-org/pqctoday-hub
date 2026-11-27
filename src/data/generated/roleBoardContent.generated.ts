@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_11142026.csv
+ * Source: src/data/role_board_content_11262026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -3267,7 +3267,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'Watch a modelled failure, not just a success',
             body: 'The simulator above shows a handshake succeeding. This is the other half — a modelled downgrade attack that pushes a connection back to classical crypto, and what your connection does about it.',
-            href: '/learn/tls-basics?tab=visual',
+            href: '/learn/tls-basics?tab=workshop&step=4',
           },
         ] as [
           { title: string; body: string; href?: string },
