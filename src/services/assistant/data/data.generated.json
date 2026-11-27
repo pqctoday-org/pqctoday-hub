@@ -1359,6 +1359,10 @@
     {
      "rx": "\\b(?:which|what) (?:deadlines?|dates?|milestones?)\\b",
      "w": 2
+    },
+    {
+     "rx": "\\b(?:by|in) (?:what|which) year\\b|\\btarget (?:years?|dates?)\\b",
+     "w": 3
     }
    ],
    "fact": [
@@ -1421,6 +1425,10 @@
     },
     {
      "rx": "\\bstart learning\\b",
+     "w": 4
+    },
+    {
+     "rx": "\\b(?:quiz|quizzes|test (?:my|your|our) knowledge|practice questions?)\\b",
      "w": 4
     },
     {
@@ -1663,6 +1671,10 @@
     {
      "rx": "\\bwhy (?:do|does|should|must) .{0,40}(?:care|matter|worry|migrate|prepare)\\b",
      "w": 2
+    },
+    {
+     "rx": "\\b(?:do|does|must) (?:i|we|you|one|anyone) (?:really |still |even )?(?:need|have) to (?:worry|care|be (?:worried|concerned))\\b",
+     "w": 4
     }
    ],
    "rules": [

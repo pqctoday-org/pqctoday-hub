@@ -256,6 +256,19 @@ describe('lessons under their own name, plain matches, and questions nothing is 
     }
   })
 
+  it('reads a quiz request, a "by what year" question and a "do I need to worry" question for what they ask', async () => {
+    const read = async (q: string) => held(await answer(q)).intent
+    expect(await read('quiz on tls')).toBe('learning')
+    expect(await read('By what year do Hong Kong banks need to be fully quantum-safe?')).toBe(
+      'dates'
+    )
+    expect(await read('do I need to worry about symmetric crypto')).toBe('risk')
+    expect(await read('What are the NIST PQC standards?')).toBe('list')
+    const quiz = held(await answer('quiz on tls'))
+    expect(quiz.groups[0].name).toBe('Learn')
+    expect(learnRows(quiz).map((r) => r.title)).toContain('TLS Basics')
+  })
+
   it('does not show a record that holds only one word of a longer question beside the best matches', async () => {
     const a = held(await answer('is rsa 2048 still ok'))
     const shown = a.groups.flatMap((g) => g.rows.map((r) => r.title))
